@@ -5,10 +5,8 @@ Audiobread is a Unity-based audio middleware. Perpetually in development.
 ## TERMS
 
 Copyright (c) 2022 Anastasia Devana.
-May be used for reference purposes only.
-Contact author for any intended duplication or intended use beyond exploratory read, compilation, testing.
-No license or rights transfer implied from the open publication.
-This software is made available strictly on an "as is" basis without warranty of any kind, express or implied.
+
+May be used for reference purposes only. Contact author for any intended duplication or intended use beyond exploratory read, compilation, testing. No license or rights transfer implied from the open publication. This software is made available strictly on an "as is" basis without warranty of any kind, express or implied.
 
 ## HOW TO INSTALL
 
