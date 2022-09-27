@@ -1,5 +1,6 @@
 {
-    "name": "Audiobread",
+    "name": "HearXR.Audiobread",
+    "rootNamespace": "",
     "references": [
         "GUID:3637989b04aec4cbda58ec1e1ebbf04d"
     ],

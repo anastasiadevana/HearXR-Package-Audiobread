@@ -1,5 +1,6 @@
 {
-    "name": "AudiobreadEditor",
+    "name": "HearXR.Audiobread.Editor",
+    "rootNamespace": "",
     "references": [
         "GUID:c3e820e45250845a5a966666417e17e6"
     ],

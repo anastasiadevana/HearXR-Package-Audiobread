@@ -1,5 +1,6 @@
 using System;
 using HearXR.Common;
+using HearXR.Common.Pool;
 using UnityEngine;
 
 // TODO: It's a bit weird that AudiobreadSource is the pooled item.

@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using HearXR.Common;
+using HearXR.Common.Pool;
 using UnityEngine;
 using Object = UnityEngine.Object;
 

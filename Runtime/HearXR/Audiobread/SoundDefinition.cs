@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Audio;
 
-[assembly: InternalsVisibleTo("AudiobreadEditor")]
+[assembly: InternalsVisibleTo("HearXR.Audiobread.Editor")]
 namespace HearXR.Audiobread
 {
     /// <summary>
