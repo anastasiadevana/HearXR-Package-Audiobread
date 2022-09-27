@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9df274b54146416699d6b84a5a1ec162, type: 3}
+  m_Name: CoreUnityAudioModule
+  m_EditorClassIdentifier: 
+  _soundProperties:
+  - {fileID: 11400000, guid: 08598bbb055634117b012d498a25d5c5, type: 2}
+  - {fileID: 11400000, guid: cfd91663c9cde4016bf69ec6e3a749c9, type: 2}

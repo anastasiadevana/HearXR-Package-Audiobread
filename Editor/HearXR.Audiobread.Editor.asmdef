@@ -1,0 +1,17 @@
+{
+    "name": "AudiobreadEditor",
+    "references": [
+        "GUID:c3e820e45250845a5a966666417e17e6"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

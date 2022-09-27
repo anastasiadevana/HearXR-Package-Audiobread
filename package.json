@@ -1,0 +1,26 @@
+{
+  "name": "com.hearxr.audiobread",
+  "displayName": "Hear XR Audiobread",
+  "version": "1.0.0",
+  "unity": "2020.3",
+  "description": "Hear XR Audiobread - Unity audio middleware",
+  "keywords": [
+    "tools"
+  ],
+  "category": "Hear XR",
+  "type": "tool",
+  "author": {
+    "name": "Hear XR",
+    "email": "anastasia@hearxr.com",
+    "url": "https://hearxr.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:anastasiadevana/HearXR-Package-Audiobread.git",
+    "directory": "com.hearxr.common"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/@anastasiadevana"
+  },
+  "hideInEditor": false
+}
