@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using HearXR.Audiobread.SoundProperties;
 using UnityEngine;
 
 namespace HearXR.Audiobread
@@ -11,6 +9,7 @@ namespace HearXR.Audiobread
     {
         #region Events
         public event Action<ISoundGeneratorUnityAudio, double> OnStealRequested;
+        protected event Action<AudiobreadSource> ApplySoundDefinitionToUnityAudio;
         #endregion
         
         #region Properties
@@ -75,7 +74,7 @@ namespace HearXR.Audiobread
         #endregion
         
         #region Sound Abstract Methods
-        protected override void DoPlay(PlaySoundFlags playFlags, bool scheduled, double startTime = -1.0d)
+        protected override void DoPlay(PlaySoundFlags playFlags, bool scheduled, double startTime = Audiobread.INACTIVE_START_TIME)
         {
             // If asked to play when already playing, reset loop counts.
             if (IsPlayingOrTransitioning())
@@ -106,26 +105,24 @@ namespace HearXR.Audiobread
             // If PlayScheduled() was not requested, and there are no delays, just play it and get it over with.
             if (!scheduled)
             {
+                Debug.Log("Not scheduled!");
+                
                 _audioSource.Play();
                 SetStatus(SoundStatus.Paused, false);
                 SetPlaybackState(PlaybackState.Playing);
                 InvokeOnBegan(this, AudioSettings.dspTime);
                 return;
             }
-
-            // TODO: SoundModule hookup. (delay)
-            // DoPlayScheduled(startTime, delay);
+            
+            DoPlayScheduled(startTime);
         }
         
-        protected void DoPlayScheduled(double startTime, float delay)
+        protected void DoPlayScheduled(double startTime)
         {
-            // Scheduled it is then.
             if (startTime < 0.0d)
             {
                 startTime = AudioSettings.dspTime;
             }
-
-            startTime += delay;
 
             _clipStartTime = startTime;
 
@@ -168,8 +165,8 @@ namespace HearXR.Audiobread
         {
             if (PlaybackState == PlaybackState.PlayInitiated)
             {
-                double startTime = AudioSettings.dspTime + _scheduledTimeRemainingOnPause;
-                DoPlayScheduled(startTime, 0.0f);
+                var startTime = AudioSettings.dspTime + _scheduledTimeRemainingOnPause;
+                DoPlayScheduled(startTime);
                 return;
             }
 
@@ -208,6 +205,19 @@ namespace HearXR.Audiobread
             }
         }
         
+        protected override void PostInitModules(InitSoundFlags initSoundFlags = InitSoundFlags.None)
+        {
+            base.PostInitModules(initSoundFlags);
+            
+            // TODO: This should be in the parent UnityAudio class.
+            // TODO: When do we unsubscribe from this?
+            ApplySoundDefinitionToUnityAudio += _soundModuleGroupProcessor.HandleApplySoundDefinitionToUnityAudio;
+            // foreach (var smProcessor in _soundModuleProcessors)
+            // {
+            //     ApplySoundDefinitionToUnityAudio += smProcessor.ApplySoundDefinitionToUnityAudio;
+            // }
+        }
+
         // protected override void PostSetParent(ISound previousParent, ISound newParent)
         // {
         //     base.PostSetParent(previousParent, newParent);
@@ -239,6 +249,12 @@ namespace HearXR.Audiobread
             //Debug.Log($"HEAR XR: {this} applying sound definition and properties");
             SetLooping();
 
+            ApplySoundDefinitionToUnityAudio?.Invoke(_audiobreadSource);
+            // foreach (var smProcessor in _soundModuleProcessors)
+            // {
+            //     // TODO:
+            // }
+            
             // TODO: Set spatialization
             // SetSpatializationType(_parentSound.SoundDefinition.SpatializationType);
             
@@ -323,6 +339,9 @@ namespace HearXR.Audiobread
 
                 case SchedulableSoundState.Playing:
                     SetPlaybackState(PlaybackState.Playing);
+                    
+                    Debug.Log("Schedulable is playing now!");
+                    
                     InvokeOnBegan(this, _actualClipStartTime);
                     _actualClipStartTime = -1;
                     CheckIfBeforeEnded();

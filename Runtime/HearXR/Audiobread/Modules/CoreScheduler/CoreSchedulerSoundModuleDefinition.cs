@@ -6,14 +6,21 @@ namespace HearXR.Audiobread
 {
     public class CoreSchedulerSoundModuleDefinition : SoundModuleDefinition, IChildSchedulerDefinition
     {
+        #region Editor Fields
         [SerializeField] private RepeatsDefinition _repeatsDefinition;
-
         [SerializeField] private TimeBetweenDefinition _timeBetweenDefinition;
-        
         // TODO: Maybe get rid of this? Parent repeats + random playback order might cause an issue.
         [SerializeField] private ParentSoundRepeatType _repeatType;
+        #endregion
         
-        internal Repeats RepeatsProperty
+        #region Static Private Fields
+        private static bool _propertiesCached;
+        private static Repeats _repeatsProperty;
+        private static TimeBetween _timeBetweenProperty;
+        #endregion
+        
+        #region Static Properties
+        public static Repeats RepeatsProperty
         {
             get
             {
@@ -22,7 +29,7 @@ namespace HearXR.Audiobread
             }
         }
 
-        internal TimeBetween TimeBetweenProperty
+        public static TimeBetween TimeBetweenProperty
         {
             get
             {
@@ -30,12 +37,11 @@ namespace HearXR.Audiobread
                 return _timeBetweenProperty;
             }
         }
+        #endregion
 
+        #region Properties
         public ParentSoundRepeatType RepeatType => _repeatType;
-
-        private bool _propertiesCached;
-        private Repeats _repeatsProperty;
-        private TimeBetween _timeBetweenProperty;
+        #endregion
 
         protected override void CacheProperties(ref Dictionary<SoundProperty, Definition> soundProperties)
         {
@@ -44,12 +50,14 @@ namespace HearXR.Audiobread
             soundProperties.Add(_timeBetweenProperty, _timeBetweenDefinition);
         }
         
-        private void CacheProperties()
+        #region Private Static Methods
+        private static void CacheProperties()
         {
             if (_propertiesCached) return;
             _repeatsProperty = BuiltInData.Properties.GetSoundPropertyByType<Repeats>();
             _timeBetweenProperty = BuiltInData.Properties.GetSoundPropertyByType<TimeBetween>();
             _propertiesCached = true;
         }
+        #endregion
     }
 }

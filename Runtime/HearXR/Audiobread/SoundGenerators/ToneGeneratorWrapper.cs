@@ -74,8 +74,7 @@ namespace HearXR.Audiobread
 
                ((ISoundInternal<ToneGeneratorDefinition>) generator).Init(_soundDefinition);
                generator.SoundSourceObject = _soundSourceObject;
-               //generator.ParentSound = _parentSound;
-               generator.ParentSound = this;
+               generator.ParentSound = _parentSound;
 
                if (!generator.IsValid()) return false;
 

@@ -8,15 +8,6 @@ namespace HearXR.Audiobread
 {
     public class ToneGenerator : SoundGeneratorUnityAudio<ToneGeneratorDefinition, ToneGenerator>
     {
-        // TODO: Move out?
-        public enum WaveShape
-        {
-            Sin,
-            Square,
-            Sawtooth,
-            Triangle
-        }
-        
         #region Private Fields
         // Tone generator specific fields.
         private float _toneDuration = 2.0f; // TODO: Put in definition.
@@ -27,6 +18,7 @@ namespace HearXR.Audiobread
         private int _clipPosition;
         private float _squareVolumeFactor = 0.4f; // TODO: Definition
         private float _sawtoothVolumeFactor = 0.4f; // TODO: Put into definition
+        private float _sineVolumeFactor = 1.0f; // TODO: Put into definition
         #endregion
         
         #region Constructor
@@ -34,14 +26,6 @@ namespace HearXR.Audiobread
         #endregion
         
         #region Sound Abstract Methods
-        // TODO: SoundModule hookup.
-        // protected override void GatherSoundPropertyInfo(ref Dictionary<SoundProperty, Definition> soundPropertyInfo)
-        // {
-        //     base.GatherSoundPropertyInfo(ref soundPropertyInfo);
-        //     soundPropertyInfo.Add(_pitchProperty, _soundDefinition.pitchDefinition);
-        //     soundPropertyInfo.Add(_delayProperty, _soundDefinition.delayDefinition);
-        // }
-
         protected override void DoPlay(PlaySoundFlags playFlags, bool scheduled, double startTime = -1.0d)
         {
             // Always treat as scheduled.
@@ -118,6 +102,7 @@ namespace HearXR.Audiobread
             _audiobreadSource.Mode = AudiobreadSource.AudioSourceMode.ToneGenerator;
             CreateAudioClip();
             _audioSource.clip = _audioClip;
+            _audioSource.loop = true;
         }
         
         protected override void ResetToDefaults()
@@ -145,10 +130,11 @@ namespace HearXR.Audiobread
             if (_audioClip != null)
             {
                 // TODO: CAN this ever happen???
-                Debug.LogWarning("Already have an AudioClip... How did that happen?");
+                Debug.LogWarning("ToneGenerator: Already have an AudioClip... How did that happen?");
             }
             else
             {
+                Debug.Log("ToneGenerator: Create audio clip");
                 _audioClip = AudioClip.Create(_soundDefinition.Name, _clipTotalSamples, _clipChannels, _clipSampleRate, true, OnAudioClipRead, OnAudioClipSetPosition);   
             }
         }
@@ -163,7 +149,7 @@ namespace HearXR.Audiobread
                     case WaveShape.Sin:
                         //buffer[i] = CreateSine(_timeIndex, _frequency, _sampleRate);
                         // TODO: Try to use complex number so that we don't have to run Sin all the time.
-                        buffer[i] = Mathf.Sin(Mathf.PI * 2.0f * _clipPosition * _toneFrequency / _clipSampleRate);
+                        buffer[i] = Mathf.Sin(Mathf.PI * 2.0f * _clipPosition * _toneFrequency / _clipSampleRate) * _sineVolumeFactor;
                         break;
                 
                     case WaveShape.Square:

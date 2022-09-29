@@ -54,8 +54,9 @@ namespace HearXR.Audiobread
         protected event Action SoundDefinitionChangedEvent;
         protected event Action SoundUpdateTickEvent;
         protected event Action UnityAudioGeneratorTickEvent;
-        protected event Action<PlaySoundFlags> BeforeChildPlayEvent;
-        protected event Action<PlaySoundFlags> BeforePlayEvent;
+        public delegate double BeforePlayAction(PlaySoundFlags playSoundFlags = PlaySoundFlags.None, double startTime = Audiobread.INACTIVE_START_TIME);
+        public event BeforePlayAction BeforeChildPlayEvent;
+        public event BeforePlayAction BeforePlayEvent;
         protected event Action<ISound> ParentSetEvent;
         #endregion
 
@@ -566,7 +567,7 @@ namespace HearXR.Audiobread
 
         protected void SetPlaybackState(PlaybackState newState)
         {
-            PlaybackState previousState = _playbackState;
+            var previousState = _playbackState;
             _playbackState = newState;
             if (newState != previousState)
             {
@@ -618,14 +619,14 @@ namespace HearXR.Audiobread
         {
             UnityAudioGeneratorTickEvent?.Invoke();
         }
-        protected void InvokeOnBeforeChildPlay(PlaySoundFlags playSoundFlags)
+        protected double InvokeOnBeforeChildPlay(PlaySoundFlags playSoundFlags, double startTime = Audiobread.INACTIVE_START_TIME)
         {
-            BeforeChildPlayEvent?.Invoke(playSoundFlags);
+            return BeforeChildPlayEvent?.Invoke(playSoundFlags, startTime) ?? startTime;
         }
         
-        protected void InvokeOnBeforePlay(PlaySoundFlags playSoundFlags)
+        protected double InvokeOnBeforePlay(PlaySoundFlags playSoundFlags, double startTime = Audiobread.INACTIVE_START_TIME)
         {
-            BeforePlayEvent?.Invoke(playSoundFlags);
+            return BeforePlayEvent?.Invoke(playSoundFlags, startTime) ?? startTime;
         }
         
         void ISoundInternal.InvokeOnSetParent(ISound parentSound)
@@ -826,8 +827,6 @@ namespace HearXR.Audiobread
         #region ISoundInternal<TDefinition> Methods
         void ISoundInternal<TDefinition>.Init(TDefinition soundDefinition, InitSoundFlags initSoundFlags)
         {
-            // Debug.Log($"Try init {this}");
-            
             // TODO: Handle all InitSoundFlags
             ResetStatus(SoundStatus.None);
             
@@ -884,10 +883,7 @@ namespace HearXR.Audiobread
 
         public override void Play(PlaySoundFlags playSoundFlags = PlaySoundFlags.None)
         {
-            // TODO: When are pre-play values being called?
-            // TODO: Make sure all the flags are accounted for.
-            // TODO: What do we do if a sound is scheduled?
-            // TODO: What do we do if a sound is paused?
+            // TODO: Make sure all flags are accounted for.
             if (!CanPlay(playSoundFlags)) return;
 
             if (PersistRequested(playSoundFlags))
@@ -899,54 +895,40 @@ namespace HearXR.Audiobread
                 // Always register self, even if not persistent.
                 RegisterSelf();
             }
-            
-            // NOTE: Moved to SoundModuleProcessor
-            // var setValuesType = (HasPlayFlag(playSoundFlags, PlaySoundFlags.PlayNext))
-            //     ? SetValuesType.OnBeforeChildPlay
-            //     : SetValuesType.OnBeforePlay;
-            //
-            // InitSoundPropertyValues(setValuesType, playSoundFlags);
-            // ApplySoundPropertyValues(setValuesType);
-            // END
 
+            var startTime = double.Epsilon;
             if (HasPlayFlag(playSoundFlags, PlaySoundFlags.PlayNext))
             {
-                InvokeOnBeforeChildPlay(playSoundFlags);
+                startTime = InvokeOnBeforeChildPlay(playSoundFlags);
             }
             else
             {
-                InvokeOnBeforePlay(playSoundFlags);
+                startTime = InvokeOnBeforePlay(playSoundFlags);
             }
-
-            SetPlaybackState(PlaybackState.PlayInitiated);
-            DoPlay(playSoundFlags, false);
+            
+            if (startTime > Audiobread.INACTIVE_START_TIME)
+            {
+                DoPlay(playSoundFlags, true, startTime);
+            }
+            else
+            {
+                SetPlaybackState(PlaybackState.PlayInitiated);
+                DoPlay(playSoundFlags, false);   
+            }
         }
         
         public override void PlayScheduled(double startTime, PlaySoundFlags playSoundFlags = PlaySoundFlags.None)
         {
-            // TODO: This is too similar to Play?
+            // TODO: Roll this into Play() above. It's basically the same.
             if (!CanPlay(playSoundFlags)) return;
-
-            // NOTE: Moved to SoundModuleProcessor
-            // if (Sound.HasPlayFlag(playSoundFlags, PlaySoundFlags.PlayNext))
-            // {
-            //     InitSoundPropertyValues(SetValuesType.OnBeforeChildPlay, playSoundFlags);
-            //     ApplySoundPropertyValues(SetValuesType.OnBeforeChildPlay);
-            // }
-            // else
-            // {
-            //     InitSoundPropertyValues(SetValuesType.OnBeforePlay, playSoundFlags);
-            //     ApplySoundPropertyValues(SetValuesType.OnBeforePlay);
-            // }
-            // END
             
             if (HasPlayFlag(playSoundFlags, PlaySoundFlags.PlayNext))
             {
-                InvokeOnBeforeChildPlay(playSoundFlags);
+                startTime = InvokeOnBeforeChildPlay(playSoundFlags, startTime);
             }
             else
             {
-                InvokeOnBeforePlay(playSoundFlags);
+                startTime = InvokeOnBeforePlay(playSoundFlags, startTime);
             }
 
             DoPlay(playSoundFlags, true, startTime);

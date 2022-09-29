@@ -64,29 +64,10 @@ namespace HearXR.Audiobread
         }
         #endregion
 
-        #region Sound<TDefinition, TSelf> Overrides
-        // NOTE: I don't think we need to do this. This might be a remnant of when this file was inheriting from 
-        //       parent sound.
-        // protected override void ParseSoundDefinition()
-        // {
-        //     // TODO: First of all, WHY. Secondly, should we do the same for Tone Generator?
-        //     // Make sure that nothing from base gets called, because we're special.
-        // }
-        #endregion
-        
-        #region ParentSound Overrides
-        protected override void DoOnChildBeforeEnded(ISound child, double endTime, int nonStoppedChildrenLeft)
-        {
-            base.DoOnChildBeforeEnded(child, endTime, nonStoppedChildrenLeft);
-            if (nonStoppedChildrenLeft == 1)
-            {
-                InvokeOnBeforeEnded(this, endTime);
-            }
-        }
-
+        #region SoundGeneratorWrapper Overrides
         protected override void DoOnSelfEnded()
         {
-            // Don't need to call anything from base here.
+            base.DoOnSelfEnded();
             if (IsVirtual())
             {
                 Debug.LogError("Something is happening with a virtual sound. Not sure what to do about that.");
@@ -134,7 +115,8 @@ namespace HearXR.Audiobread
         #region Helper Methods
         public override string ToString()
         {
-            return $"- CLIP - [{_soundDefinition.AudioClip.name}]";
+            //return $"- CLIP - [{_soundDefinition.AudioClip.name}]";
+            return $"- CLIP - [{_soundDefinition.name}]";
         }
         #endregion
 
@@ -256,12 +238,14 @@ namespace HearXR.Audiobread
                 return false;
             }
 
-            AudiobreadClip player = source.Player;
+            // TODO: Rename all the "player" references to "generator" for consistency.
+            var player = source.Player;
 
             if (!player.IsValid()) return false;
 
             ((ISoundInternal<AudiobreadClipDefinition>) player).Init(_soundDefinition);
             player.SoundSourceObject = _soundSourceObject;
+            
             player.ParentSound = _parentSound;
             //player.ParentSound = this;
 

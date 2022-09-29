@@ -82,6 +82,13 @@ namespace HearXR.Audiobread
         }
         #endregion
         
+        #region Sound<T> Overrides
+        protected override void InitModules(InitSoundFlags initSoundFlags = InitSoundFlags.None)
+        {
+            // Do nothing, because we only want to init on the SoundGeneratorUnityAudio.
+        }
+        #endregion
+        
         #region Protected Methods
         protected void SubscribeToGeneratorEvents(ref TGenerator player)
         {

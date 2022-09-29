@@ -65,8 +65,9 @@ namespace HearXR.Audiobread.SoundProperties
         #region SoundPropertyController Abstract Methods
         public override void Calculate()
         {
-            // TODO: Pulling straight from the definition here! Not sure if this is what we want.
-            _value = _definition.value + _randomizedOffset;
+            // TODO: Pulling straight from the definition here! Not sure if this is what we want. Maybe can grab _baseValue instead?
+            // NOTE: Using the _rawValue from the FloatCalculator.Generate() instead.
+            //_value = _definition.value + _randomizedOffset;
 
             // Influences
             _influenceFactor = 1.0f;
@@ -82,7 +83,7 @@ namespace HearXR.Audiobread.SoundProperties
 
             // Adjusted value.
             _value = _rawValue * _totalFactor * _influenceFactor;
-
+            
             Mathf.Clamp(_value, _property.MinLimit, _property.MaxLimit);
             
             _valueContainer.FloatValue = _value;
@@ -158,8 +159,6 @@ namespace HearXR.Audiobread.SoundProperties
 
         internal void OnSoundBegan()
         {
-            
-            
             if (!_shouldFadeIn) return;
             
             // // TODO: Preview fades in editor - Looks like maybe I DO need a light editor-friendly singleton of some sort.
@@ -216,6 +215,8 @@ namespace HearXR.Audiobread.SoundProperties
         #region Coroutines
         private IEnumerator DoFade(float from, float to, float duration)
         {
+            // TODO: Make the fade non-linear.
+            
             _shouldFadeIn = false;
             
             float currentTime = 0.0f;

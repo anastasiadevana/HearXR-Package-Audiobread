@@ -65,14 +65,14 @@ namespace HearXR.Audiobread
             OnUnityAudioGeneratorTick();
         }
 
-        internal void HandleBeforeChildPlay(PlaySoundFlags playSoundFlags)
+        internal double HandleBeforeChildPlay(PlaySoundFlags playSoundFlags, double startTime)
         {
-            OnBeforeChildPlay(playSoundFlags);
+            return OnBeforeChildPlay(playSoundFlags, startTime);
         }
 
-        internal void HandleBeforePlay(PlaySoundFlags playSoundFlags)
+        internal double HandleBeforePlay(PlaySoundFlags playSoundFlags, double startTime)
         {
-            OnBeforePlay(playSoundFlags);
+            return OnBeforePlay(playSoundFlags, startTime);
         }
 
         internal void HandleOnSoundBegan(ISound sound, double startTime)
@@ -110,8 +110,8 @@ namespace HearXR.Audiobread
         protected abstract void OnSoundDefinitionChanged();
         protected abstract void DoInit();
         protected abstract void OnSoundUpdateTick();
-        protected abstract void OnBeforeChildPlay(PlaySoundFlags playSoundFlags);
-        protected abstract void OnBeforePlay(PlaySoundFlags playSoundFlags);
+        protected abstract double OnBeforeChildPlay(PlaySoundFlags playSoundFlags, double startTime);
+        protected abstract double OnBeforePlay(PlaySoundFlags playSoundFlags, double startTime);
         protected abstract void OnSetParent(ISound parentSound);
         #endregion
         
@@ -171,7 +171,9 @@ namespace HearXR.Audiobread
         protected override void OnSetParent(ISound parentSound)
         {
             if (_calculators.Count == 0) return;
-            
+
+            var processor = ((ISoundInternal) parentSound).SoundModuleGroupProcessor;
+
             // Try to find a matching sound module with the parent.
             if (!((ISoundInternal) parentSound).SoundModuleGroupProcessor.TryGetMatchingSoundModuleProcessor(
                 _soundModule,
@@ -188,20 +190,20 @@ namespace HearXR.Audiobread
             }
         }
 
-        protected override void OnBeforeChildPlay(PlaySoundFlags playSoundFlags)
+        protected override double OnBeforeChildPlay(PlaySoundFlags playSoundFlags, double startTime)
         {
             RegenerateCalculators(SetValuesType.OnBeforeChildPlay, playSoundFlags);
-            if (Bypass) return;
+            if (Bypass) return startTime;
             
-            ApplySoundModifiers(SetValuesType.OnBeforeChildPlay, playSoundFlags);
+            return ApplySoundModifiers(SetValuesType.OnBeforeChildPlay, playSoundFlags, startTime);
         }
 
-        protected override void OnBeforePlay(PlaySoundFlags playSoundFlags)
+        protected override double OnBeforePlay(PlaySoundFlags playSoundFlags, double startTime)
         {
             RegenerateCalculators(SetValuesType.OnBeforePlay, playSoundFlags);
-            if (Bypass) return;
+            if (Bypass) return startTime;
             
-            ApplySoundModifiers(SetValuesType.OnBeforePlay, playSoundFlags);
+            return ApplySoundModifiers(SetValuesType.OnBeforePlay, playSoundFlags, startTime);
         }
 
         private void InitCalculators()
@@ -294,7 +296,8 @@ namespace HearXR.Audiobread
             }
         }
 
-        protected abstract void ApplySoundModifiers(SetValuesType setValuesType, PlaySoundFlags playSoundFlags = PlaySoundFlags.None);
+        protected abstract double ApplySoundModifiers(SetValuesType setValuesType, 
+            PlaySoundFlags playSoundFlags = PlaySoundFlags.None, double startTime = Audiobread.INACTIVE_START_TIME);
         
         protected virtual void PostInitCalculators() {}
     }

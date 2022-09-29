@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using HearXR.Audiobread.SoundProperties;
 using UnityEngine;
 
 namespace HearXR.Audiobread
@@ -14,6 +15,10 @@ namespace HearXR.Audiobread
         // TODO: This override below doesn't do a null check.
         public new static Audiobread Instance => SoundManager.Instance as Audiobread;
         public AudiobreadPool Pool => _audiobreadPool;
+        #endregion
+        
+        #region Constants
+        public const double INACTIVE_START_TIME = -1.0d;
         #endregion
         
         #region Private Fields

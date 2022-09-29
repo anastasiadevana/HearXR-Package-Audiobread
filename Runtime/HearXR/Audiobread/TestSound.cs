@@ -32,12 +32,13 @@ namespace HearXR.Audiobread
                 return false;
             }
 
-            TestAudiobreadClip player = source.TestPlayer;
+            var player = source.TestPlayer;
 
             if (!player.IsValid()) return false;
 
             ((ISoundInternal<TestSoundDefinition>) player).Init(_soundDefinition);
             player.SoundSourceObject = _soundSourceObject;
+            
             player.ParentSound = _parentSound;
             //player.ParentSound = this;
 

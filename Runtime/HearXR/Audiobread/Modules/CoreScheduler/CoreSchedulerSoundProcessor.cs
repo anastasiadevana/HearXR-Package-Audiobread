@@ -1,3 +1,4 @@
+using HearXR.Audiobread.SoundProperties;
 using UnityEngine;
 
 namespace HearXR.Audiobread
@@ -7,7 +8,6 @@ namespace HearXR.Audiobread
         // TODO: We have a problem of where to store _childIndex.
         //       It is relevant to both one-shots and continuous sounds.
         //       But currently this module will not reset it if the sound is a one-shot.
-        
         
         #region Private Fields
         private IContainerSoundDefinition _soundDefinition;
@@ -40,7 +40,11 @@ namespace HearXR.Audiobread
             }
         }
 
-        protected override void ApplySoundModifiers(SetValuesType setValuesType, PlaySoundFlags playSoundFlags = PlaySoundFlags.None) {}
+        protected override double ApplySoundModifiers(SetValuesType setValuesType, 
+            PlaySoundFlags playSoundFlags = PlaySoundFlags.None, double startTime = Audiobread.INACTIVE_START_TIME)
+        {
+            return startTime;
+        }
 
         internal bool CanPlay(PlaySoundFlags playSoundFlags = PlaySoundFlags.None)
         {
@@ -74,7 +78,7 @@ namespace HearXR.Audiobread
             // TODO: Maybe go into a different / "waiting" mode instead, especially if the wait is long?
             if (playNext)
             {
-                startTime += _calculators[ModuleSoundDefinition.TimeBetweenProperty].ValueContainer.FloatValue;
+                startTime += _calculators[CoreSchedulerSoundModuleDefinition.TimeBetweenProperty].ValueContainer.FloatValue;
             }
             
             DecrementRepeatsRemaining(_childIndex);
@@ -85,7 +89,7 @@ namespace HearXR.Audiobread
             if (_soundDefinition.SoundType != SoundType.Continuous) return;
             
             _childIndex = -1;
-            _repeatsRemaining = _calculators[ModuleSoundDefinition.RepeatsProperty].ValueContainer.IntValue; 
+            _repeatsRemaining = _calculators[CoreSchedulerSoundModuleDefinition.RepeatsProperty].ValueContainer.IntValue; 
             _limitedRepeats = (_repeatsRemaining > 0);
             _playMore = true;
         }

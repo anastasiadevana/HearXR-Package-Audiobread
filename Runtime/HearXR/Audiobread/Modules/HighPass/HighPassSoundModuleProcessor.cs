@@ -32,7 +32,8 @@ namespace HearXR.Audiobread
             _highPassFilter.enabled = !ModuleSoundDefinition.bypass;
         }
 
-        protected override void ApplySoundModifiers(SetValuesType setValuesType, PlaySoundFlags playSoundFlags)
+        protected override double ApplySoundModifiers(SetValuesType setValuesType, 
+            PlaySoundFlags playSoundFlags = PlaySoundFlags.None, double startTime = Audiobread.INACTIVE_START_TIME)
         {
             throw new System.NotImplementedException();
         }

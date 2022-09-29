@@ -56,12 +56,14 @@ namespace HearXR.Audiobread.SoundProperties
                 _rawValue = _baseValue;
                 return;
             }
+            
             float randomValue = Audiobread.GetClampedRandomValue(_definition.value, _definition.variance, 
                 _property.MinLimit, _property.MaxLimit);
-            
-            // Debug.Log($"Generated random value for {_definition.soundProperty.name}: {randomValue}");
-            
+
             _randomizedOffset = _baseValue - randomValue;
+            _rawValue = _baseValue + _randomizedOffset;
+
+            // Debug.Log($"Generated random value for {_definition.soundProperty.name}: {randomValue} BASE {_baseValue} RANDOMIZED OFFSET {_randomizedOffset}");
         }
     }
 }

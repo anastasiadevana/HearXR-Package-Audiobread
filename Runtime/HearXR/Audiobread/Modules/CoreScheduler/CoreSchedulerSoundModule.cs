@@ -1,3 +1,4 @@
+using HearXR.Audiobread.SoundProperties;
 using UnityEngine;
 
 namespace HearXR.Audiobread

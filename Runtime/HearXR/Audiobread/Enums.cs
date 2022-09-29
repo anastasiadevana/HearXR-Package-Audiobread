@@ -1,7 +1,8 @@
 using System;
 
 namespace HearXR.Audiobread
-{[Flags] public enum InitSoundFlags
+{
+    [Flags] public enum InitSoundFlags
     {
         None = 0,
         PersistInstance = 1
@@ -102,5 +103,13 @@ namespace HearXR.Audiobread
     {
         Child,
         Self
+    }
+    
+    public enum WaveShape
+    {
+        Sin,
+        Square,
+        Sawtooth,
+        Triangle
     }
 }

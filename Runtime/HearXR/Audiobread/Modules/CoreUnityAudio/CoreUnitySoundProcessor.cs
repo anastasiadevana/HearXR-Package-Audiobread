@@ -34,10 +34,11 @@ namespace HearXR.Audiobread.Core
             // _fadeOut = (_hasFadeOut) ? ModuleSoundDefinition.fadeOutDefinition : null;
             
             // Add fades to the volume calculator.
-            _volumeCalculator = (VolumeCalculator) _calculators[ModuleSoundDefinition.VolumeProperty];
+            _volumeCalculator = (VolumeCalculator) _calculators[BuiltInData.Properties.GetSoundPropertyByType<Volume>()];
             _volumeCalculator.SetFades(ModuleSoundDefinition.fadeInDefinition, ModuleSoundDefinition.fadeOutDefinition);
             _volumeCalculator.OnFadeOutFinished += HandleFadeOutFinished;
             _volumeCalculator.OnFadeOutFinished += HandleFadeInFinished;
+            _volumeCalculator.PrepareToPlay();
             
             // TODO: Unsubscribe from this at some point?
             // ((VolumeCalculator) _calculators[ModuleSoundDefinition.VolumeProperty]).OnFadeFinished += delegate(Fade.Direction direction)
@@ -68,7 +69,7 @@ namespace HearXR.Audiobread.Core
             base.OnSoundBegan(sound, startTime);
             
             // TODO: Compare sound with _sound.
-            // Debug.Log($"{sound} began!");
+            Debug.Log($"{sound} began!");
             _volumeCalculator.OnSoundBegan();
         }
 
@@ -85,24 +86,40 @@ namespace HearXR.Audiobread.Core
             ApplySoundModifiers(SetValuesType.OnUpdate);
         }
 
-        protected override void ApplySoundModifiers(SetValuesType setValuesType, PlaySoundFlags playSoundFlags = PlaySoundFlags.None)
+        protected override double ApplySoundModifiers(SetValuesType setValuesType, 
+            PlaySoundFlags playSoundFlags = PlaySoundFlags.None, double startTime = Audiobread.INACTIVE_START_TIME)
         {
-            if (!MySound.IsValid() || !_initSoundSource) return;
+            if (!MySound.IsValid() || !_initSoundSource) return startTime;
             
             var properties = _soundPropertiesBySetType[setValuesType];
 
-            for (int i = 0; i < properties.Length; ++i)
+            for (var i = 0; i < properties.Length; ++i)
             {
-                if (properties[i] == ModuleSoundDefinition.PitchProperty)
+                if (properties[i] == CoreUnitySoundModuleDefinition.PitchProperty)
                 {
                     var value = _calculators[properties[i]].ValueContainer.FloatValue;
                     _audioSource.pitch = value;
                 }
-
-                if (properties[i] == ModuleSoundDefinition.VolumeProperty)
+                else if (properties[i] == CoreUnitySoundModuleDefinition.VolumeProperty)
                 {
                     var value = _calculators[properties[i]].ValueContainer.FloatValue;
                     _audioSource.volume = value;
+                }
+                else if (properties[i] == CoreUnitySoundModuleDefinition.DelayProperty)
+                {
+                    if (setValuesType == SetValuesType.OnBeforePlay)
+                    {
+                        var delay = _calculators[properties[i]].ValueContainer.FloatValue;
+                        if (delay > 0)
+                        {
+                            if (startTime < 0.0d)
+                            {
+                                startTime = AudioSettings.dspTime;
+                            }
+                            startTime += delay;
+                        }
+                        return startTime;
+                    }
                 }
                 
                 // if (!_calculators.ContainsKey(properties[i]))
@@ -135,6 +152,8 @@ namespace HearXR.Audiobread.Core
                 //     Debug.LogWarning($"HEAR XR: {this} Unable to apply property {properties[i].name}");
                 // }
             }
+
+            return startTime;
         }
 
         #region IStopControllerProcessor Methods

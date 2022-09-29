@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using HearXR.Audiobread.SoundProperties;
 using UnityEngine;
 
 namespace HearXR.Audiobread
@@ -8,10 +6,6 @@ namespace HearXR.Audiobread
     public class ToneGeneratorDefinition : SoundDefinition
     {
         [SerializeField] private float _frequency = 220.0f; // TODO: Make this a sound property.
-        
-        public PitchDefinition pitchDefinition;
-        
-        public DelayDefinition delayDefinition;
 
         public float Frequency => _frequency;
         

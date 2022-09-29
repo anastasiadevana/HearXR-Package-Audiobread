@@ -11,16 +11,6 @@ namespace HearXR.Audiobread
         #endregion
 
         #region Sound Abstract Methods
-        
-        // TODO: SoundModule hookup.
-        // protected override void GatherSoundPropertyInfo(ref Dictionary<SoundProperty, Definition> soundPropertyInfo)
-        // {
-        //     base.GatherSoundPropertyInfo(ref soundPropertyInfo);
-        //     soundPropertyInfo.Add(_pitchProperty, _soundDefinition.pitchDefinition);
-        //     soundPropertyInfo.Add(_delayProperty, _soundDefinition.delayDefinition);
-        //     soundPropertyInfo.Add(_offsetProperty, _soundDefinition.offsetDefinition);
-        // }
-
         protected override void ApplySoundPropertyValues(SetValuesType setValuesType)
         {
             base.ApplySoundPropertyValues(setValuesType);

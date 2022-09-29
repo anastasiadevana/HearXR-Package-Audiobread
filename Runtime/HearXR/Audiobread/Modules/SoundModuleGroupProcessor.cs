@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace HearXR.Audiobread
 {
@@ -24,7 +25,10 @@ namespace HearXR.Audiobread
                 SubscribeSoundModuleProcessorToEvents(ref moduleProcessor);
 
                 _soundModuleProcessors.Add(moduleProcessor);
+                // Debug.Log($"Add module {moduleProcessor.GetType()} to {_sound}");
             }
+            
+            // Debug.Log($"{_sound} sound has {_soundModuleProcessors.Count} modules");
         }
         #endregion
 
@@ -145,16 +149,16 @@ namespace HearXR.Audiobread
             UnityAudioGeneratorTickEvent?.Invoke();
         }
         
-        private event Action<PlaySoundFlags> BeforeChildPlayEvent;
-        internal void HandleBeforeChildPlay(PlaySoundFlags playSoundFlags)
+        private event Sound.BeforePlayAction BeforeChildPlayEvent;
+        internal double HandleBeforeChildPlay(PlaySoundFlags playSoundFlags, double startTime)
         {
-            BeforeChildPlayEvent?.Invoke(playSoundFlags);
+            return BeforeChildPlayEvent?.Invoke(playSoundFlags, startTime) ?? startTime;
         }
         
-        private event Action<PlaySoundFlags> BeforePlayEvent;
-        internal void HandleBeforePlay(PlaySoundFlags playSoundFlags)
+        private event Sound.BeforePlayAction BeforePlayEvent;
+        internal double HandleBeforePlay(PlaySoundFlags playSoundFlags, double startTime)
         {
-            BeforePlayEvent?.Invoke(playSoundFlags);
+            return BeforePlayEvent?.Invoke(playSoundFlags, startTime) ?? startTime;
         }
         
         private event Action<ISound> ParentSetEvent;
@@ -166,6 +170,8 @@ namespace HearXR.Audiobread
         private event Action<ISound, double> OnSoundBegan;
         internal void HandleOnSoundBegan(ISound sound, double startTime)
         {
+            Debug.Log("Sound began");
+            
             OnSoundBegan?.Invoke(sound, startTime);
         }
 

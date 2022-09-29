@@ -61,30 +61,6 @@ namespace HearXR.Audiobread
             // }
         }
 
-        protected event Action<AudiobreadSource> ApplySoundDefinitionToUnityAudio;
-        protected override void PostInitModules(InitSoundFlags initSoundFlags = InitSoundFlags.None)
-        {
-            base.PostInitModules(initSoundFlags);
-            
-            // TODO: This should be in the parent UnityAudio class.
-            // TODO: When do we unsubscribe from this?
-            ApplySoundDefinitionToUnityAudio += _soundModuleGroupProcessor.HandleApplySoundDefinitionToUnityAudio;
-            // foreach (var smProcessor in _soundModuleProcessors)
-            // {
-            //     ApplySoundDefinitionToUnityAudio += smProcessor.ApplySoundDefinitionToUnityAudio;
-            // }
-        }
-
-        protected override void ApplySoundDefinitionAndProperties(InitSoundFlags initSoundFlags = InitSoundFlags.None)
-        {
-            base.ApplySoundDefinitionAndProperties(initSoundFlags);
-            ApplySoundDefinitionToUnityAudio?.Invoke(_audiobreadSource);
-            // foreach (var smProcessor in _soundModuleProcessors)
-            // {
-            //     // TODO:
-            // }
-        }
-        
         protected override void DoPlay(PlaySoundFlags playFlags, bool scheduled, double startTime = -1.0d)
         {
             // If asked to play when already playing, reset loop counts.
@@ -95,17 +71,6 @@ namespace HearXR.Audiobread
             
             // Unset ReadyToPlay because we can only play one thing at a time.
             SetStatus(SoundStatus.ReadyToPlay, false);
-
-            // TODO: SORT OUT THE DELAY THINGY
-            // If there is any delay on the sound, we should always just use PlayScheduled.
-            // var delay = _calculators[_delayProperty].ValueContainer.FloatValue;
-            // if (delay > 0.0f)
-            // {
-            //     scheduled = true;
-            // }
-
-            var delay = 0.0f;
-            // scheduled = false;
 
             // Stop the sound that was paused.
             // TODO: Do we care about "scheduled" here? Should we just always stop paused sources?
@@ -126,7 +91,7 @@ namespace HearXR.Audiobread
                 return;
             }
 
-            DoPlayScheduled(startTime, delay);
+            DoPlayScheduled(startTime);
         }
         
         protected override void DoReleaseResources()
