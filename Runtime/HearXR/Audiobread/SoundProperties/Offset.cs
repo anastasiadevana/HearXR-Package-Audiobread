@@ -4,7 +4,7 @@ namespace HearXR.Audiobread.SoundProperties
 {
     [System.Serializable] public class OffsetDefinition : FloatDefinition<Offset> {}
     
-    [CreateAssetMenu (menuName = "Audiobread/Offset Property")]
+    [CreateAssetMenu (menuName = "Audiobread/Sound Property/Offset Property")]
     public class Offset : FloatSoundProperty
     {
         // public override System.Type SoundModuleType { get; } = typeof(SoundModule); // TODO:

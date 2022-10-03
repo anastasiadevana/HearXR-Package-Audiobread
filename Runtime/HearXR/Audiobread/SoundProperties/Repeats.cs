@@ -4,7 +4,7 @@ namespace HearXR.Audiobread.SoundProperties
 {
     [System.Serializable] public class RepeatsDefinition : IntDefinition<Repeats> {}
     
-    [CreateAssetMenu (menuName = "Audiobread/Repeats Property")]
+    [CreateAssetMenu (menuName = "Audiobread/Sound Property/Repeats Property")]
     public class Repeats : IntSoundProperty
     {
         // public override System.Type SoundModuleType { get; } = typeof(SoundModule); // TODO:

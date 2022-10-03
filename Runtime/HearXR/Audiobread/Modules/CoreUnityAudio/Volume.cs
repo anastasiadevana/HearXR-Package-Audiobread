@@ -5,7 +5,7 @@ namespace HearXR.Audiobread.SoundProperties
 {
     [System.Serializable] public class VolumeDefinition : FloatDefinition<Volume> {}
     
-    [CreateAssetMenu (menuName = "Audiobread/Volume Property")]
+    [CreateAssetMenu (menuName = "Audiobread/Sound Property/Volume Property")]
     public class Volume : FloatSoundProperty
     {
         // public override System.Type SoundModuleType { get; } = typeof(CoreUnitySoundModule);

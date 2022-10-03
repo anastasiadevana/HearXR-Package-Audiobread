@@ -2,13 +2,13 @@
 
 namespace HearXR.Audiobread.SoundProperties
 {
-    [System.Serializable] public class MusicalLengthDefinition : IntDefinition<MusicalLength> {}
+    [System.Serializable] public class MusicalDurationDefinition : IntDefinition<MusicalDuration> {}
     
-    [CreateAssetMenu (menuName = "Audiobread/Musical Length Property")]
-    public class MusicalLength : IntSoundProperty
+    [CreateAssetMenu (menuName = "Audiobread/Sound Property/Musical Duration Property")]
+    public class MusicalDuration : IntSoundProperty
     {
         // public override System.Type SoundModuleType { get; } = typeof(SoundModule); // TODO:
-        public override string ShortName { get; } = "Lgth";
+        public override string ShortName { get; } = "Dur";
         public override int DefaultValue { get; } = 0;
         
         public override bool HasMinLimit { get; } = true;

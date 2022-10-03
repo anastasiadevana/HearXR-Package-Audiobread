@@ -1,79 +1,30 @@
-﻿using UnityEditor;
+using UnityEditor;
 using UnityEngine;
 
 namespace HearXR.Audiobread.SoundProperties
 {
-    [CustomPropertyDrawer(typeof(FloatDefinition), true)]
-    public class FloatDefinitionDrawer : DefinitionDrawer
+    [CustomPropertyDrawer(typeof(TimeDurationDefinition))]
+    public class TimeDurationDefinitionDrawer : FloatDefinitionDrawer
     {
-        // TODO: Maybe turn this into something like this? https://docs.unity3d.com/ScriptReference/PopupWindow.html
-        // /// <summary>
-        // /// Options to display in the popup to select constant or variable.
-        // /// </summary>
-        // private readonly string[] popupOptions = { "Use Constant", "Use Variable" };
-        // bool useConstant;
-        //
-        // /// <summary> Cached style to use to draw the popup button. </summary>
-        // private GUIStyle popupStyle;
-        
-        protected FloatSoundProperty _soundProperty;
-
-        protected bool _showRandomize;
-
-        private SerializedProperty _audioClipsProp;
-        private SerializedProperty _volumeProp;
-        private SerializedProperty _randomizeVolumeProp;
-        private SerializedProperty _volumeVarianceProp;
-        private SerializedProperty _pitchProp;
-        private SerializedProperty _randomizePitchProp;
-        private SerializedProperty _pitchVarianceProp;
-        private SerializedProperty _loopingProp;
-        private SerializedProperty _loopType;
-        private SerializedProperty _timeBetweenClipsProp;
-        private SerializedProperty _randomizeTimeBetweenClipsProp;
-        private SerializedProperty _timeBetweenClipsVarianceProp;
-        private SerializedProperty _spatializationTypeProp;
-
-        protected const float UNITY_SLIDER_NUMBER_WIDTH = 55.0f;
-
-        private readonly float _labelWidth = 120.0f;
-        protected readonly float _smallNumberInputWidth = 50.0f;
-        protected readonly float _randomizeLabelWidth = 70.0f;
-        protected readonly float _horizontalSpacer = 5.0f;
-        protected readonly float _checkboxWidth = 16.0f;
-        protected readonly float _baseValueSliderLeftOffset = 20.0f; // used to be 26.0f;
-
-        protected readonly float _baseValueSliderRightOffset = 16.0f;
-        protected readonly Color _minMaxSliderOverlayColor = new Color(0.957f, 0.098f, 0.976f);
-
-        private readonly float _header3RectHeight = 24.0f;
-        private readonly Color _header3RectColor = Color.yellow;
-
-        protected float _rowX;
-        protected float _rowWidth;
-        protected float _controlX;
-        protected float _controlWidth;
-
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        protected override (FloatSoundProperty, float) GetSoundPropertyAndDefaultValue()
         {
-            int numLines = (_showRandomize) ? 4 : 2;
-            return (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing) * numLines + 14;
+            return GetSoundPropertyAndDefaultValue<TimeDuration>();
         }
-
+        
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             // TODO: Really don't need a tuple here! Can just get the property.
-            (FloatSoundProperty soundProperty, float defaultValue) = GetSoundPropertyAndDefaultValue();
+            var (soundProperty, defaultValue) = GetSoundPropertyAndDefaultValue();
             if (soundProperty == default)
             {
                 Debug.LogError($"HEAR XR: Missing sound property definition drawer for {label.text}");
             }
             _soundProperty = soundProperty;
 
-            SerializedProperty valueProp = property.FindPropertyRelative("value");
-            SerializedProperty randomizeProp = property.FindPropertyRelative("randomize");
-            SerializedProperty varianceProp = property.FindPropertyRelative("variance");
-            SerializedProperty soundPropertyProp = property.FindPropertyRelative("soundProperty");
+            var valueProp = property.FindPropertyRelative("value");
+            var randomizeProp = property.FindPropertyRelative("randomize");
+            var varianceProp = property.FindPropertyRelative("variance");
+            var soundPropertyProp = property.FindPropertyRelative("soundProperty");
 
             // Make sure we save the sound property reference.
             if (soundPropertyProp.objectReferenceValue == null)
@@ -115,6 +66,11 @@ namespace HearXR.Audiobread.SoundProperties
             }
             position.y = nextY;
             
+            
+            
+            // TODO: Add a checkbox for DEFAULT duration.
+
+
             // TODO: Take a look at this, and do something like that:
             //       https://github.com/roboryantron/Unite2017/blob/master/Assets/Code/Variables/Editor/FloatReferenceDrawer.cs
             // // Calculate rect for configuration button
@@ -197,18 +153,6 @@ namespace HearXR.Audiobread.SoundProperties
                 float totalPropertyRange = Mathf.Abs(_soundProperty.MaxLimit - _soundProperty.MinLimit);
                 EditorGUI.Slider(position, varianceProp, 0.0f, totalPropertyRange, "Variance");
             }
-        }
-
-        protected virtual (FloatSoundProperty, float) GetSoundPropertyAndDefaultValue()
-        {
-            return default;
-        }
-
-        protected virtual (FloatSoundProperty, float) GetSoundPropertyAndDefaultValue<T>() where T : FloatSoundProperty
-        {
-            var property = BuiltInData.Instance.properties.GetSoundPropertyByType<T>();
-            var defaultValue = property.DefaultValue;
-            return (property, defaultValue);
         }
     }
 }

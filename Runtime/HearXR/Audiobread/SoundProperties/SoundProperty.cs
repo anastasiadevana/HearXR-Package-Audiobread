@@ -8,14 +8,17 @@ namespace HearXR.Audiobread.SoundProperties
     {
         public abstract string ShortName { get; }
 
-        // public abstract Type SoundModuleType { get; }
+        public abstract bool Randomizable { get; }
         
-        // TODO: Rename these.
         public abstract bool RandomizeOnSoundPlay { get; }
     
         public abstract bool RandomizeOnChildPlay { get; }
         
         public abstract bool ContinuousUpdate { get; }
+        
+        public abstract bool HasMinLimit { get; }
+        
+        public abstract bool HasMaxLimit { get; }
 
         public abstract Calculator CreateCalculator();
         
@@ -27,16 +30,10 @@ namespace HearXR.Audiobread.SoundProperties
     public abstract class SoundProperty<T> : SoundProperty
     {
         public abstract T DefaultValue { get; }
-        
-        public abstract bool HasMinLimit { get; }
-        
+
         public abstract T MinLimit { get; }
-        
-        public abstract bool HasMaxLimit { get; }
-        
+
         public abstract T MaxLimit { get; }
-        
-        public abstract bool Randomizable { get; }
 
         public abstract ValueContainer<T> CreateValueContainer();
     }

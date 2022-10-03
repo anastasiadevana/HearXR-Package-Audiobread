@@ -2,12 +2,12 @@
 
 namespace HearXR.Audiobread.SoundProperties
 {
-    [CustomPropertyDrawer(typeof(MusicalLengthDefinition))]
-    public class MusicalLengthDefinitionDrawer : IntDefinitionDrawer
+    [CustomPropertyDrawer(typeof(MusicalDurationDefinition))]
+    public class MusicalDurationDefinitionDrawer : IntDefinitionDrawer
     {
         protected override (IntSoundProperty, int) GetSoundPropertyAndDefaultValue()
         {
-            MusicalLength property = BuiltInData.Instance.properties.GetSoundPropertyByType<MusicalLength>();
+            MusicalDuration property = BuiltInData.Instance.properties.GetSoundPropertyByType<MusicalDuration>();
             int defaultValue = property.DefaultValue;
             return (property, defaultValue);
         }
