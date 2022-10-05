@@ -6,13 +6,13 @@ namespace HearXR.Audiobread
 {
     public abstract class SoundModule : ScriptableObject, ISoundModule, ISoundModule<SoundModuleDefinition, SoundModuleProcessor>
     {
-        #region Editor Fields
-        [SerializeField] private List<SoundProperty> _soundProperties = new List<SoundProperty>();
-        #endregion
+        // #region Editor Fields
+        // [SerializeField] private List<SoundProperty> _soundProperties = new List<SoundProperty>();
+        // #endregion
         
-        #region Properties
-        public List<SoundProperty> SoundProperties => _soundProperties;
-        #endregion
+        // #region Properties
+        // public List<SoundProperty> SoundProperties => _soundProperties;
+        // #endregion
         
         #region Abstract Properties
         public abstract string DisplayName { get; }

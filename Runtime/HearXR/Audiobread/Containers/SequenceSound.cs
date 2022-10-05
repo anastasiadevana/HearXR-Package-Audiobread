@@ -106,7 +106,7 @@ namespace HearXR.Audiobread
         
         // NOTE: Moved to ContainerSound.
         
-        protected override void DoPlay(PlaySoundFlags playFlags, bool scheduled, double startTime = -1)
+        protected override void DoPlay(PlaySoundFlags playFlags)
         {
             // bool playNext = HasPlayFlag(playFlags, PlaySoundFlags.PlayNext);
             //
@@ -118,11 +118,11 @@ namespace HearXR.Audiobread
             // }
             //
             // // Even if PlayScheduled wasn't called explicitly, but we have children, use PlayScheduled anyway.
-            // if (!scheduled && (_scheduleChildren || playNext))
+            // if (!scheduledStart && (_scheduleChildren || playNext))
             // {
-            //     scheduled = true;
+            //     scheduledStart = true;
             //     startTime = GetScheduledStartTime();
-            //     //Debug.Log($"Get scheduled start time {startTime} current time: {AudioSettings.dspTime}");
+            //     //Debug.Log($"Get scheduledStart start time {startTime} current time: {AudioSettings.dspTime}");
             // }
             //
             // // If we're playing the next child, add the time between to the start time.
@@ -152,7 +152,7 @@ namespace HearXR.Audiobread
             // // Remove the "play next" flag - because it's play next just for this sound, not for the child.
             // playFlags &= ~PlaySoundFlags.PlayNext;
             //
-            // if (scheduled)
+            // if (scheduledStart)
             // {
             //     child.PlayScheduled(startTime, playFlags);
             // }

@@ -65,11 +65,6 @@ namespace HearXR.Audiobread.SoundProperties
         #region SoundPropertyController Abstract Methods
         public override void Calculate()
         {
-            // TODO: Pulling straight from the definition here! Not sure if this is what we want. Maybe can grab _baseValue instead?
-            // NOTE: Using the _rawValue from the FloatCalculator.Generate() instead.
-            //_value = _definition.value + _randomizedOffset;
-
-            // Influences
             _influenceFactor = 1.0f;
 
             for (int i = 0; i < _influences.Count; ++i)
@@ -216,6 +211,7 @@ namespace HearXR.Audiobread.SoundProperties
         private IEnumerator DoFade(float from, float to, float duration)
         {
             // TODO: Make the fade non-linear.
+            // TODO: Handle pauses.
             
             _shouldFadeIn = false;
             

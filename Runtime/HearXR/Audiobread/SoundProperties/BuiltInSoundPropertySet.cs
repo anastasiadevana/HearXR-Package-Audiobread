@@ -33,7 +33,6 @@ namespace HearXR.Audiobread.SoundProperties
             {
                 InitDataStructures();
             }
-
             return _soundPropertiesBySystemType[type];
         }
         

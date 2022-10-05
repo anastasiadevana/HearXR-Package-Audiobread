@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using HearXR.Audiobread.SoundProperties;
 using UnityEngine;
 
@@ -24,6 +25,20 @@ namespace HearXR.Audiobread
             return _soundProperties;
         }
 
+        public bool TryGetSoundProperty<T>(FieldInfo fieldInfo, out T soundProperty) where T : SoundProperty
+        {
+            soundProperty = default;
+            var found = false;
+            
+            if (fieldInfo.GetValue(this) is IDefinition<ISoundProperty> fieldValue)
+            {
+                soundProperty = fieldValue.SoundProperty as T;
+                found = true;
+            }
+
+            return found;
+        }
+        
         protected virtual void CacheProperties(ref Dictionary<SoundProperty, Definition> soundProperties) {}
     }
 }

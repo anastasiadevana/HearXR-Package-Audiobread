@@ -45,7 +45,7 @@ namespace HearXR.Audiobread
             return false;
         }
         
-        protected override void DoPlay(PlaySoundFlags playFlags, bool scheduled, double startTime = -1)
+        protected override void DoPlay(PlaySoundFlags playFlags)
         {
             var playNext = HasPlayFlag(playFlags, PlaySoundFlags.PlayNext);
             
@@ -56,7 +56,7 @@ namespace HearXR.Audiobread
                 StopMultiple(_children, StopSoundFlags.Instant);
             }
 
-            _schedulerSoundProcessor.ProcessSchedulingBeforePlay(playFlags, ref scheduled, ref startTime);
+            _schedulerSoundProcessor.ProcessSchedulingBeforePlay(ref _instancePlaybackInfo, playFlags);
             
             ISound child = _child;
             _child = null;
@@ -70,9 +70,9 @@ namespace HearXR.Audiobread
             // Remove the "play next" flag - because it's play next just for this sound, not for the child.
             playFlags &= ~PlaySoundFlags.PlayNext;
             
-            if (scheduled)
+            if (_instancePlaybackInfo.scheduledStart)
             {
-                child.PlayScheduled(startTime, playFlags);
+                child.PlayScheduled(_instancePlaybackInfo.startTime, playFlags);
             }
             else
             {
@@ -129,6 +129,8 @@ namespace HearXR.Audiobread
         #region BaseContainerSound Overrides
         protected override void DoOnChildBeforeEnded(ISound child, double endTime, int nonStoppedChildrenLeft)
         {
+            // Debug.Log("CONTAINER do on child before ended");
+            
             base.DoOnChildBeforeEnded(child, endTime, nonStoppedChildrenLeft);
             
             // Debug.Log($"OnChildBeforeEnded {child}");

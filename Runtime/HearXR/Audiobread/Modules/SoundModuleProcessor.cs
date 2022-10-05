@@ -55,24 +55,24 @@ namespace HearXR.Audiobread
             DoInit();
         }
 
-        internal void HandleSoundUpdateTick()
+        internal void HandleSoundUpdateTick(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo)
         {
-            OnSoundUpdateTick();
+            OnSoundUpdateTick(ref instancePlaybackInfo);
         }
 
-        internal void HandleUnityAudioGeneratorTickEvent()
+        internal void HandleUnityAudioGeneratorTickEvent(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo)
         {
-            OnUnityAudioGeneratorTick();
+            OnUnityAudioGeneratorTick(ref instancePlaybackInfo);
         }
 
-        internal double HandleBeforeChildPlay(PlaySoundFlags playSoundFlags, double startTime)
+        internal void HandleBeforeChildPlay(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, PlaySoundFlags playSoundFlags)
         {
-            return OnBeforeChildPlay(playSoundFlags, startTime);
+            OnBeforeChildPlay(ref instancePlaybackInfo, playSoundFlags);
         }
 
-        internal double HandleBeforePlay(PlaySoundFlags playSoundFlags, double startTime)
+        internal void HandleBeforePlay(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, PlaySoundFlags playSoundFlags)
         {
-            return OnBeforePlay(playSoundFlags, startTime);
+            OnBeforePlay(ref instancePlaybackInfo, playSoundFlags);
         }
 
         internal void HandleOnSoundBegan(ISound sound, double startTime)
@@ -109,15 +109,15 @@ namespace HearXR.Audiobread
         #region Abstract Methods
         protected abstract void OnSoundDefinitionChanged();
         protected abstract void DoInit();
-        protected abstract void OnSoundUpdateTick();
-        protected abstract double OnBeforeChildPlay(PlaySoundFlags playSoundFlags, double startTime);
-        protected abstract double OnBeforePlay(PlaySoundFlags playSoundFlags, double startTime);
+        protected abstract void OnSoundUpdateTick(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo);
+        protected abstract void OnBeforeChildPlay(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, PlaySoundFlags playSoundFlags);
+        protected abstract void OnBeforePlay(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, PlaySoundFlags playSoundFlags);
         protected abstract void OnSetParent(ISound parentSound);
         #endregion
         
         #region Virtual Methods
         protected virtual void DoApplySoundDefinitionToUnityAudio(AudiobreadSource audiobreadSource) {}
-        protected virtual void OnUnityAudioGeneratorTick() {}
+        protected virtual void OnUnityAudioGeneratorTick(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo) {}
         protected virtual void OnSoundBegan(ISound sound, double startTime) {}
         // protected virtual void OnContainerBeforeFirstPlay() {}
         #endregion
@@ -163,7 +163,7 @@ namespace HearXR.Audiobread
             RegenerateCalculators(SetValuesType.All);
         }
 
-        protected override void OnSoundUpdateTick()
+        protected override void OnSoundUpdateTick(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo)
         {
             CalculateCalculators(SetValuesType.OnUpdate);
         }
@@ -190,20 +190,20 @@ namespace HearXR.Audiobread
             }
         }
 
-        protected override double OnBeforeChildPlay(PlaySoundFlags playSoundFlags, double startTime)
+        protected override void OnBeforeChildPlay(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, PlaySoundFlags playSoundFlags)
         {
             RegenerateCalculators(SetValuesType.OnBeforeChildPlay, playSoundFlags);
-            if (Bypass) return startTime;
+            if (Bypass) return;
             
-            return ApplySoundModifiers(SetValuesType.OnBeforeChildPlay, playSoundFlags, startTime);
+            ApplySoundModifiers(ref instancePlaybackInfo, SetValuesType.OnBeforeChildPlay, playSoundFlags);
         }
 
-        protected override double OnBeforePlay(PlaySoundFlags playSoundFlags, double startTime)
+        protected override void OnBeforePlay(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, PlaySoundFlags playSoundFlags)
         {
             RegenerateCalculators(SetValuesType.OnBeforePlay, playSoundFlags);
-            if (Bypass) return startTime;
+            if (Bypass) return;
             
-            return ApplySoundModifiers(SetValuesType.OnBeforePlay, playSoundFlags, startTime);
+            ApplySoundModifiers(ref instancePlaybackInfo, SetValuesType.OnBeforePlay, playSoundFlags);
         }
 
         private void InitCalculators()
@@ -212,17 +212,19 @@ namespace HearXR.Audiobread
             //       instantiate each sound with the dictionaries already allocated for all known properties.
             //       Then just flip TRUE / FALSE for when this property is in use.
             
-            var soundPropertyInto = _moduleSoundDefinition.GetSoundProperties();
+            var soundPropertyInfo = _moduleSoundDefinition.GetSoundProperties();
             
             // TODO: Some of these things can be made static per sub-module.
 
             // Generate a calculator for each sound property.
             _calculators = new Dictionary<SoundProperty, Calculator>();
-            _soundProperties = new SoundProperty[soundPropertyInto.Count];
+            _soundProperties = new SoundProperty[soundPropertyInfo.Count];
 
             var i = 0;
-            foreach (var item in soundPropertyInto)
+            foreach (var item in soundPropertyInfo)
             {
+                // Debug.Log($"InitCalculators(): {item.Key.ShortName} {item.Key.GetInstanceID()} - HAVE", item.Key);
+                
                 var prop = item.Key;
                 _soundProperties[i] = prop;
                 _calculators.Add(prop, prop.CreateCalculator());
@@ -239,8 +241,9 @@ namespace HearXR.Audiobread
                 
                 for (i = 0; i < item.Value.Length; ++i)
                 {
-                    if (soundPropertyInto.ContainsKey(item.Value[i]))
+                    if (soundPropertyInfo.ContainsKey(item.Value[i]))
                     {
+                        // Debug.Log($"{item.Key} {item.Value[i].ShortName} {item.Value[i].GetInstanceID()} - YES!", item.Value[i]);
                         propsBySetType.Add(item.Value[i]);
                     }
                 }
@@ -296,8 +299,8 @@ namespace HearXR.Audiobread
             }
         }
 
-        protected abstract double ApplySoundModifiers(SetValuesType setValuesType, 
-            PlaySoundFlags playSoundFlags = PlaySoundFlags.None, double startTime = Audiobread.INACTIVE_START_TIME);
+        protected abstract void ApplySoundModifiers(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, SetValuesType setValuesType, 
+            PlaySoundFlags playSoundFlags = PlaySoundFlags.None);
         
         protected virtual void PostInitCalculators() {}
     }

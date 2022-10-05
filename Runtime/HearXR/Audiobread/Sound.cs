@@ -7,6 +7,16 @@ namespace HearXR.Audiobread
 {
     public abstract class Sound : ISoundInternal
     {
+        #region Data Structures
+        public class SoundInstancePlaybackInfo
+        {
+            public bool scheduledStart = false;
+            public double startTime;
+            public bool scheduledEnd = false;
+            public double duration;
+        }
+        #endregion
+        
         #region ISound Events
         public event TimedSoundAction OnBegan;
         private readonly object _onBeganLock = new object();
@@ -52,9 +62,10 @@ namespace HearXR.Audiobread
         
         protected event Action InitSoundModuleProcessor;
         protected event Action SoundDefinitionChangedEvent;
-        protected event Action SoundUpdateTickEvent;
-        protected event Action UnityAudioGeneratorTickEvent;
-        public delegate double BeforePlayAction(PlaySoundFlags playSoundFlags = PlaySoundFlags.None, double startTime = Audiobread.INACTIVE_START_TIME);
+        public delegate void TickAction(ref SoundInstancePlaybackInfo instancePlaybackInfo);
+        protected event TickAction SoundUpdateTickEvent;
+        protected event TickAction UnityAudioGeneratorTickEvent;
+        public delegate void BeforePlayAction(ref SoundInstancePlaybackInfo instancePlaybackInfo, PlaySoundFlags playSoundFlags = PlaySoundFlags.None);
         public event BeforePlayAction BeforeChildPlayEvent;
         public event BeforePlayAction BeforePlayEvent;
         protected event Action<ISound> ParentSetEvent;
@@ -62,7 +73,7 @@ namespace HearXR.Audiobread
 
         #region Constants
         // TODO: These need to be moved elsewhere and documented.
-        protected const double SCHEDULING_BUFFER = 0.1f;
+        protected const double SCHEDULING_BUFFER = 0.1f; // TODO: Move to Audiobread core.
         protected const int SAFETY_SAMPLE_BUFFER = 5;
         #endregion
 
@@ -122,6 +133,8 @@ namespace HearXR.Audiobread
 
         SchedulableSoundState ISound.SchedulableState => _schedulableState;
         protected SchedulableSoundState _schedulableState;
+
+        protected SoundInstancePlaybackInfo _instancePlaybackInfo;
         
         SoundModuleGroupProcessor ISoundInternal.SoundModuleGroupProcessor => _soundModuleGroupProcessor;
         #endregion
@@ -612,21 +625,21 @@ namespace HearXR.Audiobread
         }
         protected void InvokeSoundUpdateTickEvent()
         {
-            SoundUpdateTickEvent?.Invoke();
+            SoundUpdateTickEvent?.Invoke(ref _instancePlaybackInfo);
         }
 
         protected void InvokeUnityAudioGeneratorTickEvent()
         {
-            UnityAudioGeneratorTickEvent?.Invoke();
+            UnityAudioGeneratorTickEvent?.Invoke(ref _instancePlaybackInfo);
         }
-        protected double InvokeOnBeforeChildPlay(PlaySoundFlags playSoundFlags, double startTime = Audiobread.INACTIVE_START_TIME)
+        protected void InvokeOnBeforeChildPlay(PlaySoundFlags playSoundFlags)
         {
-            return BeforeChildPlayEvent?.Invoke(playSoundFlags, startTime) ?? startTime;
+            BeforeChildPlayEvent?.Invoke(ref _instancePlaybackInfo, playSoundFlags);
         }
         
-        protected double InvokeOnBeforePlay(PlaySoundFlags playSoundFlags, double startTime = Audiobread.INACTIVE_START_TIME)
+        protected void InvokeOnBeforePlay(PlaySoundFlags playSoundFlags)
         {
-            return BeforePlayEvent?.Invoke(playSoundFlags, startTime) ?? startTime;
+            BeforePlayEvent?.Invoke(ref _instancePlaybackInfo, playSoundFlags);
         }
         
         void ISoundInternal.InvokeOnSetParent(ISound parentSound)
@@ -838,6 +851,9 @@ namespace HearXR.Audiobread
             }
             
             _soundDefinition = soundDefinition;
+            
+            _instancePlaybackInfo = new SoundInstancePlaybackInfo();
+            
             PostSetSoundDefinition(initSoundFlags);
             // Debug.Log($"Is valid? {this}");
             if (!IsValid()) return;
@@ -895,43 +911,46 @@ namespace HearXR.Audiobread
                 // Always register self, even if not persistent.
                 RegisterSelf();
             }
-
-            var startTime = double.Epsilon;
+            
             if (HasPlayFlag(playSoundFlags, PlaySoundFlags.PlayNext))
             {
-                startTime = InvokeOnBeforeChildPlay(playSoundFlags);
+                InvokeOnBeforeChildPlay(playSoundFlags);
             }
             else
             {
-                startTime = InvokeOnBeforePlay(playSoundFlags);
+                InvokeOnBeforePlay(playSoundFlags);
             }
-            
-            if (startTime > Audiobread.INACTIVE_START_TIME)
+
+            if (_instancePlaybackInfo.startTime > Audiobread.INACTIVE_START_TIME)
             {
-                DoPlay(playSoundFlags, true, startTime);
+                _instancePlaybackInfo.scheduledStart = true;
             }
             else
             {
                 SetPlaybackState(PlaybackState.PlayInitiated);
-                DoPlay(playSoundFlags, false);   
             }
+            
+            DoPlay(playSoundFlags);
         }
         
         public override void PlayScheduled(double startTime, PlaySoundFlags playSoundFlags = PlaySoundFlags.None)
         {
+            _instancePlaybackInfo.scheduledStart = true;
+            _instancePlaybackInfo.startTime = startTime;
+            
             // TODO: Roll this into Play() above. It's basically the same.
             if (!CanPlay(playSoundFlags)) return;
-            
+
             if (HasPlayFlag(playSoundFlags, PlaySoundFlags.PlayNext))
             {
-                startTime = InvokeOnBeforeChildPlay(playSoundFlags, startTime);
+                InvokeOnBeforeChildPlay(playSoundFlags);
             }
             else
             {
-                startTime = InvokeOnBeforePlay(playSoundFlags, startTime);
+                InvokeOnBeforePlay(playSoundFlags);
             }
-
-            DoPlay(playSoundFlags, true, startTime);
+            
+            DoPlay(playSoundFlags);
         }
 
         // TODO: SoundModule hookup.
@@ -1034,7 +1053,7 @@ namespace HearXR.Audiobread
         #endregion
         
         #region Abstract Methods
-        protected abstract void DoPlay(PlaySoundFlags playFlags, bool scheduled, double startTime = -1.0d);
+        protected abstract void DoPlay(PlaySoundFlags playFlags);
         #endregion
         
         #region Sound Method Overrides

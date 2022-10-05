@@ -43,7 +43,7 @@ namespace HearXR.Audiobread
             return false;
         }
         
-        protected override void DoPlay(PlaySoundFlags playFlags, bool scheduled, double startTime = -1.0d)
+        protected override void DoPlay(PlaySoundFlags playFlags)
         {
             // TODO: If we schedule this far in advance, the sound source may get stolen, or something else can happen in the game.
             // TODO: If start time is fairly far away, maybe just wait for it, instead of scheduling this far in advance.
@@ -53,9 +53,9 @@ namespace HearXR.Audiobread
 
             _generators.Add(generator);
 
-            if (scheduled)
+            if (_instancePlaybackInfo.scheduledStart)
             {
-                generator.PlayScheduled(startTime, playFlags);
+                generator.PlayScheduled(_instancePlaybackInfo.startTime, playFlags);
             }
             else
             {

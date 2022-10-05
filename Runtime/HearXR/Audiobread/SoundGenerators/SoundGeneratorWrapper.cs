@@ -207,8 +207,6 @@ namespace HearXR.Audiobread
         
         protected void OnChildBeforeEnded(ISound child, double endTime)
         {
-            // Debug.Log("HELLO!");
-            
             int nonStoppedChildrenLeft = 0;
             lock (_nonStoppedGenerators)
             {

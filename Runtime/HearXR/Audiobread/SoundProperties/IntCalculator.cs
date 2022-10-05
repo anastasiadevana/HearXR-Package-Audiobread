@@ -10,6 +10,8 @@ namespace HearXR.Audiobread.SoundProperties
 
         public override void Calculate()
         {
+            if (!Active) return;
+            
             _value = _rawValue;
             for (int i = 0; i < _influences.Count; ++i)
             {
@@ -21,6 +23,8 @@ namespace HearXR.Audiobread.SoundProperties
         
         public override void Calculate(ref Dictionary<Parameter, float> parameterValues)
         {
+            if (!Active) return;
+            
             // TODO: Parameters
             
             Calculate();
@@ -28,6 +32,8 @@ namespace HearXR.Audiobread.SoundProperties
 
         public override void Generate()
         {
+            if (!Active) return;
+            
             // TODO: Maybe GetClampedRandomValue function can be in this class now, or into some Math helper class.
             // TODO: Besides the Audiobread implementation forgot about the random checkbox (if it's not checked)
             if (!_definition.randomize || !_property.Randomizable)

@@ -19,11 +19,15 @@ namespace HearXR.Audiobread
         
         #region Constants
         public const double INACTIVE_START_TIME = -1.0d;
+        public const double INVALID_TIME_DURATION = -1.0d;
         #endregion
         
         #region Private Fields
         private AudiobreadPool _audiobreadPool;
         //private BuiltInData _builtInData;
+        
+        // Used for random double generation.
+        private static readonly System.Random _random = new System.Random();
         #endregion
                 
         #region Init
@@ -113,6 +117,52 @@ namespace HearXR.Audiobread
         #endregion
         
         #region Static Internal Methods
+        internal static double ClampDouble(double value, double min, double max)
+        {
+            if (value < min)
+            {
+                return min;
+            }
+            return value > max ? max : value;
+        }
+
+        internal static double InverseLerpDouble(double a, double b, double value)
+        {
+            return a != b ? Clamp01Double((value - a) / (b - a)) : 0.0d;
+        }
+        
+        internal static double Clamp01Double(double value)
+        {
+            if (value < 0.0d)
+            {
+                return 0.0d;   
+            }
+            return value > 1.0d ? 1.0d : value;
+        }
+
+        internal static double AbsDouble(double value)
+        {
+            return (value >= 0.0d) ? value : value * -1.0d;
+        }
+        
+        // TODO: This should go in Common.
+        internal static double GetClampedRandomValue(double baseValue, double variance, double min, double max)
+        {
+            var value = 0.0d;
+            if (variance > 0.0d)
+            {
+                var minRandom = baseValue - variance;
+                var maxRandom = baseValue + variance;
+                value = minRandom + (_random.NextDouble() * (maxRandom - minRandom));
+            }
+            else
+            {
+                value = baseValue;
+            }
+            
+            return ClampDouble(value, min, max);
+        }
+        
         internal static float GetClampedRandomValue(float baseValue, float variance, float min, float max)
         {
             // TODO: This should go in Common.

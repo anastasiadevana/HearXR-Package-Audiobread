@@ -7,9 +7,25 @@
     public interface IIntDefinition : IIntDefinition<IntSoundProperty> {}
     
     [System.Serializable]
-    public class IntDefinition : Definition<int, IntSoundProperty>, IIntDefinition {}
+    public abstract class IntDefinition : Definition<int, IntSoundProperty>, IIntDefinition {}
 
     [System.Serializable]
-    public class IntDefinition<TProperty> : IntDefinition where TProperty : IntSoundProperty {}
+    public abstract class IntDefinition<TProperty> : IntDefinition where TProperty : IntSoundProperty
+    {
+        private static IntSoundProperty _soundProperty;
+        
+        public override IntSoundProperty SoundProperty
+        {
+            get
+            {
+                if (_soundProperty == null)
+                {
+                    _soundProperty = BuiltInData.Properties.GetSoundPropertyByType<TProperty>();
+                }
+        
+                return _soundProperty;
+            }
+        }
+    }
 }
 

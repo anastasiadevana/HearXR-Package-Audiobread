@@ -2,7 +2,7 @@
 
 namespace HearXR.Audiobread.SoundProperties
 {
-    [System.Serializable] public class TimeBetweenDefinition : FloatDefinition<Pitch> {}
+    [System.Serializable] public class TimeBetweenDefinition : FloatDefinition<TimeBetween> {}
     
     [CreateAssetMenu (menuName = "Audiobread/Sound Property/Time Between Property")]
     public class TimeBetween : FloatSoundProperty
@@ -15,6 +15,8 @@ namespace HearXR.Audiobread.SoundProperties
         public override float MinLimit { get; } = 0.0f;
         public override bool HasMaxLimit { get; } = true;
         public override float MaxLimit { get; } = 360.0f;
+        
+        public override bool ActiveByDefault { get; } = false;
         
         public override bool Randomizable { get; } = true;
         public override bool RandomizeOnSoundPlay { get; } = true;

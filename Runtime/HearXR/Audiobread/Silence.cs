@@ -17,7 +17,7 @@ namespace HearXR.Audiobread
             throw new System.NotImplementedException();
         }
 
-        protected override void DoPlay(PlaySoundFlags playFlags, bool scheduled, double startTime = -1)
+        protected override void DoPlay(PlaySoundFlags playFlags, bool scheduledStart, double startTime = -1)
         {
             throw new System.NotImplementedException();
         }

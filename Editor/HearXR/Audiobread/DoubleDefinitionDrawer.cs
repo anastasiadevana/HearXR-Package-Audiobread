@@ -1,12 +1,12 @@
-﻿using UnityEditor;
+using UnityEditor;
 using UnityEngine;
 
 namespace HearXR.Audiobread.SoundProperties
 {
-    [CustomPropertyDrawer(typeof(FloatDefinition), true)]
-    public class FloatDefinitionDrawer : DefinitionDrawer
+    [CustomPropertyDrawer(typeof(DoubleDefinition), true)]
+    public class DoubleDefinitionDrawer : DefinitionDrawer
     {
-        protected FloatSoundProperty _soundProperty;
+        protected DoubleSoundProperty _soundProperty;
 
         protected override bool TryInitSoundProperty(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -24,35 +24,35 @@ namespace HearXR.Audiobread.SoundProperties
                 Debug.LogError($"HEAR XR: Missing sound property definition drawer for {label.text}");
                 return false;
             }
-            
+
             var defaultValue = _soundProperty.DefaultValue;
-            
+
             // Make sure we save the sound property reference.
             if (_soundPropertyProp.objectReferenceValue == null)
             {
                 _soundPropertyProp.objectReferenceValue = _soundProperty;
-                
+
                 // Since this is the first time we're editing this definition, set default values.
-                _valueProp.floatValue = defaultValue;
+                _valueProp.doubleValue = defaultValue;
                 _activeProp.boolValue = _soundProperty.ActiveByDefault;
             }
 
             _soundPropertyName = _soundProperty.name;
             _soundPropertyRandomizable = _soundProperty.Randomizable;
-            
+
             return true;
         }
 
         protected override void DrawSoundPropertySlider(Rect position)
         {
-            EditorGUI.Slider(position, _valueProp, _soundProperty.MinLimit, _soundProperty.MaxLimit, "");
+            EditorGUI.Slider(position, _valueProp, (float) _soundProperty.MinLimit, (float) _soundProperty.MaxLimit, "");
         }
 
         protected override void DrawRandomizationRange(Rect position)
         {
             // Real quick do the magic number offsets.
-            float offsetRowWidth = _rowWidth - _baseValueSliderLeftOffset - _baseValueSliderRightOffset;
-            float offsetRowX = _rowX + _baseValueSliderLeftOffset;
+            var offsetRowWidth = _rowWidth - _baseValueSliderLeftOffset - _baseValueSliderRightOffset;
+            var offsetRowX = _rowX + _baseValueSliderLeftOffset;
 
             position.y += position.height + EditorGUIUtility.standardVerticalSpacing;
 
@@ -61,17 +61,19 @@ namespace HearXR.Audiobread.SoundProperties
 
             // Calculations for drawing the min-max range over the slider.
             float sliderWidth = offsetRowWidth - UNITY_SLIDER_NUMBER_WIDTH;
-            
-            float minLimit = _soundProperty.MinLimit;
-            float maxLimit = _soundProperty.MaxLimit;
+
+            var minLimit = _soundProperty.MinLimit;
+            var maxLimit = _soundProperty.MaxLimit;
 
             // Calculate and clamp min/max values.
-            float clampedMin = Mathf.Clamp((_valueProp.floatValue - _varianceProp.floatValue), minLimit, maxLimit);
-            float clampedMax = Mathf.Clamp((_valueProp.floatValue + _varianceProp.floatValue), minLimit, maxLimit);
+            var clampedMin =
+                Audiobread.ClampDouble((_valueProp.floatValue - _varianceProp.floatValue), minLimit, maxLimit);
+            var clampedMax =
+                Audiobread.ClampDouble((_valueProp.floatValue + _varianceProp.floatValue), minLimit, maxLimit);
 
             // Normalize the min/max values to 0-1 range.
-            float normalizedMin = Mathf.InverseLerp(minLimit, maxLimit, clampedMin);
-            float normalizedMax = Mathf.InverseLerp(minLimit, maxLimit, clampedMax);
+            var normalizedMin = (float) Audiobread.InverseLerpDouble(minLimit, maxLimit, clampedMin);
+            var normalizedMax = (float) Audiobread.InverseLerpDouble(minLimit, maxLimit, clampedMax);
 
             // Draw the min-max slider overlay (shift it upwards to overlay with the slider).
             Rect overlay = position;
@@ -87,8 +89,8 @@ namespace HearXR.Audiobread.SoundProperties
 
             float inverseOffset = 4.0f;
 
-            Rect minRect = new Rect(overlay.x - _smallNumberInputWidth - _horizontalSpacer,
-                controlY - inverseOffset, _smallNumberInputWidth, controlHeight);
+            Rect minRect = new Rect(overlay.x - _smallNumberInputWidth - _horizontalSpacer, controlY - inverseOffset,
+                _smallNumberInputWidth, controlHeight);
             Rect maxRect = new Rect(overlay.x + overlay.width + _horizontalSpacer, controlY - inverseOffset,
                 _smallNumberInputWidth, controlHeight);
 
@@ -101,11 +103,11 @@ namespace HearXR.Audiobread.SoundProperties
                 ReadOnlyLabelStyle.alignment = TextAnchor.MiddleLeft;
                 EditorGUI.LabelField(maxRect, formattedMax, ReadOnlyLabelStyle);
             }
-            
+
             position.y += 13;
             EditorGUIUtility.labelWidth = 60;
-            float totalPropertyRange = Mathf.Abs(_soundProperty.MaxLimit - _soundProperty.MinLimit);
-            EditorGUI.Slider(position, _varianceProp, 0.0f, totalPropertyRange, "Variance");
+            var totalPropertyRange = Audiobread.AbsDouble(_soundProperty.MaxLimit - _soundProperty.MinLimit);
+            EditorGUI.Slider(position, _varianceProp, 0.0f, (float) totalPropertyRange, "Variance");
         }
     }
 }

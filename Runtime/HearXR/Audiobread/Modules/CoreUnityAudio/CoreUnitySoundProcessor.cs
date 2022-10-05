@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using HearXR.Audiobread.SoundProperties;
 using UnityEngine;
 
@@ -69,7 +70,6 @@ namespace HearXR.Audiobread.Core
             base.OnSoundBegan(sound, startTime);
             
             // TODO: Compare sound with _sound.
-            Debug.Log($"{sound} began!");
             _volumeCalculator.OnSoundBegan();
         }
 
@@ -81,79 +81,82 @@ namespace HearXR.Audiobread.Core
             _initSoundSource = true;
         }
 
-        protected override void OnUnityAudioGeneratorTick()
+        protected override void OnUnityAudioGeneratorTick(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo)
         {
-            ApplySoundModifiers(SetValuesType.OnUpdate);
+            ApplySoundModifiers(ref instancePlaybackInfo, SetValuesType.OnUpdate);
         }
 
-        protected override double ApplySoundModifiers(SetValuesType setValuesType, 
-            PlaySoundFlags playSoundFlags = PlaySoundFlags.None, double startTime = Audiobread.INACTIVE_START_TIME)
+        protected override void ApplySoundModifiers(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, SetValuesType setValuesType, 
+            PlaySoundFlags playSoundFlags = PlaySoundFlags.None)
         {
-            if (!MySound.IsValid() || !_initSoundSource) return startTime;
+            if (!MySound.IsValid() || !_initSoundSource) return;
             
             var properties = _soundPropertiesBySetType[setValuesType];
 
             for (var i = 0; i < properties.Length; ++i)
             {
+                if (!_calculators[properties[i]].Active) continue;
+                
+                // Debug.Log($"{setValuesType}--{properties.Length} {properties[i].ShortName}");
+                
+                // Pitch
                 if (properties[i] == CoreUnitySoundModuleDefinition.PitchProperty)
                 {
                     var value = _calculators[properties[i]].ValueContainer.FloatValue;
                     _audioSource.pitch = value;
+                    continue;
                 }
-                else if (properties[i] == CoreUnitySoundModuleDefinition.VolumeProperty)
+                
+                // Volume
+                if (properties[i] == CoreUnitySoundModuleDefinition.VolumeProperty)
                 {
                     var value = _calculators[properties[i]].ValueContainer.FloatValue;
                     _audioSource.volume = value;
+                    continue;
                 }
-                else if (properties[i] == CoreUnitySoundModuleDefinition.DelayProperty)
+
+                // Delay
+                if (properties[i] == CoreUnitySoundModuleDefinition.DelayProperty)
                 {
                     if (setValuesType == SetValuesType.OnBeforePlay)
                     {
                         var delay = _calculators[properties[i]].ValueContainer.FloatValue;
                         if (delay > 0)
                         {
-                            if (startTime < 0.0d)
+                            if (instancePlaybackInfo.startTime < AudioSettings.dspTime)
                             {
-                                startTime = AudioSettings.dspTime;
+                                instancePlaybackInfo.startTime = AudioSettings.dspTime;
                             }
-                            startTime += delay;
+                            instancePlaybackInfo.startTime += delay;
+                            instancePlaybackInfo.scheduledStart = true;
                         }
-                        return startTime;
                     }
+                    continue;
                 }
                 
-                // if (!_calculators.ContainsKey(properties[i]))
-                // {
-                //     Debug.LogError($"HEAR XR {this} doesn't have the calculator for {properties[i].name}");
-                // }
-                //
-                // _calculators[properties[i]].Calculate();
-                // var value = _calculators[properties[i]].ValueContainer.FloatValue;
-                //
-                // *if (properties[i] == _volumeProperty)
-                // *{
-                // *    _audioSource.volume = value;
-                // *}
-                // *else if (properties[i] == _pitchProperty)
-                // *{
-                // *    _audioSource.pitch = value;
-                // *}
-                // else if (properties[i] == _delayProperty)
-                // {
-                //     continue; // Delay is used at the moment of playing.
-                // }
+                // Time duration
+                if (properties[i] == CoreUnitySoundModuleDefinition.TimeDurationProperty)
+                {
+                    if (setValuesType == SetValuesType.OnBeforePlay)
+                    {
+                        // TODO: Validate the value?
+                        var duration = _calculators[properties[i]].ValueContainer.DoubleValue;
+                        // Debug.Log($"Setting duration to {duration}");
+                        instancePlaybackInfo.duration = duration;
+                        instancePlaybackInfo.scheduledEnd = true;
+                        instancePlaybackInfo.scheduledStart = true;
+                    }
+
+                    continue;
+                }
+                
+                // TODO: Add offset.
                 // else if (properties[i] == _offsetProperty)
                 // {
                 //     var audioClip = _soundDefinition.AudioClip;
                 //     _audioSource.timeSamples = TimeSamplesHelper.ValidateAudioClipOffset(in audioClip, value);
                 // }
-                // else
-                // {
-                //     Debug.LogWarning($"HEAR XR: {this} Unable to apply property {properties[i].name}");
-                // }
             }
-
-            return startTime;
         }
 
         #region IStopControllerProcessor Methods

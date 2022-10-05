@@ -8,7 +8,7 @@ namespace HearXR.Audiobread.SoundProperties
     public class MusicalDuration : IntSoundProperty
     {
         // public override System.Type SoundModuleType { get; } = typeof(SoundModule); // TODO:
-        public override string ShortName { get; } = "Dur";
+        public override string ShortName { get; } = "MDur";
         public override int DefaultValue { get; } = 0;
         
         public override bool HasMinLimit { get; } = true;
@@ -16,6 +16,9 @@ namespace HearXR.Audiobread.SoundProperties
         
         public override bool HasMaxLimit { get; } = true;
         public override int MaxLimit { get; } = 100;
+        
+        public override bool ActiveByDefault { get; } = true;
+        
         public override bool Randomizable { get; } = true;
 
         public override bool RandomizeOnSoundPlay { get; } = true;

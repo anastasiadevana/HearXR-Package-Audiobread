@@ -1,6 +1,4 @@
 namespace HearXR.Audiobread.Core
 {
-    public class CoreSoundModuleDefinition : SoundModuleDefinition
-    {
-    }
+    public class CoreSoundModuleDefinition : SoundModuleDefinition {}
 }

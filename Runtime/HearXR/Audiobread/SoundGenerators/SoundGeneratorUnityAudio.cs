@@ -36,6 +36,7 @@ namespace HearXR.Audiobread
         
         // TODO: Probably don't need to store all of these.
         // TODO: Reset all these values when "rinsing".
+        // TODO: Already storing startTime in the SoundInstancePlaybackInfo
         // Support values for scheduling.
         protected double _clipStartTime;
         protected double _actualClipStartTime;
@@ -46,6 +47,8 @@ namespace HearXR.Audiobread
         
         // Pause / resume support.
         protected double _scheduledTimeRemainingOnPause;
+        
+        protected const double SCHEDULING_BUFFER = 0.1f; // TODO: Move to Audiobread core.
         #endregion
         
         #region Private Fields
@@ -74,7 +77,7 @@ namespace HearXR.Audiobread
         #endregion
         
         #region Sound Abstract Methods
-        protected override void DoPlay(PlaySoundFlags playFlags, bool scheduled, double startTime = Audiobread.INACTIVE_START_TIME)
+        protected override void DoPlay(PlaySoundFlags playFlags)
         {
             // If asked to play when already playing, reset loop counts.
             if (IsPlayingOrTransitioning())
@@ -90,12 +93,12 @@ namespace HearXR.Audiobread
             // var delay = _calculators[_delayProperty].ValueContainer.FloatValue;
             // if (delay > 0.0f)
             // {
-            //     scheduled = true;
+            //     scheduledStart = true;
             // }
 
             // Stop the sound that was paused.
-            // TODO: Do we care about "scheduled" here? Should we just always stop paused sources?
-            if (IsPaused() && scheduled)
+            // TODO: Do we care about "scheduledStart" here? Should we just always stop paused sources?
+            if (IsPaused() && _instancePlaybackInfo.scheduledStart)
             {
                 _audioSource.Stop();
             }
@@ -103,9 +106,9 @@ namespace HearXR.Audiobread
             SetSchedulableState(SchedulableSoundState.None);
 
             // If PlayScheduled() was not requested, and there are no delays, just play it and get it over with.
-            if (!scheduled)
+            if (!_instancePlaybackInfo.scheduledStart)
             {
-                Debug.Log("Not scheduled!");
+                Debug.Log("Not scheduledStart!");
                 
                 _audioSource.Play();
                 SetStatus(SoundStatus.Paused, false);
@@ -114,25 +117,28 @@ namespace HearXR.Audiobread
                 return;
             }
             
-            DoPlayScheduled(startTime);
+            DoPlayScheduled();
         }
         
-        protected void DoPlayScheduled(double startTime)
+        protected void DoPlayScheduled()
         {
-            if (startTime < 0.0d)
+            // Make sure that the start time is not in the past.
+            // TODO: If the start time is in the past, should we use an offset?
+            if (_instancePlaybackInfo.startTime < AudioSettings.dspTime)
             {
-                startTime = AudioSettings.dspTime;
+                Debug.LogWarning($"Start time was in the past {_instancePlaybackInfo.startTime} vs {AudioSettings.dspTime}, so we changed it");
+                _instancePlaybackInfo.startTime = AudioSettings.dspTime;
+            }
+            
+            _clipStartTime = _instancePlaybackInfo.startTime;
+            _audioSource.PlayScheduled(_clipStartTime);
+            
+            if (_instancePlaybackInfo.scheduledEnd)
+            {
+                _audioSource.SetScheduledEndTime(_clipStartTime + _instancePlaybackInfo.duration);
+                // Debug.LogError($"START TIME: {_clipStartTime} CURRENT: {AudioSettings.dspTime} DURATION: {_instancePlaybackInfo.duration} END: {_clipStartTime + _instancePlaybackInfo.duration}");
             }
 
-            _clipStartTime = startTime;
-
-            // TODO: Make sure that _clipStartTime is never in the past (sometimes it is).
-            // Make sure that the play scheduled time is never negative.
-            // if (_clipStartTime < AudioSettings.dspTime)
-            // {
-            //     _clipStartTime = AudioSettings.dspTime;
-            // }
-            _audioSource.PlayScheduled(_clipStartTime);
             SetStatus(SoundStatus.Paused, false);
 
             OnDidScheduleSound();
@@ -151,7 +157,8 @@ namespace HearXR.Audiobread
         {
             if (PlaybackState == PlaybackState.PlayInitiated)
             {
-                // Save how much time was left on the scheduled sound, so that we can resume after unpause.
+                Debug.LogError("Incorporate this with SoundInstancePlaybackInfo");
+                // Save how much time was left on the scheduledStart sound, so that we can resume after unpause.
                 _scheduledTimeRemainingOnPause = _clipStartTime - AudioSettings.dspTime;
                 if (_scheduledTimeRemainingOnPause < 0.0d) _scheduledTimeRemainingOnPause = 0.0d;
                 _audioSource.Stop();
@@ -165,8 +172,9 @@ namespace HearXR.Audiobread
         {
             if (PlaybackState == PlaybackState.PlayInitiated)
             {
-                var startTime = AudioSettings.dspTime + _scheduledTimeRemainingOnPause;
-                DoPlayScheduled(startTime);
+                Debug.LogError("Make sure to incorporate this with SoundInstancePlaybackInfo, as well as with scheduled stops");
+                _instancePlaybackInfo.startTime = AudioSettings.dspTime + _scheduledTimeRemainingOnPause;
+                DoPlayScheduled();
                 return;
             }
 
@@ -339,9 +347,6 @@ namespace HearXR.Audiobread
 
                 case SchedulableSoundState.Playing:
                     SetPlaybackState(PlaybackState.Playing);
-                    
-                    Debug.Log("Schedulable is playing now!");
-                    
                     InvokeOnBegan(this, _actualClipStartTime);
                     _actualClipStartTime = -1;
                     CheckIfBeforeEnded();
@@ -443,7 +448,14 @@ namespace HearXR.Audiobread
             // Save some values for status checks.
             _clipStartSamples = _audioSource.timeSamples;
             _clipPlayingSamples = _clipTotalSamples - _clipStartSamples;
-            _clipPlayingLength = TimeSamplesHelper.SamplesToTime(_clipPlayingSamples, _clipOneSampleDuration);
+            if (_instancePlaybackInfo.scheduledEnd)
+            {
+                _clipPlayingLength = _instancePlaybackInfo.duration;
+            }
+            else
+            {
+                _clipPlayingLength = TimeSamplesHelper.SamplesToTime(_clipPlayingSamples, _clipOneSampleDuration);   
+            }
             _clipEndTime = _clipStartTime + _clipPlayingLength;
         }
         
@@ -465,14 +477,24 @@ namespace HearXR.Audiobread
         
         protected virtual void CheckIfBeforeEnded()
         {
-            if (!_audioSource.isPlaying || _audioSource.loop) return;
-            
-            var samplesRemaining = _clipTotalSamples - _audioSource.timeSamples;
-            if (samplesRemaining >= _beforeCompletedSamplesThreshold) return;
-            
-            // Recalculate the end time, since it's probably more accurate now.
-            _clipEndTime = TimeSamplesHelper.SamplesToTime(samplesRemaining, _clipOneSampleDuration) + AudioSettings.dspTime;
-            SetSchedulableState(SchedulableSoundState.Completing);
+            if (!_audioSource.isPlaying || (_audioSource.loop && !_instancePlaybackInfo.scheduledEnd)) return;
+
+            if (_instancePlaybackInfo.scheduledEnd)
+            {
+                var timeRemaining = _clipEndTime - AudioSettings.dspTime;
+                if (timeRemaining >= SCHEDULING_BUFFER) return;
+                
+                SetSchedulableState(SchedulableSoundState.Completing);
+            }
+            else
+            {
+                var samplesRemaining = _clipTotalSamples - _audioSource.timeSamples;
+                if (samplesRemaining >= _beforeCompletedSamplesThreshold) return;
+
+                // Recalculate the end time, since it's probably more accurate now.
+                _clipEndTime = TimeSamplesHelper.SamplesToTime(samplesRemaining, _clipOneSampleDuration) + AudioSettings.dspTime;
+                SetSchedulableState(SchedulableSoundState.Completing);   
+            }
         }
         
         protected virtual void CheckIfEnded()

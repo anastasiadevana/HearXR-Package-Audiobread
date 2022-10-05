@@ -16,6 +16,8 @@ namespace HearXR.Audiobread.SoundProperties
             PickSmallest
         }
 
+        public bool Active { get; protected set; }
+        
         public abstract ValueContainer ValueContainer { get; }
 
         public abstract void Generate();
@@ -83,6 +85,7 @@ namespace HearXR.Audiobread.SoundProperties
         public override void SetDefinition(Definition definition)
         {
             _definition = (TDefinition) definition;
+            Active = _definition.active;
             Generate();
             Calculate();
         }
@@ -131,6 +134,8 @@ namespace HearXR.Audiobread.SoundProperties
         #region Abstract Methods
         public override void Generate()
         {
+            if (!Active) return;
+            
             _rawValue = _valueContainer.Value;
         }
         #endregion

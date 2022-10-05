@@ -137,28 +137,28 @@ namespace HearXR.Audiobread
             SoundDefinitionChangedEvent?.Invoke();
         }
 
-        private event Action SoundUpdateTickEvent;
-        internal void HandleSoundUpdateTick()
+        private event Sound.TickAction SoundUpdateTickEvent;
+        internal void HandleSoundUpdateTick(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo)
         {
-            SoundUpdateTickEvent?.Invoke();
+            SoundUpdateTickEvent?.Invoke(ref instancePlaybackInfo);
         }
         
-        private event Action UnityAudioGeneratorTickEvent;
-        internal void HandleUnityAudioGeneratorTickEvent()
+        private event Sound.TickAction UnityAudioGeneratorTickEvent;
+        internal void HandleUnityAudioGeneratorTickEvent(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo)
         {
-            UnityAudioGeneratorTickEvent?.Invoke();
+            UnityAudioGeneratorTickEvent?.Invoke(ref instancePlaybackInfo);
         }
         
         private event Sound.BeforePlayAction BeforeChildPlayEvent;
-        internal double HandleBeforeChildPlay(PlaySoundFlags playSoundFlags, double startTime)
+        internal void HandleBeforeChildPlay(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, PlaySoundFlags playSoundFlags)
         {
-            return BeforeChildPlayEvent?.Invoke(playSoundFlags, startTime) ?? startTime;
+            BeforeChildPlayEvent?.Invoke(ref instancePlaybackInfo, playSoundFlags);
         }
         
         private event Sound.BeforePlayAction BeforePlayEvent;
-        internal double HandleBeforePlay(PlaySoundFlags playSoundFlags, double startTime)
+        internal void HandleBeforePlay(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, PlaySoundFlags playSoundFlags)
         {
-            return BeforePlayEvent?.Invoke(playSoundFlags, startTime) ?? startTime;
+            BeforePlayEvent?.Invoke(ref instancePlaybackInfo, playSoundFlags);
         }
         
         private event Action<ISound> ParentSetEvent;
@@ -170,8 +170,6 @@ namespace HearXR.Audiobread
         private event Action<ISound, double> OnSoundBegan;
         internal void HandleOnSoundBegan(ISound sound, double startTime)
         {
-            Debug.Log("Sound began");
-            
             OnSoundBegan?.Invoke(sound, startTime);
         }
 

@@ -26,10 +26,11 @@ namespace HearXR.Audiobread
         #endregion
         
         #region Sound Abstract Methods
-        protected override void DoPlay(PlaySoundFlags playFlags, bool scheduled, double startTime = -1.0d)
+        protected override void DoPlay(PlaySoundFlags playFlags)
         {
-            // Always treat as scheduled.
-            base.DoPlay(playFlags, true, startTime);
+            // Always treat as scheduledStart.
+            _instancePlaybackInfo.scheduledStart = true;
+            base.DoPlay(playFlags);
         }
         
         protected override void ApplySoundPropertyValues(SetValuesType setValuesType)

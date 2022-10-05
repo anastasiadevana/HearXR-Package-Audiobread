@@ -6,141 +6,51 @@ namespace HearXR.Audiobread.SoundProperties
     [CustomPropertyDrawer(typeof(IntDefinition), true)]
     public class IntDefinitionDrawer : DefinitionDrawer
     {
-        // TODO: Maybe turn this into something like this? https://docs.unity3d.com/ScriptReference/PopupWindow.html
-        // /// <summary>
-        // /// Options to display in the popup to select constant or variable.
-        // /// </summary>
-        // private readonly string[] popupOptions = { "Use Constant", "Use Variable" };
-        // bool useConstant;
-        //
-        // /// <summary> Cached style to use to draw the popup button. </summary>
-        // private GUIStyle popupStyle;
-        
         private IntSoundProperty _soundProperty;
 
-        private bool _showRandomize;
-
-        private SerializedProperty _audioClipsProp;
-        private SerializedProperty _volumeProp;
-        private SerializedProperty _randomizeVolumeProp;
-        private SerializedProperty _volumeVarianceProp;
-        private SerializedProperty _pitchProp;
-        private SerializedProperty _randomizePitchProp;
-        private SerializedProperty _pitchVarianceProp;
-        private SerializedProperty _loopingProp;
-        private SerializedProperty _loopType;
-        private SerializedProperty _timeBetweenClipsProp;
-        private SerializedProperty _randomizeTimeBetweenClipsProp;
-        private SerializedProperty _timeBetweenClipsVarianceProp;
-        private SerializedProperty _spatializationTypeProp;
-
-        private const float UNITY_SLIDER_NUMBER_WIDTH = 55.0f;
-
-        private readonly float _labelWidth = 120.0f;
-        private readonly float _smallNumberInputWidth = 50.0f;
-        private readonly float _randomizeLabelWidth = 70.0f;
-        private readonly float _horizontalSpacer = 5.0f;
-        private readonly float _checkboxWidth = 16.0f;
-        private readonly float _baseValueSliderLeftOffset = 20.0f; // used to be 26.0f;
-
-        private readonly float _baseValueSliderRightOffset = 16.0f;
-        private readonly Color _minMaxSliderOverlayColor = new Color(0.957f, 0.098f, 0.976f);
-
-        private readonly float _header3RectHeight = 24.0f;
-        private readonly Color _header3RectColor = Color.yellow;
-
-        private float _rowX;
-        private float _rowWidth;
-        private float _controlX;
-        private float _controlWidth;
-
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        protected override bool TryInitSoundProperty(Rect position, SerializedProperty property, GUIContent label)
         {
-            int numLines = (_showRandomize) ? 4 : 2;
-            return (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing) * numLines + 14;
-        }
+            var soundModuleDefinition = (ISoundModuleDefinition) property.serializedObject.targetObject;
+            if (soundModuleDefinition == null)
+            {
+                Debug.LogError($"Unable to cast sound module definition {property.serializedObject.targetObject}");
+                return false;
+            }
 
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-        {
-            // if (popupStyle == null)
-            // {
-            //     popupStyle = new GUIStyle(GUI.skin.GetStyle("PaneOptions"));
-            //     popupStyle.imagePosition = ImagePosition.ImageOnly;
-            // }
-            
-            // TODO: Really don't need a tuple here! Can just get the property.
-            (IntSoundProperty soundProperty, int defaultValue) = GetSoundPropertyAndDefaultValue();
-            if (soundProperty == default)
+            var found = soundModuleDefinition.TryGetSoundProperty(fieldInfo, out _soundProperty);
+
+            if (!found)
             {
                 Debug.LogError($"HEAR XR: Missing sound property definition drawer for {label.text}");
+                return false;
             }
-            _soundProperty = soundProperty;
 
-            SerializedProperty valueProp = property.FindPropertyRelative("value");
-            SerializedProperty randomizeProp = property.FindPropertyRelative("randomize");
-            SerializedProperty varianceProp = property.FindPropertyRelative("variance");
-            SerializedProperty soundPropertyProp = property.FindPropertyRelative("soundProperty");
+            var defaultValue = _soundProperty.DefaultValue;
 
             // Make sure we save the sound property reference.
-            if (soundPropertyProp.objectReferenceValue == null)
+            if (_soundPropertyProp.objectReferenceValue == null)
             {
-                soundPropertyProp.objectReferenceValue = soundProperty;
-                valueProp.intValue = defaultValue;
+                _soundPropertyProp.objectReferenceValue = _soundProperty;
+
+                // Since this is the first time we're editing this definition, set default values.
+                _valueProp.intValue = defaultValue;
+                _activeProp.boolValue = _soundProperty.ActiveByDefault;
             }
 
-            // Cache some values.
-            _rowX = position.x;
-            _rowWidth = position.width;
-            _controlX = position.x;
-            _controlWidth = position.width;
-            float startingY = position.y;
+            _soundPropertyName = _soundProperty.name;
+            _soundPropertyRandomizable = _soundProperty.Randomizable;
 
-            // Draw header.
-            position = DrawHeader2(position, _soundProperty.name);
+            return true;
+        }
 
-            // Draw checkbox and "Randomize" label overlapping the color rectangle.
-            float nextY = position.y;
-            position.y = startingY;
-            position.x = _controlX + (_controlWidth - _checkboxWidth - _horizontalSpacer);
-            position.width = _checkboxWidth;
-            randomizeProp.boolValue = EditorGUI.Toggle(position, randomizeProp.boolValue);
-            _showRandomize = randomizeProp.boolValue;
+        protected override void DrawSoundPropertySlider(Rect position)
+        {
+            EditorGUI.IntSlider(position, _valueProp, _soundProperty.MinLimit, _soundProperty.MaxLimit, "");
+        }
 
-            // Label
-            position.x -= (_randomizeLabelWidth + _horizontalSpacer);
-            position.width = _randomizeLabelWidth;
-            position.y -= 1; // Slight tweaking to make sure it all lines up nicely.
-            EditorGUI.LabelField(position, "Randomize");
-            position.y = nextY;
-            
-            // TODO: Take a look at this, and do something like that:
-            //       https://github.com/roboryantron/Unite2017/blob/master/Assets/Code/Variables/Editor/FloatReferenceDrawer.cs
-            // // Calculate rect for configuration button
-            // Rect buttonRect = new Rect(position);
-            // buttonRect.yMin += popupStyle.margin.top;
-            // buttonRect.width = popupStyle.fixedWidth + popupStyle.margin.right;
-            // position.xMin = buttonRect.xMax;
-            // // Store old indent level and set it to 0, the PrefixLabel takes care of it
-            // int indent = EditorGUI.indentLevel;
-            // EditorGUI.indentLevel = 0;
-            // int result = EditorGUI.Popup(buttonRect, useConstant ? 0 : 1, popupOptions, popupStyle);
-            // useConstant = result == 0;
-
-            // Draw the actual base value slider.
-            // TODO: Handle if the sound property doesn't have one or both of the limits.
-            // Leave a little room on the sides, so that the labels don't get cut off.
-            position.x = _rowX + _baseValueSliderLeftOffset;
-            position.width = _rowWidth - _baseValueSliderLeftOffset - _baseValueSliderRightOffset;
-            position.height = EditorGUIUtility.singleLineHeight;
-            //EditorGUI.Slider(position, valueProp, _soundProperty.MinLimit, _soundProperty.MaxLimit, "");
-            //EditorGUI.IntSlider(position, valueProp, _soundProperty.MaxLimit, _soundProperty.MaxLimit, "");
-            //Debug.Log($"current value {valueProp.intValue} min {_soundProperty.MinLimit} max {_soundProperty.MaxLimit}");
-            EditorGUI.IntSlider(position, valueProp, _soundProperty.MinLimit, _soundProperty.MaxLimit, "");
-
-            // Display min / max values if randomization is enabled.
-            if (_showRandomize)
-            {
-                // Real quick do the magic number offsets.
+        protected override void DrawRandomizationRange(Rect position)
+        {
+            // Real quick do the magic number offsets.
                 float offsetRowWidth = _rowWidth - _baseValueSliderLeftOffset - _baseValueSliderRightOffset;
                 float offsetRowX = _rowX + _baseValueSliderLeftOffset;
 
@@ -156,8 +66,8 @@ namespace HearXR.Audiobread.SoundProperties
                 int maxLimit = _soundProperty.MaxLimit;
 
                 // Calculate and clamp min/max values.
-                int clampedMin = Mathf.Clamp((valueProp.intValue - varianceProp.intValue), minLimit, maxLimit);
-                int clampedMax = Mathf.Clamp((valueProp.intValue + varianceProp.intValue), minLimit, maxLimit);
+                int clampedMin = Mathf.Clamp((_valueProp.intValue - _varianceProp.intValue), minLimit, maxLimit);
+                int clampedMax = Mathf.Clamp((_valueProp.intValue + _varianceProp.intValue), minLimit, maxLimit);
 
                 // Normalize the min/max values to 0-1 range.
                 float normalizedMin = Mathf.InverseLerp(minLimit, maxLimit, clampedMin);
@@ -183,7 +93,7 @@ namespace HearXR.Audiobread.SoundProperties
                     _smallNumberInputWidth, controlHeight);
 
                 // Align and draw the labels.
-                if (varianceProp.intValue > 0)
+                if (_varianceProp.intValue > 0)
                 {
                     ReadOnlyLabelStyle.alignment = TextAnchor.MiddleRight;
                     EditorGUI.LabelField(minRect, formattedMin, ReadOnlyLabelStyle);
@@ -196,13 +106,7 @@ namespace HearXR.Audiobread.SoundProperties
                 EditorGUIUtility.labelWidth = 60;
                 int totalPropertyRange = Mathf.Abs(_soundProperty.MaxLimit - _soundProperty.MinLimit);
                 //EditorGUI.Slider(position, varianceProp, 0.0f, totalPropertyRange, "Variance");
-                EditorGUI.IntSlider(position, varianceProp, 0, totalPropertyRange, "Variance");
-            }
-        }
-
-        protected virtual (IntSoundProperty, int) GetSoundPropertyAndDefaultValue()
-        {
-            return default;
+                EditorGUI.IntSlider(position, _varianceProp, 0, totalPropertyRange, "Variance");
         }
     }
 }

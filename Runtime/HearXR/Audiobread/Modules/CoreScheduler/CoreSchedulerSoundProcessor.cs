@@ -40,11 +40,8 @@ namespace HearXR.Audiobread
             }
         }
 
-        protected override double ApplySoundModifiers(SetValuesType setValuesType, 
-            PlaySoundFlags playSoundFlags = PlaySoundFlags.None, double startTime = Audiobread.INACTIVE_START_TIME)
-        {
-            return startTime;
-        }
+        protected override void ApplySoundModifiers(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, SetValuesType setValuesType, 
+            PlaySoundFlags playSoundFlags = PlaySoundFlags.None) {}
 
         internal bool CanPlay(PlaySoundFlags playSoundFlags = PlaySoundFlags.None)
         {
@@ -60,16 +57,18 @@ namespace HearXR.Audiobread
             return _playMore;
         }
 
-        internal void ProcessSchedulingBeforePlay(PlaySoundFlags playFlags, ref bool scheduled, ref double startTime)
+        internal void ProcessSchedulingBeforePlay(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, PlaySoundFlags playFlags)
         {
+            // Debug.Log("ProcessSchedulingBeforePlay");
+            
             // We only care about continuous sounds.
             if (_soundDefinition.SoundType != SoundType.Continuous) return;
-            
+
             // Always schedule, even if wasn't requested.
-            if (!scheduled)
+            if (!instancePlaybackInfo.scheduledStart)
             {
-                scheduled = true;
-                startTime = AudioSettings.dspTime;
+                instancePlaybackInfo.scheduledStart = true;
+                instancePlaybackInfo.startTime = AudioSettings.dspTime;
             }
             
             var playNext = Sound.HasPlayFlag(playFlags, PlaySoundFlags.PlayNext);
@@ -78,7 +77,7 @@ namespace HearXR.Audiobread
             // TODO: Maybe go into a different / "waiting" mode instead, especially if the wait is long?
             if (playNext)
             {
-                startTime += _calculators[CoreSchedulerSoundModuleDefinition.TimeBetweenProperty].ValueContainer.FloatValue;
+                instancePlaybackInfo.startTime += _calculators[CoreSchedulerSoundModuleDefinition.TimeBetweenProperty].ValueContainer.FloatValue;
             }
             
             DecrementRepeatsRemaining(_childIndex);
@@ -96,6 +95,8 @@ namespace HearXR.Audiobread
         
         protected virtual void DecrementRepeatsRemaining(int childIndexPlayed)
         {
+            // Debug.Log("Decrement repeats remaining");
+            
             if (!_limitedRepeats) return;
             
             if (_repeatsRemaining <= 0) return;

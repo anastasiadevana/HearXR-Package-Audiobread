@@ -31,5 +31,15 @@ namespace HearXR.Audiobread.SoundProperties
             }
             set => Debug.LogError("Unable to set float value to an int property.");
         }
+        
+        public override double DoubleValue
+        {
+            get
+            {
+                Debug.LogError("Unable to get double value from an int property.");
+                return default;
+            }
+            set => Debug.LogError("Unable to set double value on an int property.");
+        }
     }
 }

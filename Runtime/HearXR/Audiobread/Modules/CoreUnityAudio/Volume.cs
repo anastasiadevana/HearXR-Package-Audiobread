@@ -8,7 +8,6 @@ namespace HearXR.Audiobread.SoundProperties
     [CreateAssetMenu (menuName = "Audiobread/Sound Property/Volume Property")]
     public class Volume : FloatSoundProperty
     {
-        // public override System.Type SoundModuleType { get; } = typeof(CoreUnitySoundModule);
         public override string ShortName { get; } = "Vol";
         public override float DefaultValue { get; } = 1.0f;
         
@@ -17,6 +16,8 @@ namespace HearXR.Audiobread.SoundProperties
         
         public override bool HasMaxLimit { get; } = true;
         public override float MaxLimit { get; } = 1.0f;
+        
+        public override bool ActiveByDefault { get; } = true;
         public override bool Randomizable { get; } = true;
         
         public override Calculator.CalculationMethod CalculationMethod { get; } = Calculator.CalculationMethod.Multiplication;

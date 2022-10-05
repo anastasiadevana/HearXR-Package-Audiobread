@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Reflection;
 using HearXR.Audiobread.SoundProperties;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ namespace HearXR.Audiobread.Core
         private static Pitch _pitchProperty;
         private static Volume _volumeProperty;
         private static Delay _delayProperty;
-        private static TimeDuration _durationProperty;
+        private static TimeDuration _timeDurationProperty;
         #endregion
         
         #region Static Properties
@@ -42,12 +43,12 @@ namespace HearXR.Audiobread.Core
             }
         }
         
-        public static TimeDuration DurationProperty
+        public static TimeDuration TimeDurationProperty
         {
             get
             {
                 CacheProperties();
-                return _durationProperty;
+                return _timeDurationProperty;
             }
         }
         #endregion
@@ -66,7 +67,7 @@ namespace HearXR.Audiobread.Core
             soundProperties.Add(_pitchProperty, pitchPropertyDefinition);
             soundProperties.Add(_volumeProperty, volumePropertyDefinition);
             soundProperties.Add(_delayProperty, delayPropertyDefinition);
-            soundProperties.Add(_durationProperty, durationPropertyDefinition);
+            soundProperties.Add(_timeDurationProperty, durationPropertyDefinition);
         }
         
         #region Private Static Methods
@@ -76,7 +77,7 @@ namespace HearXR.Audiobread.Core
             _pitchProperty = BuiltInData.Properties.GetSoundPropertyByType<Pitch>();
             _volumeProperty = BuiltInData.Properties.GetSoundPropertyByType<Volume>();
             _delayProperty = BuiltInData.Properties.GetSoundPropertyByType<Delay>();
-            _durationProperty = BuiltInData.Properties.GetSoundPropertyByType<TimeDuration>();
+            _timeDurationProperty = BuiltInData.Properties.GetSoundPropertyByType<TimeDuration>();
             _propertiesCached = true;
         }
         #endregion

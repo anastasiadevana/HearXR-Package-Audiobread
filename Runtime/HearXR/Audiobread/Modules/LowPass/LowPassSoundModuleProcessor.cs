@@ -18,10 +18,10 @@ namespace HearXR.Audiobread
             InitLowPass(audiobreadSource);
         }
         
-        protected override double ApplySoundModifiers(SetValuesType setValuesType, 
-            PlaySoundFlags playSoundFlags = PlaySoundFlags.None, double startTime = Audiobread.INACTIVE_START_TIME)
+        protected override void ApplySoundModifiers(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, SetValuesType setValuesType, 
+            PlaySoundFlags playSoundFlags = PlaySoundFlags.None)
         {
-            if (!MySound.IsValid() || !_initComplete || _invalid) return startTime;
+            if (!MySound.IsValid() || !_initComplete || _invalid) return;
             
             var properties = _soundPropertiesBySetType[setValuesType];
             
@@ -39,8 +39,6 @@ namespace HearXR.Audiobread
                     _lowPassFilter.lowpassResonanceQ = value;
                 }
             }
-
-            return startTime;
         }
         
         #region Private Methods

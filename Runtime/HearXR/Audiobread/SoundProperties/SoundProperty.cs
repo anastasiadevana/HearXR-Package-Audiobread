@@ -4,11 +4,13 @@ using UnityEngine;
 
 namespace HearXR.Audiobread.SoundProperties
 {
-    public abstract class SoundProperty : ScriptableObject
+    public abstract class SoundProperty : ScriptableObject, ISoundProperty
     {
         public abstract string ShortName { get; }
 
         public abstract bool Randomizable { get; }
+        
+        public abstract bool ActiveByDefault { get; }
         
         public abstract bool RandomizeOnSoundPlay { get; }
     

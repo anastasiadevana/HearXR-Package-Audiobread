@@ -61,7 +61,7 @@ namespace HearXR.Audiobread
             // }
         }
 
-        protected override void DoPlay(PlaySoundFlags playFlags, bool scheduled, double startTime = -1.0d)
+        protected override void DoPlay(PlaySoundFlags playFlags)
         {
             // If asked to play when already playing, reset loop counts.
             if (IsPlayingOrTransitioning())
@@ -73,8 +73,8 @@ namespace HearXR.Audiobread
             SetStatus(SoundStatus.ReadyToPlay, false);
 
             // Stop the sound that was paused.
-            // TODO: Do we care about "scheduled" here? Should we just always stop paused sources?
-            if (IsPaused() && scheduled)
+            // TODO: Do we care about "scheduledStart" here? Should we just always stop paused sources?
+            if (IsPaused() && _instancePlaybackInfo.scheduledStart)
             {
                 _audioSource.Stop();
             }
@@ -82,7 +82,7 @@ namespace HearXR.Audiobread
             SetSchedulableState(SchedulableSoundState.None);
 
             // If PlayScheduled() was not requested, and there are no delays, just play it and get it over with.
-            if (!scheduled)
+            if (!_instancePlaybackInfo.scheduledStart)
             {
                 _audioSource.Play();
                 SetStatus(SoundStatus.Paused, false);
@@ -91,7 +91,7 @@ namespace HearXR.Audiobread
                 return;
             }
 
-            DoPlayScheduled(startTime);
+            DoPlayScheduled();
         }
         
         protected override void DoReleaseResources()

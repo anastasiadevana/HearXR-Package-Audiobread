@@ -16,11 +16,8 @@ namespace HearXR.Audiobread
         public CoreChildPickerSoundProcessor(CoreChildPickerSoundModule soundModule, ISound sound) : base(soundModule, sound) {}
 
         #region SoundModuleProcessor Abstract Methods
-        protected override double ApplySoundModifiers(SetValuesType setValuesType, 
-            PlaySoundFlags playSoundFlags = PlaySoundFlags.None, double startTime = Audiobread.INACTIVE_START_TIME)
-        {
-            return startTime;
-        }
+        protected override void ApplySoundModifiers(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, SetValuesType setValuesType, 
+            PlaySoundFlags playSoundFlags = PlaySoundFlags.None) {}
         #endregion
         
         #region SoundModuleProcessor Overrides

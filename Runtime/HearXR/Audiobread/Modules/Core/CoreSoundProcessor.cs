@@ -4,8 +4,8 @@ namespace HearXR.Audiobread.Core
     {
         public CoreSoundProcessor(CoreSoundModule soundModule, ISound sound) : base(soundModule, sound) {}
 
-        protected override double ApplySoundModifiers(SetValuesType setValuesType, 
-            PlaySoundFlags playSoundFlags = PlaySoundFlags.None, double startTime = Audiobread.INACTIVE_START_TIME)
+        protected override void ApplySoundModifiers(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, SetValuesType setValuesType, 
+            PlaySoundFlags playSoundFlags = PlaySoundFlags.None)
         {
             throw new System.NotImplementedException();
         }

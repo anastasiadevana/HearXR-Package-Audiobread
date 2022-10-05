@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace HearXR.Audiobread.Core
 {
+    // TODO: Is this even used? Or are we using CoreUnitySoundModule instead?
     [CreateAssetMenu (menuName = "Audiobread/Sound Modules/Core Unity Audio")]
     public class CoreSoundModule : SoundModule
     {

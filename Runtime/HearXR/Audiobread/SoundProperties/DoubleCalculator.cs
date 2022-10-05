@@ -4,17 +4,16 @@ using UnityEngine;
 
 namespace HearXR.Audiobread.SoundProperties
 {
-    public class FloatCalculator : Calculator<float, FloatSoundProperty, FloatDefinition>
+    public class DoubleCalculator : Calculator<double, DoubleSoundProperty, DoubleDefinition>
     {
-        public FloatCalculator(FloatSoundProperty soundProperty) : base(soundProperty) {}
+        public DoubleCalculator(DoubleSoundProperty soundProperty) : base(soundProperty) {}
 
         public override void Calculate()
         {
             if (!Active) return;
             
-            var influenceFactor = 1.0f;
-            var influenceAddition = 0.0f;
-            
+            // TODO: Pulling straight from the definition here! Not sure if this is what we want.
+            _value = _definition.value + _randomizedOffset;
             if (_property.CalculationMethod != CalculationMethod.Override)
             {
                 for (int i = 0; i < _influences.Count; ++i)
@@ -22,11 +21,11 @@ namespace HearXR.Audiobread.SoundProperties
                     switch (_property.CalculationMethod)
                     {
                         case CalculationMethod.Multiplication:
-                            influenceFactor *= _influences[i].Value;
+                            _value *= _influences[i].Value;
                             break;
                         
                         case CalculationMethod.Addition:
-                            influenceAddition += _influences[i].Value;
+                            _value += _influences[i].Value;
                             break;
                         
                         default:
@@ -35,14 +34,10 @@ namespace HearXR.Audiobread.SoundProperties
                     }
                 }   
             }
-
-            // Adjusted value.
-            // TODO: Work in parameters (move from volume)
-            _value = (_rawValue + influenceAddition) * influenceFactor;
             
-            Mathf.Clamp(_value, _property.MinLimit, _property.MaxLimit);
+            Audiobread.ClampDouble(_value, _property.MinLimit, _property.MaxLimit);
             
-            _valueContainer.FloatValue = _value;
+            _valueContainer.DoubleValue = _value;
         }
         
         public override void Calculate(ref Dictionary<Parameter, float> parameterValues)
@@ -68,7 +63,7 @@ namespace HearXR.Audiobread.SoundProperties
                 return;
             }
             
-            var randomValue = Audiobread.GetClampedRandomValue(_definition.value, _definition.variance, 
+            double randomValue = (double) Audiobread.GetClampedRandomValue(_definition.value, _definition.variance, 
                 _property.MinLimit, _property.MaxLimit);
 
             _randomizedOffset = _baseValue - randomValue;

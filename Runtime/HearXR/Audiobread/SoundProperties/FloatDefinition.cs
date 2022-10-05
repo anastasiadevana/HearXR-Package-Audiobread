@@ -7,8 +7,24 @@
     public interface IFloatDefinition : IFloatDefinition<FloatSoundProperty> {}
     
     [System.Serializable]
-    public class FloatDefinition : Definition<float, FloatSoundProperty>, IFloatDefinition {}
+    public abstract class FloatDefinition : Definition<float, FloatSoundProperty>, IFloatDefinition {}
 
     [System.Serializable]
-    public class FloatDefinition<TProperty> : FloatDefinition where TProperty : FloatSoundProperty {}
+    public abstract class FloatDefinition<TProperty> : FloatDefinition where TProperty : FloatSoundProperty
+    {
+        private static FloatSoundProperty _soundProperty;
+        
+        public override FloatSoundProperty SoundProperty
+        {
+            get
+            {
+                if (_soundProperty == null)
+                {
+                    _soundProperty = BuiltInData.Properties.GetSoundPropertyByType<TProperty>();
+                }
+        
+                return _soundProperty;
+            }
+        }
+    }
 }

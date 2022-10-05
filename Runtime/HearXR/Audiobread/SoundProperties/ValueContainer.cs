@@ -16,6 +16,8 @@ namespace HearXR.Audiobread.SoundProperties
 
         protected bool _isSet;
 
+        public abstract double DoubleValue { get; set; }
+        
         public abstract float FloatValue { get; set; }
 
         public abstract int IntValue { get; set; }
