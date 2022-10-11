@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace HearXR.Audiobread
 {
+    // Actually plays the sound.
     public class AudiobreadClip : SoundGeneratorUnityAudio<AudiobreadClipDefinition, AudiobreadClip>
     {
         #region Constructor

@@ -22,11 +22,11 @@ namespace HearXR.Audiobread.SoundProperties
 
         public abstract void Generate();
         
-        public abstract void Calculate();
+        protected abstract void Calculate();
         
         public abstract void Calculate(ref Dictionary<Parameter, float> parameterValues);
 
-        public abstract void AddParameter(SoundParameter parameter);
+        public abstract void AddParameterDefinition(SoundParameterDefinition parameter);
 
         public abstract void SetDefinition(Definition definition);
 
@@ -67,18 +67,19 @@ namespace HearXR.Audiobread.SoundProperties
         protected readonly ValueContainer<T> _valueContainer;
         protected T _rawValue;
         protected T _value;
-        protected List<SoundParameter> _parameters = new List<SoundParameter>();
-        protected SoundParameter[] _parameterArray;
+        protected List<SoundParameterDefinition> _parameterDefinitions = new List<SoundParameterDefinition>();
+        protected SoundParameterDefinition[] _parameterArray;
         protected List<ValueContainer<T>> _influences = new List<ValueContainer<T>>();
         protected T _randomizedOffset;
         protected T _baseValue;
+        protected float _parameterFactor = 1.0f;
         #endregion
         
         protected Calculator(TProperty soundProperty)
         {
             _property = soundProperty;
             _valueContainer = _property.CreateValueContainer();
-            _parameterArray = new SoundParameter[0];
+            _parameterArray = new SoundParameterDefinition[0];
         }
 
         #region Public Methods
@@ -121,12 +122,12 @@ namespace HearXR.Audiobread.SoundProperties
             }
         }
 
-        public override void AddParameter(SoundParameter parameter)
+        public override void AddParameterDefinition(SoundParameterDefinition parameter)
         {
-            if (!_parameters.Contains(parameter))
+            if (!_parameterDefinitions.Contains(parameter))
             {
-                _parameters.Add(parameter);
-                _parameterArray = _parameters.ToArray();
+                _parameterDefinitions.Add(parameter);
+                _parameterArray = _parameterDefinitions.ToArray();
             }
         }
         #endregion

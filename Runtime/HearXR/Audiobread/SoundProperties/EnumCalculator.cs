@@ -7,7 +7,7 @@ namespace HearXR.Audiobread.SoundProperties
     {
         public EnumCalculator(EnumSoundProperty soundProperty) : base(soundProperty) {}
 
-        public override void Calculate()
+        protected override void Calculate()
         {
             if (!Active) return;
             _value = _rawValue;
@@ -17,6 +17,9 @@ namespace HearXR.Audiobread.SoundProperties
         public override void Calculate(ref Dictionary<Parameter, float> parameterValues)
         {
             if (!Active) return;
+            
+            // TODO: Incorporate parameter values calculation.
+            
             Calculate();
         }
 

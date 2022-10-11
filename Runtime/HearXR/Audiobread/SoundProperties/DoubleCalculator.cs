@@ -8,7 +8,7 @@ namespace HearXR.Audiobread.SoundProperties
     {
         public DoubleCalculator(DoubleSoundProperty soundProperty) : base(soundProperty) {}
 
-        public override void Calculate()
+        protected override void Calculate()
         {
             if (!Active) return;
             
@@ -44,8 +44,19 @@ namespace HearXR.Audiobread.SoundProperties
         {
             if (!Active) return;
             
-            // TODO: Add parameters here!
-            
+            _parameterFactor = 1.0f;
+            for (var i = 0; i < _parameterArray.Length; ++i)
+            {
+                if (!parameterValues.ContainsKey(_parameterArray[i].parameter))
+                {
+                    // TODO: Barf better.
+                    continue;
+                }
+
+                // TODO: Are parameters calculated with different methods as well? (multiplication, addition, etc)
+                _parameterFactor *= _parameterArray[i].GetSoundPropertyValue(parameterValues[_parameterArray[i].parameter]);
+            }
+
             Calculate();
         }
 

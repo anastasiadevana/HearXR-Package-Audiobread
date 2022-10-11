@@ -20,7 +20,7 @@ namespace HearXR.Audiobread
         
         // VolumeDefinition VolumeDefinition { get; }
         
-        List<SoundParameter> Parameters { get; }
+        List<SoundParameterDefinition> Parameters { get; }
 
         List<SoundModule> GetCompatibleModules();
 

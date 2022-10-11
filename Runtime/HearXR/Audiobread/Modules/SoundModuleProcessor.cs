@@ -86,6 +86,11 @@ namespace HearXR.Audiobread
             OnSoundBegan(sound, startTime);
         }
 
+        internal void HandleOnSetParameter(Parameter parameter, float parameterValue)
+        {
+            OnSetParameter(parameter, parameterValue);
+        }
+
         internal void HandleSoundDefinitionChanged()
         {
             OnSoundDefinitionChanged();
@@ -125,6 +130,8 @@ namespace HearXR.Audiobread
         protected virtual void DoApplySoundDefinitionToUnityAudio(AudiobreadSource audiobreadSource) {}
         protected virtual void OnUnityAudioGeneratorTick(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo) {}
         protected virtual void OnSoundBegan(ISound sound, double startTime) {}
+
+        protected virtual void OnSetParameter(Parameter parameter, float parameterValue) {}
         // protected virtual void OnContainerBeforeFirstPlay() {}
         #endregion
     }
@@ -157,10 +164,56 @@ namespace HearXR.Audiobread
         }
         #endregion
 
+        protected Dictionary<Parameter, float> _parameters = new Dictionary<Parameter, float>();
+
+        protected override void OnSetParameter(Parameter parameter, float parameterValue)
+        {
+            // Debug.Log($"Handle on set parameter!!! {parameter} {this}");
+            
+            // Debug.Log($"{_parameters.Count} {this}");
+            
+            base.OnSetParameter(parameter, parameterValue);
+            if (_parameters.ContainsKey(parameter))
+            {
+                // TODO: SoundParameterDefinition should handle easing here.
+                _parameters[parameter] = parameterValue;
+                // Debug.Log($"Set parameter {parameter} to {parameterValue} on {this}");
+                Debug.Log($"{parameterValue}");
+            }
+        }
+
         protected override void DoInit()
         {
             _moduleSoundDefinition = MySound.GetModuleSoundDefinitions<TModuleDefinition>(SoundModule);
             InitCalculators();
+
+            // Add parameters
+            
+            if (MySound.SoundDefinition.Parameters != null && MySound.SoundDefinition.Parameters.Count > 0)
+            {
+                for (int i = 0; i < MySound.SoundDefinition.Parameters.Count; ++i)
+                {
+                    if (_calculators.ContainsKey(MySound.SoundDefinition.Parameters[i].soundProperty))
+                    {
+                        if (!_parameters.ContainsKey(MySound.SoundDefinition.Parameters[i].parameter))
+                        {
+                            _parameters.Add(MySound.SoundDefinition.Parameters[i].parameter,
+                                MySound.SoundDefinition.Parameters[i].parameter.defaultValue);
+                            
+                            _calculators[MySound.SoundDefinition.Parameters[i].soundProperty]
+                                .AddParameterDefinition(MySound.SoundDefinition.Parameters[i]);
+                            
+                            // Debug.Log($"Added parameter {MySound.SoundDefinition.Parameters[i].parameter} to {this}");
+                        }
+                    }
+                }
+            }
+
+            if (_parameters.Count > 0)
+            {
+                Debug.Log($"{_parameters.Count} {this}");   
+            }
+
             PostInitCalculators();
         }
 
@@ -289,7 +342,7 @@ namespace HearXR.Audiobread
                 // }
                 
                 _calculators[properties[i]].Generate();
-                _calculators[properties[i]].Calculate();
+                _calculators[properties[i]].Calculate(ref _parameters);
                 
                 // if (debug)
                 // {
@@ -310,7 +363,7 @@ namespace HearXR.Audiobread
                 {
                     Debug.LogError($"HEAR XR {this} doesn't have the calculator for {properties[i].name}");
                 }
-                _calculators[properties[i]].Calculate();
+                _calculators[properties[i]].Calculate(ref _parameters);
             }
         }
 

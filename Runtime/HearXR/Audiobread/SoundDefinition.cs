@@ -19,7 +19,7 @@ namespace HearXR.Audiobread
         // TODO: Move to Unity one.
         public AudioMixerGroup audioMixerGroup;
 
-        [Space(20)] public List<SoundParameter> _parameters;
+        [Space(20)] public List<SoundParameterDefinition> _parameters;
         
         [SerializeField] protected List<SoundModuleDefinition> _moduleSoundDefinitions = new List<SoundModuleDefinition>();
         
@@ -39,7 +39,7 @@ namespace HearXR.Audiobread
         
         // public VolumeDefinition VolumeDefinition => _volumeDefinition;
         
-        public List<SoundParameter> Parameters => _parameters;
+        public List<SoundParameterDefinition> Parameters => _parameters;
 
         public List<SoundModule> EnabledModules => _enabledSoundModules;
 

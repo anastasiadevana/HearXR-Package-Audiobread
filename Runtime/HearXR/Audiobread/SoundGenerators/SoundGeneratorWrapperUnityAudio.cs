@@ -87,6 +87,20 @@ namespace HearXR.Audiobread
         {
             // Do nothing, because we only want to init on the SoundGeneratorUnityAudio.
         }
+
+        public override void SetParameter(Parameter parameter, float parameterValue)
+        {
+            // Pass through the parameters to the SoundGeneratorUnityAudio.
+            for (var i = _generators.Count - 1; i >= 0; --i)
+            {
+                _generators[i].SetParameter(parameter, parameterValue);
+            }
+
+            if (_primedGenerator != null)
+            {
+                _primedGenerator.SetParameter(parameter, parameterValue);
+            }
+        }
         #endregion
         
         #region Protected Methods

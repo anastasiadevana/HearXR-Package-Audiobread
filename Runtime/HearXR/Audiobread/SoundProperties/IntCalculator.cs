@@ -8,7 +8,7 @@ namespace HearXR.Audiobread.SoundProperties
     {
         public IntCalculator(IntSoundProperty soundProperty) : base(soundProperty) {}
 
-        public override void Calculate()
+        protected override void Calculate()
         {
             if (!Active) return;
             
@@ -25,7 +25,7 @@ namespace HearXR.Audiobread.SoundProperties
         {
             if (!Active) return;
             
-            // TODO: Parameters
+            // TODO: Incorporate parameter values calculation.
             
             Calculate();
         }

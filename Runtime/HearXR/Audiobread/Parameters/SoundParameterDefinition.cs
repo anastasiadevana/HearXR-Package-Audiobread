@@ -8,10 +8,8 @@ namespace HearXR.Audiobread
     /// It describes the relationship between a specific parameter and a sound property based on a curve.
     /// </summary>
     [System.Serializable]
-    public class SoundParameter
+    public class SoundParameterDefinition
     {
-        // TODO: Maybe this thing should be called SoundParameterDefinition?
-        
         public Parameter parameter;
         public SoundProperty soundProperty;
         public AnimationCurve curve;

@@ -96,24 +96,6 @@ namespace HearXR.Audiobread.SoundProperties
         }
         #endregion
 
-        #region Protected Methods
-        protected Rect DrawHeader2(Rect pos, string label)
-        {
-            // Draw background color for the header.
-            pos.height = _header2RectHeight;
-            EditorGUI.DrawRect(pos, _header2RectColor);
-
-            // Draw the header label.
-            pos.x += 10 + 16.0f; // TODO: No magic numbers (checkbox width)
-            EditorGUI.LabelField(pos, label, Header2Style);
-            pos.x -= 10 - 16.0f; // TODO: No magic numbers (checkbox width)
-
-            pos.y += _header2RectHeight + (EditorGUIUtility.standardVerticalSpacing * 3);
-            
-            return pos;
-        }
-        #endregion
-        
         #region Virtual Methods
         protected override bool TryInitSoundProperty(Rect position, SerializedProperty property, GUIContent label)
         {

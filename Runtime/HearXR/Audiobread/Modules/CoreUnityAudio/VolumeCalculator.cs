@@ -54,7 +54,7 @@ namespace HearXR.Audiobread.SoundProperties
         private bool _hasFadeIn;
         private bool _hasFadeOut;
         
-        private float _parameterFactor = 1.0f;
+        // private float _parameterFactor = 1.0f;
         private float _fadeFactor = 1.0f;
         private float _totalFactor = 1.0f;
         private float _influenceFactor = 1.0f;
@@ -65,7 +65,7 @@ namespace HearXR.Audiobread.SoundProperties
         #endregion
         
         #region SoundPropertyController Abstract Methods
-        public override void Calculate()
+        protected override void Calculate()
         {
             _influenceFactor = 1.0f;
 
@@ -86,25 +86,25 @@ namespace HearXR.Audiobread.SoundProperties
             _valueContainer.FloatValue = _value;
         }
         
-        public override void Calculate(ref Dictionary<Parameter, float> parameterValues)
-        {
-            // TODO: Push higher into a parent, since this is not volume-specific.
-            // Parameters
-            _parameterFactor = 1.0f;
-            for (int i = 0; i < _parameterArray.Length; ++i)
-            {
-                if (!parameterValues.ContainsKey(_parameterArray[i].parameter))
-                {
-                    // TODO: Barf better.
-                    continue;
-                }
-
-                _parameterFactor *=
-                    _parameterArray[i].GetSoundPropertyValue(parameterValues[_parameterArray[i].parameter]);
-            }
-            
-            Calculate();
-        }
+        // public override void Calculate(ref Dictionary<Parameter, float> parameterValues)
+        // {
+        //     // TODO: Push higher into a parent, since this is not volume-specific.
+        //     // Parameters
+        //     _parameterFactor = 1.0f;
+        //     for (int i = 0; i < _parameterArray.Length; ++i)
+        //     {
+        //         if (!parameterValues.ContainsKey(_parameterArray[i].parameter))
+        //         {
+        //             // TODO: Barf better.
+        //             continue;
+        //         }
+        //
+        //         _parameterFactor *=
+        //             _parameterArray[i].GetSoundPropertyValue(parameterValues[_parameterArray[i].parameter]);
+        //     }
+        //     
+        //     Calculate();
+        // }
         #endregion
         
         #region Internal Methods

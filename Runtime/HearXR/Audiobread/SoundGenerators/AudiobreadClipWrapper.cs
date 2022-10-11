@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace HearXR.Audiobread
 {
+    // Wraps the sound.
     public class AudiobreadClipWrapper : SoundGeneratorWrapperUnityAudio<AudiobreadClipDefinition, AudiobreadClipWrapper, AudiobreadClip>
     {
         #region Private Fields

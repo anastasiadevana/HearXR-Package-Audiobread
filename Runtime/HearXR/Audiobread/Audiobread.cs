@@ -67,13 +67,47 @@ namespace HearXR.Audiobread
             return soundDefinition.CreateSound(initFlags);
         }
 
+        // TODO: Convert to return bool and out ISound.
         public ISound PlaySound(ISoundDefinition soundDefinition, PlaySoundFlags playFlags = PlaySoundFlags.None)
         {
+            if (soundDefinition == null)
+            {
+                Debug.LogError("HEAR XR: Audiobread: Please provide a sound definition to play.");
+                return default;
+            }
+            
             var sound = soundDefinition.CreateSound();
+            if (!sound.IsValid())
+            {
+                Debug.LogError("HEAR XR: Audiobread: Unable to instantiate sound.");
+                return default;
+            }
+            
             sound.Play(playFlags);
             return sound;
         }
         
+        // TODO: Combine with the above method, maybe?
+        public ISound PlaySound(SoundDefinition soundDefinition, GameObject soundSourceObject, PlaySoundFlags playFlags = PlaySoundFlags.None)
+        {
+            if (soundDefinition == null)
+            {
+                Debug.LogError("HEAR XR: Please provide a sound definition to play.");
+                return default;
+            }
+
+            var sound = soundDefinition.CreateSound();
+            if (!sound.IsValid())
+            {
+                Debug.LogError("HEAR XR: Audiobread: Unable to instantiate sound.");
+                return default;
+            }
+
+            sound.SoundSourceObject = soundSourceObject;
+            sound.Play(playFlags);
+            return sound;
+        }
+
         /// <summary>
         /// Stop all sounds that matched the passed in arguments.
         /// If multiple arguments have been passed in, only the sounds that meet all of the requirements will be stopped.

@@ -47,6 +47,8 @@ namespace HearXR.Audiobread
         bool TryGetRegisteredParent(out ISound parentSound);
         
         void Play(PlaySoundFlags playSoundFlags = PlaySoundFlags.None);
+
+        void SetParameter(Parameter parameter, float parameterValue);
         
         void PlayScheduled(double startTime, PlaySoundFlags playSoundFlags = PlaySoundFlags.None);
 

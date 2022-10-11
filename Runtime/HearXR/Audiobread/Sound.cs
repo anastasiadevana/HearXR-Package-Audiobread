@@ -304,6 +304,7 @@ namespace HearXR.Audiobread
             BeforePlayEvent += _soundModuleGroupProcessor.HandleBeforePlay;
             ParentSetEvent += _soundModuleGroupProcessor.HandleSetParent;
             OnBegan += _soundModuleGroupProcessor.HandleOnSoundBegan;
+            OnSetParameter += _soundModuleGroupProcessor.HandleOnSetParameter;
         }
         
         protected virtual void UnsubscribeSoundModuleProcessorFromEvents()
@@ -318,6 +319,7 @@ namespace HearXR.Audiobread
             BeforePlayEvent -= _soundModuleGroupProcessor.HandleBeforePlay;
             ParentSetEvent -= _soundModuleGroupProcessor.HandleSetParent;
             OnBegan -= _soundModuleGroupProcessor.HandleOnSoundBegan;
+            OnSetParameter -= _soundModuleGroupProcessor.HandleOnSetParameter;
         }
         #endregion
         
@@ -335,24 +337,19 @@ namespace HearXR.Audiobread
         //         ? Audiobread.Instance.ValidateSoundSource(soundSourceObject)
         //         : null;
         // }
-        //
-        // public void SetParameter(Parameter parameter, float parameterValue)
-        // {
-        //     if (parameter == null)
-        //     {
-        //         return;
-        //     }
-        //
-        //     // TODO: Validate input here!
-        //     // TODO: Handle various groups of sound instances.
-        //     if (_parameters.ContainsKey(parameter))
-        //     {
-        //         // TODO: SoundParameter should handle easing here.
-        //         _parameters[parameter] = parameterValue;
-        //     }
-        // }
         // TODO: \end 
+
+        // TODO: Organize these parameter stuff into appropriate places.
+        internal event Action<Parameter, float> OnSetParameter;
+        public abstract void SetParameter(Parameter parameter, float parameterValue);
+        protected void InvokeOnSetParameter(Parameter parameter, float parameterValue)
+        {
+            // Debug.Log($"InvokeOnSetParameter!!! {OnSetParameter == null} {this.GetType()}");
+            
+            OnSetParameter?.Invoke(parameter, parameterValue);
+        }
         
+
         public void UpdateSound()
         {
             // TODO: AudiobreadClip SHOULD be able to be played without being a proper first-class sound citizen.
@@ -844,7 +841,7 @@ namespace HearXR.Audiobread
 
         #region Private Fields
         private BuiltInData _builtInData;
-        private readonly Dictionary<Parameter, float> _parameters = new Dictionary<Parameter, float>();
+        // private readonly Dictionary<Parameter, float> _parameters = new Dictionary<Parameter, float>();
         #endregion
         
         #region Protected Fields
@@ -888,23 +885,18 @@ namespace HearXR.Audiobread
             _instancePlaybackInfo = new SoundInstancePlaybackInfo();
             
             PostSetSoundDefinition(initSoundFlags);
-            // Debug.Log($"Is valid? {this}");
+            
             if (!IsValid()) return;
-            // Debug.Log($"Still valid! {this}");
 
+            // InitParameters(initSoundFlags);
+            
             InitModules(initSoundFlags);
             PostInitModules(initSoundFlags);
             InvokeInitSoundModuleProcessor();
-
-            // NOTE: Moved to SoundModuleProcessor
-            // InitSoundProperties(initSoundFlags);
-            //PostInitSoundProperties(initSoundFlags);
-            //if (!IsValid()) return;
-            // END Moved
             
-            InitParameters(initSoundFlags);
             ParseSoundDefinition();
             PostParseSoundDefinition();
+
             ApplySoundDefinitionAndProperties(initSoundFlags);
             if (!IsValid()) return;
             
@@ -1083,6 +1075,27 @@ namespace HearXR.Audiobread
 
             return null;
         }
+
+        public override void SetParameter(Parameter parameter, float parameterValue)
+        {
+            // Debug.Log($"Set parameter {parameter}");
+            
+            if (parameter == null)
+            {
+                return;
+            }
+        
+            // TODO: Call SoundModuleProcessor.
+            InvokeOnSetParameter(parameter, parameterValue);
+
+            // TODO: Validate input here!
+            // TODO: Handle various groups of sound instances.
+            // if (_parameters.ContainsKey(parameter))
+            // {
+            //     // TODO: SoundParameterDefinition should handle easing here.
+            //     _parameters[parameter] = parameterValue;
+            // }
+        }
         #endregion
         
         #region Abstract Methods
@@ -1245,29 +1258,22 @@ namespace HearXR.Audiobread
         //     }   
         // }
 
-        private void InitParameters(InitSoundFlags initSoundFlags = InitSoundFlags.None)
-        {
-            if (_soundDefinition.Parameters == null || _soundDefinition.Parameters.Count == 0)
-            {
-                return;
-            }
-
-            for (int i = 0; i < _soundDefinition.Parameters.Count; ++i)
-            {
-                if (!_parameters.ContainsKey(_soundDefinition.Parameters[i].parameter))
-                {
-                    _parameters.Add(_soundDefinition.Parameters[i].parameter,
-                        _soundDefinition.Parameters[i].parameter.defaultValue);
-                }
-
-                // TODO: SoundModule hookup.
-                // if (_calculators.ContainsKey(_soundDefinition.Parameters[i].soundProperty))
-                // {
-                //     _calculators[_soundDefinition.Parameters[i].soundProperty]
-                //         .AddParameter(_soundDefinition.Parameters[i]);
-                // }
-            }
-        }
+        // private void InitParameters(InitSoundFlags initSoundFlags = InitSoundFlags.None)
+        // {
+        //     if (_soundDefinition.Parameters == null || _soundDefinition.Parameters.Count == 0)
+        //     {
+        //         return;
+        //     }
+        //
+        //     for (int i = 0; i < _soundDefinition.Parameters.Count; ++i)
+        //     {
+        //         if (!_parameters.ContainsKey(_soundDefinition.Parameters[i].parameter))
+        //         {
+        //             _parameters.Add(_soundDefinition.Parameters[i].parameter,
+        //                 _soundDefinition.Parameters[i].parameter.defaultValue);
+        //         }
+        //     }
+        // }
         
         // NOTE: Moved to SoundModuleProcessor
         // private void InitSoundPropertyValues(SetValuesType setValuesType, PlaySoundFlags playSoundFlags)
