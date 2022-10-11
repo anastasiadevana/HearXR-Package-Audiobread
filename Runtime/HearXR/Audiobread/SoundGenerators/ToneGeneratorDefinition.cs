@@ -3,12 +3,8 @@ using UnityEngine;
 namespace HearXR.Audiobread
 {
     [CreateAssetMenu(fileName = "Tone Generator", menuName = "Audiobread/Sound Generator/Tone Generator")]
-    public class ToneGeneratorDefinition : SoundDefinition
+    public class ToneGeneratorDefinition : SoundDefinition, IToneGeneratorSoundDefinition
     {
-        [SerializeField] private float _frequency = 220.0f; // TODO: Make this a sound property.
-
-        public float Frequency => _frequency;
-        
         public override T CreateSound<T>(InitSoundFlags initSoundFlags = InitSoundFlags.None)
         {
             var sound = new ToneGeneratorWrapper();

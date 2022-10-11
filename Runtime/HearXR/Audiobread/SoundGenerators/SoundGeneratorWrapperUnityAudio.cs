@@ -123,7 +123,7 @@ namespace HearXR.Audiobread
         #endregion
         
         #region Private Methods
-        private bool PrepareGenerator()
+        private bool PrepareGenerator() // Prepare to play from here.
         {
             if (HavePrimedGenerator())
             {

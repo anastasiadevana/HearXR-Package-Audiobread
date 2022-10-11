@@ -21,6 +21,7 @@ namespace HearXR.Audiobread
         
         
         public override bool ActiveByDefault { get; } = true;
+        public override bool SetValuesOnPreparedToPlay { get; } = false;
         
         public override bool Randomizable { get; } = true;
         public override bool RandomizeOnSoundPlay { get; } = true;

@@ -5,7 +5,8 @@ using UnityEngine;
 
 namespace HearXR.Audiobread.Core
 {
-    public class CoreUnitySoundProcessor : SoundModuleProcessor<CoreUnitySoundModule, CoreUnitySoundModuleDefinition>, IStopControllerProcessor
+    public class CoreUnitySoundProcessor : SoundModuleProcessor<CoreUnitySoundModule, CoreUnitySoundModuleDefinition>, 
+                                            IStopControllerProcessor, ITimeBeforeListener
     {
         private bool _initSoundSource;
         private AudiobreadSource _audiobreadSource;
@@ -37,21 +38,23 @@ namespace HearXR.Audiobread.Core
             // Add fades to the volume calculator.
             _volumeCalculator = (VolumeCalculator) _calculators[BuiltInData.Properties.GetSoundPropertyByType<Volume>()];
             _volumeCalculator.SetFades(ModuleSoundDefinition.fadeInDefinition, ModuleSoundDefinition.fadeOutDefinition);
+            
+            // TODO: Do we need to unsubscribe at some point?
             _volumeCalculator.OnFadeOutFinished += HandleFadeOutFinished;
             _volumeCalculator.OnFadeOutFinished += HandleFadeInFinished;
-            _volumeCalculator.PrepareToPlay();
             
-            // TODO: Unsubscribe from this at some point?
-            // ((VolumeCalculator) _calculators[ModuleSoundDefinition.VolumeProperty]).OnFadeFinished += delegate(Fade.Direction direction)
-            // {
-            //     // TODO: Handle fade in finished.
-            //     if (direction == Fade.Direction.Out)
-            //     {
-            //         OnFadeOutFinished();
-            //     }
-            // };
+            if (_volumeCalculator.HasFadeOut)
+            {
+                // TODO: Do we need to unregister at some point?
+                MySound.RegisterTimeBeforeListener(this, ModuleSoundDefinition.fadeOutDefinition.duration);   
+            }
         }
-        
+
+        public void HandleTimeRemainingEvent(double timeRemaining)
+        {
+            _volumeCalculator.StartFadeOut();
+        }
+
         private StopControllerStopCallback _stopCallbackWaiting;
 
         private void HandleFadeOutFinished()
@@ -156,6 +159,12 @@ namespace HearXR.Audiobread.Core
                 //     var audioClip = _soundDefinition.AudioClip;
                 //     _audioSource.timeSamples = TimeSamplesHelper.ValidateAudioClipOffset(in audioClip, value);
                 // }
+            }
+            
+            // Deal with volume fades.
+            if (setValuesType == SetValuesType.OnPreparedToPlay)
+            {
+                _volumeCalculator.PrepareToPlay();
             }
         }
 

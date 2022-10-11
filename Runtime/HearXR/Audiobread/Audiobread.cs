@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using HearXR.Audiobread.SoundProperties;
 using UnityEngine;
@@ -117,6 +118,17 @@ namespace HearXR.Audiobread
         #endregion
         
         #region Static Internal Methods
+        public static T IntToEnum<T>(int intValue) where T : Enum
+        {
+            return (T) (object) intValue;
+        }
+
+        public int EnumToInt<T>(T newValue) where T : Enum
+        {
+            return (int) (object) newValue;
+        }
+        
+        
         internal static double ClampDouble(double value, double min, double max)
         {
             if (value < min)

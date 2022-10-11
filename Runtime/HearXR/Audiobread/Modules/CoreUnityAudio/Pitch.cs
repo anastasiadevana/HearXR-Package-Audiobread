@@ -22,7 +22,7 @@ namespace HearXR.Audiobread.SoundProperties
         public override float MaxLimit { get; } = 3.0f;
         
         public override bool ActiveByDefault { get; } = false;
-        
+        public override bool SetValuesOnPreparedToPlay { get; } = false;
         public override bool Randomizable { get; } = true;
         public override bool RandomizeOnSoundPlay { get; } = true;
         public override bool RandomizeOnChildPlay { get; } = true;

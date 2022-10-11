@@ -11,6 +11,8 @@ namespace HearXR.Audiobread
     {
         private SoundDefinition _soundDefinition;
 
+        // private int _selectedTab;
+
         private string _assetPath;
         protected Rect _position;
         protected SerializedProperty _wasChangedProperty;
@@ -30,6 +32,8 @@ namespace HearXR.Audiobread
 
         public override void OnInspectorGUI()
         {
+            // _selectedTab = GUILayout.Toolbar(_selectedTab, new [] {"Main", "Everything else"});
+            
             _position = EditorGUILayout.GetControlRect();
             
             var position = _position;

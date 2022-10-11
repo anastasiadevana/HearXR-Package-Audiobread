@@ -8,7 +8,7 @@ namespace HearXR.Audiobread
     {
         #region Editor Fields
         [SerializeField] protected SoundDefinition[] _children;
-        [SerializeField] protected CoreSchedulerSoundModuleDefinition _childSchedulerDefinition;
+        //[SerializeField] 
         // [SerializeField] protected ParentSoundPlaybackOrder _playbackOrder;
         // [SerializeField] protected bool _doNotRepeatLast;
         #endregion
@@ -29,6 +29,11 @@ namespace HearXR.Audiobread
         // public override ParentSoundPlaybackOrder PlaybackOrder => _playbackOrder;
         //
         // public override bool DoNotRepeatLast { get; }
+        #endregion
+        
+        #region Hidden Serialized Fields
+        // TODO: Hide in inspector later, when we're sure everything is working.
+        [SerializeField/*, HideInInspector*/] protected CoreSchedulerSoundModuleDefinition _childSchedulerDefinition;
         #endregion
         
         #region Properties

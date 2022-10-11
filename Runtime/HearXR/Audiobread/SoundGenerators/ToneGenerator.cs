@@ -1,28 +1,57 @@
 using System;
-using System.Collections.Generic;
-using HearXR.Audiobread.SoundProperties;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace HearXR.Audiobread
 {
-    public class ToneGenerator : SoundGeneratorUnityAudio<ToneGeneratorDefinition, ToneGenerator>
+    public class ToneGenerator : SoundGeneratorUnityAudio<ToneGeneratorDefinition, ToneGenerator>, IToneGeneratorSound
     {
         #region Private Fields
-        // Tone generator specific fields.
-        private float _toneDuration = 2.0f; // TODO: Put in definition.
-        private int _clipChannels = 2; // TODO: Should we do 1 channel???
-        private float _toneFrequency;
-        private WaveShape _waveShape;
+        // TODO: If the duration is longer than the clip length, there's a bad loop point. Figure out how to fix this.
+        // TODO: Maybe we need to switch to OnFilterRead instead.
+        private float _toneDuration = 10.0f;
+        private int _clipChannels = 1;
         private AudioClip _audioClip;
         private int _clipPosition;
-        private float _squareVolumeFactor = 0.4f; // TODO: Definition
-        private float _sawtoothVolumeFactor = 0.4f; // TODO: Put into definition
-        private float _sineVolumeFactor = 1.0f; // TODO: Put into definition
+
+        private ToneGeneratorSettings _settings;
+        private bool _initSettings;
+        
+        // private WaveShapeEnum _waveShape;
+        
+        // private float _toneFrequency;
+        
+        // TODO: Should these be in here?
+        private float _squareVolumeFactor = 0.4f;
+        private float _sawtoothVolumeFactor = 0.4f;
+        private float _sineVolumeFactor = 1.0f;
+        
+        private bool _audioClipCreated;
+        private bool _audioClipAssigned;
         #endregion
         
         #region Constructor
         public ToneGenerator(AudiobreadSource audiobreadSource) : base(audiobreadSource) {}
+        #endregion
+        
+        // TODO: Slide to new tone frequency instead of jumping.
+        #region IToneGeneratorSound
+        public ToneGeneratorSettings Settings
+        {
+            get
+            {
+                if (!_initSettings)
+                {
+                    _settings = new ToneGeneratorSettings();
+                    _initSettings = true;
+                }
+                return _settings;
+            }
+            set
+            {
+                _settings = value;
+                CreateAudioClip();
+            }
+        }
         #endregion
         
         #region Sound Abstract Methods
@@ -32,55 +61,11 @@ namespace HearXR.Audiobread
             _instancePlaybackInfo.scheduledStart = true;
             base.DoPlay(playFlags);
         }
-        
-        protected override void ApplySoundPropertyValues(SetValuesType setValuesType)
-        {
-            base.ApplySoundPropertyValues(setValuesType);
-            
-            if (!IsValid()) return;
-        
-            // TODO: SoundModule hookup.
-            // var properties = _soundPropertiesBySetType[setValuesType];
-            //
-            // for (int i = 0; i < properties.Length; ++i)
-            // {
-            //     if (!_calculators.ContainsKey(properties[i]))
-            //     {
-            //         Debug.LogError($"HEAR XR {this} doesn't have the calculator for {properties[i].name}");
-            //     }
-            //
-            //     _calculators[properties[i]].Calculate();
-            //     var value = _calculators[properties[i]].ValueContainer.FloatValue;
-            //
-            //     if (properties[i] == _volumeProperty)
-            //     {
-            //         _audioSource.volume = value;
-            //     }
-            //     else if (properties[i] == _pitchProperty)
-            //     {
-            //         _audioSource.pitch = value;
-            //     }
-            //     else if (properties[i] == _delayProperty)
-            //     {
-            //         continue; // Delay is used at the moment of playing.
-            //     }
-            //     // else if (properties[i] == _offsetProperty)
-            //     // {
-            //     //     // TODO: Generate a little clip info that will provide clip frequency, length, etc.
-            //     //     // var audioClip = _soundDefinition.AudioClip;
-            //     //     // _audioSource.timeSamples = TimeSamplesHelper.ValidateAudioClipOffset(in audioClip, value);
-            //     // }
-            //     else
-            //     {
-            //         Debug.LogWarning($"HEAR XR: {this} Unable to apply property {properties[i].name}");
-            //     }
-            // }
-        }
-        
+
         protected override void DoReleaseResources()
         {
             _inUse = false;
-            DestroyAudioClip();
+            UnassignAudioClip();
             ((ISoundInternal) this).DeInit();
             ResetToDefaults();
         }
@@ -92,7 +77,8 @@ namespace HearXR.Audiobread
             // TODO: NO MAGIC NUMBERS
             _clipSampleRate = 44100;
             
-            _toneFrequency = _soundDefinition.Frequency;
+            //_toneFrequency = _soundDefinition.Frequency.FloatValue;
+            // _toneFrequency = 440.0f;
 
             // Save some sample and frequency information about this clip for further calculations.
             _clipOneSampleDuration = TimeSamplesHelper.GetSingleSampleDuration(_clipSampleRate);
@@ -101,8 +87,7 @@ namespace HearXR.Audiobread
             _beforeCompletedSamplesThreshold = TimeSamplesHelper.TimeToSamples(SCHEDULING_BUFFER, _clipSampleRate);
 
             _audiobreadSource.Mode = AudiobreadSource.AudioSourceMode.ToneGenerator;
-            CreateAudioClip();
-            _audioSource.clip = _audioClip;
+            
             _audioSource.loop = true;
         }
         
@@ -112,32 +97,42 @@ namespace HearXR.Audiobread
             _clipSampleRate = AudioSettings.outputSampleRate;
         }
         #endregion
-
+        
+        
         #region Private Methods
-        // TODO: Do I actually need to destroy and create?
-        private void DestroyAudioClip()
+        private void UnassignAudioClip()
         {
             if (_audioClip == null) return;
             if (_audioSource != null)
             {
                 _audioSource.clip = null;
+                _audioClipAssigned = false;
             }
-            Object.Destroy(_audioClip);
-            _audioClip = null;
         }
 
         private void CreateAudioClip()
         {
-            if (_audioClip != null)
+            if (!_audioClipCreated)
             {
-                // TODO: CAN this ever happen???
-                Debug.LogWarning("ToneGenerator: Already have an AudioClip... How did that happen?");
+                if (_audioClip != null)
+                {
+                    Debug.LogWarning("ToneGenerator: Already have an AudioClip... How did that happen?");
+                }
+                else
+                {
+                    Debug.Log("ToneGenerator: Create audio clip");
+                    _audioClip = AudioClip.Create(_soundDefinition.Name, _clipTotalSamples, _clipChannels, _clipSampleRate, true, OnAudioClipRead, OnAudioClipSetPosition);   
+                }
+                _audioClipCreated = true;   
             }
-            else
-            {
-                Debug.Log("ToneGenerator: Create audio clip");
-                _audioClip = AudioClip.Create(_soundDefinition.Name, _clipTotalSamples, _clipChannels, _clipSampleRate, true, OnAudioClipRead, OnAudioClipSetPosition);   
-            }
+
+            AssignAudioClip();
+        }
+
+        private void AssignAudioClip()
+        {
+            _audioSource.clip = _audioClip;
+            _audioClipAssigned = true;
         }
         
         private void OnAudioClipRead(float[] buffer)
@@ -145,24 +140,24 @@ namespace HearXR.Audiobread
             // Using direct generation methods.
             for (var i = 0; i < buffer.Length; i += _clipChannels)
             {
-                switch (_waveShape)
+                switch (_settings.waveShape)
                 {
-                    case WaveShape.Sin:
+                    case WaveShapeEnum.Sin:
                         //buffer[i] = CreateSine(_timeIndex, _frequency, _sampleRate);
                         // TODO: Try to use complex number so that we don't have to run Sin all the time.
-                        buffer[i] = Mathf.Sin(Mathf.PI * 2.0f * _clipPosition * _toneFrequency / _clipSampleRate) * _sineVolumeFactor;
+                        buffer[i] = Mathf.Sin(Mathf.PI * 2.0f * _clipPosition * _settings.frequency / _clipSampleRate) * _sineVolumeFactor;
                         break;
                 
-                    case WaveShape.Square:
-                        buffer[i] = ((Mathf.Repeat(_clipPosition * _toneFrequency / _clipSampleRate,1) > 0.5f) ? 1.0f : -1.0f) * _squareVolumeFactor;
+                    case WaveShapeEnum.Square:
+                        buffer[i] = ((Mathf.Repeat(_clipPosition * _settings.frequency / _clipSampleRate,1) > 0.5f) ? 1.0f : -1.0f) * _squareVolumeFactor;
                         break;
                 
-                    case WaveShape.Sawtooth:
-                        buffer[i] = (Mathf.Repeat(_clipPosition * _toneFrequency / _clipSampleRate,1) * 2.0f - 1.0f) * _sawtoothVolumeFactor;
+                    case WaveShapeEnum.Sawtooth:
+                        buffer[i] = (Mathf.Repeat(_clipPosition * _settings.frequency / _clipSampleRate,1) * 2.0f - 1.0f) * _sawtoothVolumeFactor;
                         break;
                 
-                    case WaveShape.Triangle:
-                        buffer[i] = Mathf.PingPong(_clipPosition * 2.0f * _toneFrequency / _clipSampleRate,1) * 2.0f - 1.0f;
+                    case WaveShapeEnum.Triangle:
+                        buffer[i] = Mathf.PingPong(_clipPosition * 2.0f * _settings.frequency / _clipSampleRate,1) * 2.0f - 1.0f;
                         break;
                 
                     default:
@@ -195,7 +190,7 @@ namespace HearXR.Audiobread
         #region Helper Methods
         public override string ToString()
         {
-            return $"- TONE GENERATOR - [{Guid}] [{_soundDefinition.Frequency}]";
+            return $"- TONE GENERATOR - [{Guid}] [{_settings.frequency}]";
         }
         #endregion
     }

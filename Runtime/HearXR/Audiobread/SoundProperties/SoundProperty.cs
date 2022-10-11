@@ -11,7 +11,7 @@ namespace HearXR.Audiobread.SoundProperties
         public abstract bool Randomizable { get; }
         
         public abstract bool ActiveByDefault { get; }
-        
+        public abstract bool SetValuesOnPreparedToPlay { get; }
         public abstract bool RandomizeOnSoundPlay { get; }
     
         public abstract bool RandomizeOnChildPlay { get; }

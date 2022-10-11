@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace HearXR.Audiobread
@@ -482,6 +483,18 @@ namespace HearXR.Audiobread
             if (_instancePlaybackInfo.scheduledEnd)
             {
                 var timeRemaining = _clipEndTime - AudioSettings.dspTime;
+                
+                for (var i = 0; i < _timeBeforeListeners.Count; ++i)
+                {
+                    if (!_timeBeforeListeners[i].triggered && timeRemaining < _timeBeforeListeners[i].timeBefore)
+                    {
+                        // Debug.Log($"About to trigger TIME REMAINING {timeRemaining} REQUESTED {_timeBeforeListeners[i].timeBefore}");
+                        
+                        _timeBeforeListeners[i].listener.HandleTimeRemainingEvent(timeRemaining);
+                        _timeBeforeListeners[i].triggered = true;
+                    }
+                }
+
                 if (timeRemaining >= SCHEDULING_BUFFER) return;
                 
                 SetSchedulableState(SchedulableSoundState.Completing);
@@ -489,10 +502,21 @@ namespace HearXR.Audiobread
             else
             {
                 var samplesRemaining = _clipTotalSamples - _audioSource.timeSamples;
+                var timeRemaining = TimeSamplesHelper.SamplesToTime(samplesRemaining, _clipOneSampleDuration);
+                
+                for (var i = 0; i < _timeBeforeListeners.Count; ++i)
+                {
+                    if (!_timeBeforeListeners[i].triggered && _timeBeforeListeners[i].timeBefore < timeRemaining)
+                    {
+                        _timeBeforeListeners[i].listener.HandleTimeRemainingEvent(timeRemaining);
+                        _timeBeforeListeners[i].triggered = true;
+                    }
+                }
+                
                 if (samplesRemaining >= _beforeCompletedSamplesThreshold) return;
 
                 // Recalculate the end time, since it's probably more accurate now.
-                _clipEndTime = TimeSamplesHelper.SamplesToTime(samplesRemaining, _clipOneSampleDuration) + AudioSettings.dspTime;
+                _clipEndTime = timeRemaining + AudioSettings.dspTime;
                 SetSchedulableState(SchedulableSoundState.Completing);   
             }
         }
@@ -501,7 +525,7 @@ namespace HearXR.Audiobread
         {
             if (_audioSource.isPlaying || IsPaused()) return;
             SetPlaybackState(PlaybackState.Stopped);
-            SetStatus(SoundStatus.ReadyToPlay, true);
+            // SetStatus(SoundStatus.ReadyToPlay, true);
             SetSchedulableState(SchedulableSoundState.None);
             InvokeOnEnded(this);
         }

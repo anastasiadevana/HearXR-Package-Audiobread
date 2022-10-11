@@ -80,6 +80,7 @@ namespace HearXR.Audiobread
 
     public enum SetValuesType
     {
+        OnPreparedToPlay,
         OnBeforePlay,
         OnBeforeChildPlay,
         OnUpdate,
@@ -105,7 +106,7 @@ namespace HearXR.Audiobread
         Self
     }
     
-    public enum WaveShape
+    public enum WaveShapeEnum
     {
         Sin,
         Square,

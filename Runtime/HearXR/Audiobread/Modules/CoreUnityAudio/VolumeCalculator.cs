@@ -10,7 +10,9 @@ namespace HearXR.Audiobread.SoundProperties
     public class VolumeCalculator : FloatCalculator
     {
         public VolumeCalculator(FloatSoundProperty soundProperty) : base(soundProperty) {}
-        
+
+        public bool HasFadeOut => _hasFadeOut;
+
         public void SetFades(Fade fadeIn = null, Fade fadeOut = null)
         {
             _hasFadeIn = false;
@@ -106,6 +108,45 @@ namespace HearXR.Audiobread.SoundProperties
         #endregion
         
         #region Internal Methods
+        // TODO: Consolidate this with OnStopSound() - there's code duplication.
+        internal void StartFadeOut()
+        {
+            _shouldFadeIn = false;
+            if (!_hasFadeIn && !_hasFadeOut)
+            {
+                return;
+            }
+            
+            var fadeFrom = 1.0f;
+            
+            if (_fadeDirection == Fade.Direction.In || _fadeDirection == Fade.Direction.Out)
+            {
+                fadeFrom = _fadeFactor;
+                Audiobread.Instance.StopCoroutine(_fadeCoroutine);
+                _fadeDirection = Fade.Direction.None;
+            }
+            
+            // If there is no fadeout specified, or instant stop was requested, do not proceed.
+            if (_fadeOut == null || _fadeOut.duration <= 0.0f)
+            {
+                return;
+            }
+
+            // If we're already partially faded, don't take the entire time to do it.
+            var duration = _fadeOut.duration;
+            if (fadeFrom < 1.0f)
+            {
+                duration *= fadeFrom;
+            }
+
+            // TODO: Add ability to preview fades in editor.
+            if (Application.isPlaying)
+            {
+                _fadeCoroutine = Audiobread.Instance.StartCoroutine(DoFade(fadeFrom, 0.0f, duration));   
+            }
+            _fadeDirection = Fade.Direction.Out;
+        }
+        
         internal void PrepareToPlay(PlaySoundFlags playFlags = PlaySoundFlags.None)
         {
             _shouldFadeIn = false;

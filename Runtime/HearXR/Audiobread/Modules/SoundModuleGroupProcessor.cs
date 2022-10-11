@@ -102,6 +102,7 @@ namespace HearXR.Audiobread
             SoundDefinitionChangedEvent += moduleProcessor.HandleSoundDefinitionChanged;
             SoundUpdateTickEvent += moduleProcessor.HandleSoundUpdateTick;
             UnityAudioGeneratorTickEvent += moduleProcessor.HandleUnityAudioGeneratorTickEvent;
+            PreparedToPlayEvent += moduleProcessor.HandlePreparedToPlay;
             BeforeChildPlayEvent += moduleProcessor.HandleBeforeChildPlay;
             BeforePlayEvent += moduleProcessor.HandleBeforePlay;
             ParentSetEvent += moduleProcessor.HandleSetParent;
@@ -117,6 +118,7 @@ namespace HearXR.Audiobread
             SoundDefinitionChangedEvent -= moduleProcessor.HandleSoundDefinitionChanged;
             SoundUpdateTickEvent -= moduleProcessor.HandleSoundUpdateTick;
             UnityAudioGeneratorTickEvent -= moduleProcessor.HandleUnityAudioGeneratorTickEvent;
+            PreparedToPlayEvent -= moduleProcessor.HandlePreparedToPlay;
             BeforeChildPlayEvent -= moduleProcessor.HandleBeforeChildPlay;
             BeforePlayEvent -= moduleProcessor.HandleBeforePlay;
             ParentSetEvent -= moduleProcessor.HandleSetParent;
@@ -147,6 +149,12 @@ namespace HearXR.Audiobread
         internal void HandleUnityAudioGeneratorTickEvent(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo)
         {
             UnityAudioGeneratorTickEvent?.Invoke(ref instancePlaybackInfo);
+        }
+
+        private event Sound.BeforePlayAction PreparedToPlayEvent;
+        internal void HandlePreparedToPlay(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, PlaySoundFlags playSoundFlags = PlaySoundFlags.None)
+        {
+            PreparedToPlayEvent?.Invoke(ref instancePlaybackInfo);
         }
         
         private event Sound.BeforePlayAction BeforeChildPlayEvent;

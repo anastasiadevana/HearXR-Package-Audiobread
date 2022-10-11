@@ -65,6 +65,11 @@ namespace HearXR.Audiobread
             OnUnityAudioGeneratorTick(ref instancePlaybackInfo);
         }
 
+        internal void HandlePreparedToPlay(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, PlaySoundFlags playSoundFlags = PlaySoundFlags.None)
+        {
+            OnPreparedToPlay(ref instancePlaybackInfo);
+        }
+        
         internal void HandleBeforeChildPlay(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, PlaySoundFlags playSoundFlags)
         {
             OnBeforeChildPlay(ref instancePlaybackInfo, playSoundFlags);
@@ -110,6 +115,7 @@ namespace HearXR.Audiobread
         protected abstract void OnSoundDefinitionChanged();
         protected abstract void DoInit();
         protected abstract void OnSoundUpdateTick(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo);
+        protected abstract void OnPreparedToPlay(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo);
         protected abstract void OnBeforeChildPlay(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, PlaySoundFlags playSoundFlags);
         protected abstract void OnBeforePlay(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, PlaySoundFlags playSoundFlags);
         protected abstract void OnSetParent(ISound parentSound);
@@ -188,6 +194,15 @@ namespace HearXR.Audiobread
                 
                 _calculators[_soundProperties[i]].AddInfluence(parentValueContainer);
             }
+        }
+
+        protected override void OnPreparedToPlay(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo)
+        {
+            // TODO: HERE!!!
+            RegenerateCalculators(SetValuesType.OnPreparedToPlay);
+            if (Bypass) return;
+            
+            ApplySoundModifiers(ref instancePlaybackInfo, SetValuesType.OnPreparedToPlay);
         }
 
         protected override void OnBeforeChildPlay(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, PlaySoundFlags playSoundFlags)

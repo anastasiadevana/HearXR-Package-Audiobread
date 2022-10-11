@@ -66,6 +66,7 @@ namespace HearXR.Audiobread
         protected event TickAction SoundUpdateTickEvent;
         protected event TickAction UnityAudioGeneratorTickEvent;
         public delegate void BeforePlayAction(ref SoundInstancePlaybackInfo instancePlaybackInfo, PlaySoundFlags playSoundFlags = PlaySoundFlags.None);
+        public event BeforePlayAction OnPreparedToPlay;
         public event BeforePlayAction BeforeChildPlayEvent;
         public event BeforePlayAction BeforePlayEvent;
         protected event Action<ISound> ParentSetEvent;
@@ -180,7 +181,13 @@ namespace HearXR.Audiobread
         void ISoundInternal.PrepareToPlay()
         {
             if (!CanPrepareToPlay()) return;
-            SetStatus(SoundStatus.ReadyToPlay, true);
+            
+            // Avoid firing the event twice.
+            if (!IsReadyToPlay())
+            {
+                SetStatus(SoundStatus.ReadyToPlay, true);
+                OnPreparedToPlay?.Invoke(ref _instancePlaybackInfo);   
+            }
         }
 
         void ISoundInternal.DeInit()
@@ -292,6 +299,7 @@ namespace HearXR.Audiobread
             SoundDefinitionChangedEvent += _soundModuleGroupProcessor.HandleSoundDefinitionChanged;
             SoundUpdateTickEvent += _soundModuleGroupProcessor.HandleSoundUpdateTick;
             UnityAudioGeneratorTickEvent += _soundModuleGroupProcessor.HandleUnityAudioGeneratorTickEvent;
+            OnPreparedToPlay += _soundModuleGroupProcessor.HandlePreparedToPlay;
             BeforeChildPlayEvent += _soundModuleGroupProcessor.HandleBeforeChildPlay;
             BeforePlayEvent += _soundModuleGroupProcessor.HandleBeforePlay;
             ParentSetEvent += _soundModuleGroupProcessor.HandleSetParent;
@@ -305,6 +313,7 @@ namespace HearXR.Audiobread
             SoundDefinitionChangedEvent -= _soundModuleGroupProcessor.HandleSoundDefinitionChanged;
             SoundUpdateTickEvent -= _soundModuleGroupProcessor.HandleSoundUpdateTick;
             UnityAudioGeneratorTickEvent -= _soundModuleGroupProcessor.HandleUnityAudioGeneratorTickEvent;
+            OnPreparedToPlay -= _soundModuleGroupProcessor.HandlePreparedToPlay;
             BeforeChildPlayEvent -= _soundModuleGroupProcessor.HandleBeforeChildPlay;
             BeforePlayEvent -= _soundModuleGroupProcessor.HandleBeforePlay;
             ParentSetEvent -= _soundModuleGroupProcessor.HandleSetParent;
@@ -523,6 +532,30 @@ namespace HearXR.Audiobread
         }
 
         public abstract TProperties GetModuleSoundDefinitions<TProperties>(SoundModule soundModule) where TProperties : SoundModuleDefinition;
+
+        // protected Dictionary<ITimeBeforeListener, double> _timeBeforeListeners = new Dictionary<ITimeBeforeListener, double>();
+        protected List<TimeBeforeListenerSettings> _timeBeforeListeners = new List<TimeBeforeListenerSettings>();
+
+        protected class TimeBeforeListenerSettings
+        {
+            public ITimeBeforeListener listener;
+            public double timeBefore;
+            public bool triggered;
+        }
+        
+        public void RegisterTimeBeforeListener(ITimeBeforeListener listener, double timeBefore)
+        {
+            // TODO: Check if one already exists.
+            var listenerSettings = new TimeBeforeListenerSettings {listener = listener, timeBefore = timeBefore};
+            _timeBeforeListeners.Add(listenerSettings);
+            
+            // TODO: Sort by timeBefore in descending order.
+        }
+
+        public void UnregisterTimeBeforeListener(ITimeBeforeListener listener)
+        {
+            // TODO: Unregister.
+        }
         #endregion
 
         #region Public Methods

@@ -10,6 +10,11 @@ namespace HearXR.Audiobread.SoundProperties
 
         protected override bool TryInitSoundProperty(Rect position, SerializedProperty property, GUIContent label)
         {
+            if (!(property.serializedObject.targetObject is ISoundModuleDefinition))
+            {
+                Debug.LogError($"{property.serializedObject.targetObject} is not an ISoundModuleDefinition");
+            }
+            
             var soundModuleDefinition = (ISoundModuleDefinition) property.serializedObject.targetObject;
             if (soundModuleDefinition == null)
             {

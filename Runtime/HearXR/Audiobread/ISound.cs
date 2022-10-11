@@ -95,6 +95,10 @@ namespace HearXR.Audiobread
         void RefreshSoundDefinition(); // TODO: Move to internal.
 
         TProperties GetModuleSoundDefinitions<TProperties>(SoundModule soundModule) where TProperties : SoundModuleDefinition;
+
+        void RegisterTimeBeforeListener(ITimeBeforeListener listener, double timeBefore);
+
+        void UnregisterTimeBeforeListener(ITimeBeforeListener listener);
         #endregion
     }
 

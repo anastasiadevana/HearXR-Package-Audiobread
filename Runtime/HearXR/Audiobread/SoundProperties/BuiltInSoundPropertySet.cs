@@ -57,6 +57,7 @@ namespace HearXR.Audiobread.SoundProperties
             
             lock (_propertiesBySetType)
             {
+                var updatableOnPreparedToPlay = new List<SoundProperty>();
                 List<SoundProperty> updatableOnPlay = new List<SoundProperty>();
                 List<SoundProperty> updatableOnChildPlay = new List<SoundProperty>();
                 List<SoundProperty> continuous = new List<SoundProperty>();
@@ -76,11 +77,13 @@ namespace HearXR.Audiobread.SoundProperties
                     _soundPropertiesBySystemType.Add(type, soundProperty);
                     //Debug.Log($"Added {type} to the registry");
 
+                    if (soundProperty.SetValuesOnPreparedToPlay) { updatableOnPreparedToPlay.Add(soundProperty); }
                     if (soundProperty.RandomizeOnSoundPlay) { updatableOnPlay.Add(soundProperty); }
                     if (soundProperty.RandomizeOnChildPlay) { updatableOnChildPlay.Add(soundProperty); }
                     if (soundProperty.ContinuousUpdate) { continuous.Add(soundProperty); }
                 }
 
+                _propertiesBySetType.Add(SetValuesType.OnPreparedToPlay, updatableOnPreparedToPlay.ToArray());
                 _propertiesBySetType.Add(SetValuesType.OnBeforePlay, updatableOnPlay.ToArray());
                 _propertiesBySetType.Add(SetValuesType.OnBeforeChildPlay, updatableOnChildPlay.ToArray());
                 _propertiesBySetType.Add(SetValuesType.OnUpdate, continuous.ToArray());   

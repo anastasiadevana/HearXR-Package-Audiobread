@@ -60,7 +60,7 @@ namespace HearXR.Audiobread
                UpdatePlaybackState(); 
           }
 
-          protected override bool TryGetNewGenerator()
+          protected override bool TryGetNewGenerator() // Prepare to play from here
           {
                if (!_audiobreadPool.TryGetAudioSource(out var source))
                {
@@ -116,7 +116,7 @@ namespace HearXR.Audiobread
           #region Helper Methods
           public override string ToString()
           {
-               return $"- TONE GENERATOR WRAPPER - [{_soundDefinition.Frequency}]";
+               return $"- TONE GENERATOR WRAPPER";
           }
           #endregion
      }

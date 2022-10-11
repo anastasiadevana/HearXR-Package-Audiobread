@@ -17,6 +17,7 @@ namespace HearXR.Audiobread.SoundProperties
         // private GUIStyle popupStyle;
         
         #region Properties
+        // TODO: Consolidate the styles somewhere.
         protected GUIStyle ReadOnlyLabelStyle
         {
             get
@@ -95,8 +96,8 @@ namespace HearXR.Audiobread.SoundProperties
         private GUIStyle _readOnlyLabelStyle;
         
         private GUIStyle _header2Style;
-        private readonly float _header2RectHeight = 26.0f;
-        private readonly Color _header2RectColor = new Color(0.016f, 0.02f, 0.137f);
+        protected readonly float _header2RectHeight = 26.0f;
+        protected readonly Color _header2RectColor = new Color(0.016f, 0.02f, 0.137f);
         
         private GUIStyle _header3Style;
         
@@ -124,7 +125,7 @@ namespace HearXR.Audiobread.SoundProperties
         protected readonly float _baseValueSliderRightOffset = 16.0f;
         protected readonly Color _minMaxSliderOverlayColor = new Color(0.957f, 0.098f, 0.976f);
 
-        private readonly float _header3RectHeight = 24.0f;
+        protected readonly float _header3RectHeight = 24.0f;
         private readonly Color _header3RectColor = Color.yellow;
         
         protected float _rowX;
@@ -157,7 +158,11 @@ namespace HearXR.Audiobread.SoundProperties
             _soundPropertyProp = property.FindPropertyRelative("soundProperty");
             _activeProp = property.FindPropertyRelative("active");
             
-            if (!TryInitSoundProperty(position, property, label)) return;
+            if (!TryInitSoundProperty(position, property, label))
+            {
+                Debug.Log("Unable to init sound property!");
+                return;
+            }
             
             // Cache some values.
             _rowX = position.x;
