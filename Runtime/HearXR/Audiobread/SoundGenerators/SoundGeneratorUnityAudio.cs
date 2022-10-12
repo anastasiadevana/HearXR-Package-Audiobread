@@ -49,7 +49,7 @@ namespace HearXR.Audiobread
         // Pause / resume support.
         protected double _scheduledTimeRemainingOnPause;
         
-        protected const double SCHEDULING_BUFFER = 0.1f; // TODO: Move to Audiobread core.
+        // protected const double SCHEDULING_BUFFER = 0.1f; // TODO: Move to Audiobread core.
         #endregion
         
         #region Private Fields

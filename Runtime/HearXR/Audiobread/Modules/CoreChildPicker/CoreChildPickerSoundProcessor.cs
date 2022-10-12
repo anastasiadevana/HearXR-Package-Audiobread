@@ -7,7 +7,9 @@ namespace HearXR.Audiobread
     {
         #region Private Fields
         private IContainerSoundDefinition _soundDefinition;
-        private bool _enabled = false; // TODO: Do something about this?
+        
+        // TODO: Move this higher, rename it, and actually check it.
+        private bool _enabled = false;
         #endregion
 
         #region Constructor

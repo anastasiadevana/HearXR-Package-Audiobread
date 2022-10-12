@@ -8,7 +8,7 @@ namespace HearXR.Audiobread
     [CustomEditor(typeof(AudiobreadClipDefinition), true)]
     public class AudiobreadClipDefinitionEditor : SoundDefinitionEditor
     {
-         private bool _positionSet;
+         // private bool _positionSet;
          
 //         // public float GetPropertyHeight(SerializedProperty property, GUIContent label)
 //         // {
@@ -19,7 +19,7 @@ namespace HearXR.Audiobread
          public void SetPosition(Rect position)
          {
              _position = position;
-             _positionSet = true;
+             // _positionSet = true;
          }
          
 //         public override void OnInspectorGUI()

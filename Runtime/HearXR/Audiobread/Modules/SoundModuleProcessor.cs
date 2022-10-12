@@ -25,6 +25,7 @@ namespace HearXR.Audiobread
             protected set => _sound = value;
         }
 
+        // TODO: I think there are other methods where we need to check this and bail out early.
         public bool Bypass { get; protected set; }
         #endregion
         
@@ -251,7 +252,6 @@ namespace HearXR.Audiobread
 
         protected override void OnPreparedToPlay(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo)
         {
-            // TODO: HERE!!!
             RegenerateCalculators(SetValuesType.OnPreparedToPlay);
             if (Bypass) return;
             
