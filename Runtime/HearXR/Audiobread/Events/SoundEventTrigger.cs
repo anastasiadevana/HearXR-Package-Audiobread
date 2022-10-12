@@ -5,6 +5,7 @@ using UnityEngine.Serialization;
 
 namespace HearXR.Audiobread
 {
+    [DefaultExecutionOrder(-40)]
     public class SoundEventTrigger : MonoBehaviour
     {
         public SoundTriggerTag soundTriggerTag;
@@ -39,42 +40,12 @@ namespace HearXR.Audiobread
         
         private void OnEnable()
         {
-            
-            
-            
-            
-            
-            
-            
-            
             TryRaiseBuiltInEvent(_raiseOnEnable, BuiltInData.Events.onEnable);
-            
-            
-            
-            
-            
-            
-            
         }
         
         private void OnDisable()
         {
-            
-            
-            
-            
-            
-            
-            
-            
             TryRaiseBuiltInEvent(_raiseOnDisable, BuiltInData.Events.onDisable);
-            
-            
-            
-            
-            
-            
-            
         }
 
         private void TryRaiseBuiltInEvent(bool doRaise, BuiltInSoundEvent soundEvent)

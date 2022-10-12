@@ -4,6 +4,7 @@ namespace HearXR.Audiobread.SoundProperties
 {
     [System.Serializable] public class OffsetDefinition : FloatDefinition<Offset> {}
     
+    // TODO: Re-enable offset property (on core Unity audio).
     [CreateAssetMenu (menuName = "Audiobread/Sound Property/Offset Property")]
     public class Offset : FloatSoundProperty
     {

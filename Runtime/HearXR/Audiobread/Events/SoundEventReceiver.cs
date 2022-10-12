@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace HearXR.Audiobread
 {
+    [DefaultExecutionOrder(-50)]
     public class SoundEventReceiver : MonoBehaviour
     {
         // TODO: Add another static reference.
@@ -17,12 +18,13 @@ namespace HearXR.Audiobread
         }
 
         // TODO: Custom settings for each.
+        // TODO: Move to main enums place.
         public enum SoundAction
         {
             Play,
             Stop,
             PlayMultiple,
-            StopMutiple,
+            StopMultiple,
             Pause,
             Resume,
             PauseMultiple,
@@ -41,7 +43,7 @@ namespace HearXR.Audiobread
             public SoundEvent soundEvents; // TODO: Validate this!
             public SoundTriggerTag filterSoundTriggerByTag;
             public GameObject filterTriggerByReference;
-            public ISoundDefinition soundDefinition;
+            public SoundDefinition soundDefinition;
             public TargetType targetType; // TODO: Move to sound action
             public GameObject specifyOtherTarget; // TODO: Move to sound action
             public List<SoundAction> actions;
@@ -111,11 +113,11 @@ namespace HearXR.Audiobread
                     {
                         case SoundAction.Play:
                             // TODO: Handle persistent sounds. MAYBE persistence should be on the sound definition side?
-                            //Audiobread.Instance.PlaySound(soundEventReactions[i].soundDefinition, target);
+                            Audiobread.Instance.PlaySound(soundEventReactions[i].soundDefinition, target);
                             break;
                         
                         case SoundAction.Stop:
-                            //Audiobread.Instance.StopSounds(soundEventReactions[i].soundDefinition, target);
+                            Audiobread.Instance.StopSounds(soundEventReactions[i].soundDefinition, target);
                             break;
                         
                         /*
@@ -123,7 +125,7 @@ namespace HearXR.Audiobread
                             throw new NotImplementedException();
                             break;
                         
-                        case SoundAction.StopMutiple:
+                        case SoundAction.StopMultiple:
                             throw new NotImplementedException();
                             break;
                         
