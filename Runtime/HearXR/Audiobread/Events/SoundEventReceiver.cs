@@ -5,6 +5,7 @@ using UnityEngine;
 namespace HearXR.Audiobread
 {
     [DefaultExecutionOrder(-50)]
+    [AddComponentMenu("Audiobread/Sound Event Receiver")]
     public class SoundEventReceiver : MonoBehaviour
     {
         // TODO: Add another static reference.

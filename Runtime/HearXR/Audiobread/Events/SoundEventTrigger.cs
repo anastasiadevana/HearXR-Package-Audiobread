@@ -6,6 +6,7 @@ using UnityEngine.Serialization;
 namespace HearXR.Audiobread
 {
     [DefaultExecutionOrder(-40)]
+    [AddComponentMenu("Audiobread/Sound Event Trigger")]
     public class SoundEventTrigger : MonoBehaviour
     {
         public SoundTriggerTag soundTriggerTag;

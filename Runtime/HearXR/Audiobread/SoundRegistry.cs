@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +7,11 @@ namespace HearXR.Audiobread
     [ExecuteAlways]
     public class SoundRegistry
     {
+        #region Events
+        public static event Action<ISound> SoundRegisteredEvent;
+        public static event Action<ISound> SoundUnregisteredEvent;
+        #endregion
+        
         #region Properties
         //public static SoundRegistry Instance => _instance ? _instance : (_instance = new SoundRegistry());
         public static SoundRegistry Instance
@@ -23,19 +29,19 @@ namespace HearXR.Audiobread
         }
 
         public List<ISound> Sounds => _sounds;
-        public System.Guid Guid => _guid;
+        public Guid Guid => _guid;
         #endregion
 
         #region Private Fields
         private static SoundRegistry _instance;
-        private System.Guid _guid;
+        private Guid _guid;
         protected List<ISound> _sounds = new List<ISound>();
         #endregion
         
         #region Constructor
         protected SoundRegistry()
         {
-            _guid = System.Guid.NewGuid();
+            _guid = Guid.NewGuid();
         }
         #endregion
 
@@ -43,13 +49,13 @@ namespace HearXR.Audiobread
         internal void RegisterSoundInstance(ISound sound)
         {
             _sounds.Add(sound);
-            //Debug.Log($"HEAR XR: Added {sound} to registry. Total registered sounds {_sounds.Count}");
+            SoundRegisteredEvent?.Invoke(sound);
         }
 
         internal void UnregisterSoundInstance(ISound sound)
         {
             _sounds.Remove(sound);
-            // Debug.Log($"HEAR XR: Removed {sound} from registry. Total registered sounds {_sounds.Count}");
+            SoundUnregisteredEvent?.Invoke(sound);
         }
         
         internal void ClearRegistry()

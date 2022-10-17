@@ -5,7 +5,8 @@ using UnityEngine;
 
 namespace HearXR.Audiobread
 {
-    [DefaultExecutionOrder(-100)]
+    [DefaultExecutionOrder(-200)]
+    [AddComponentMenu("Audiobread/Audiobread Manager")]
     public class Audiobread : SoundManager
     {
         #region Editor Fields
