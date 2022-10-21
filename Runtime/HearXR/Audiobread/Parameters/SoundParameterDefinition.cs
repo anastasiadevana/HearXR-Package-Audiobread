@@ -22,5 +22,25 @@ namespace HearXR.Audiobread
         {
             return curve.Evaluate(parameterValue);
         }
+        
+        
+        public Parameter Parameter
+        {
+            get => parameter;
+            set => parameter = value;
+        }
+
+        public SoundProperty SoundProperty
+        {
+            get => soundProperty;
+            set => soundProperty = value;
+        }
+
+        public AnimationCurve Curve
+        {
+            get => curve;
+            set => curve = value;
+        }
+
     }   
 }
