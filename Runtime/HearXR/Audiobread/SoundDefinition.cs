@@ -37,17 +37,17 @@ namespace HearXR.Audiobread
 
         public string Name => name;
         
-        // public VolumeDefinition VolumeDefinition => _volumeDefinition;
-        
         public List<SoundParameterDefinition> Parameters => _parameters;
+
+        public float ChanceToPlay => chanceToPlay;
+
+        public string SoundDesignerNotes => soundDesignerNotes;
 
         public List<SoundModule> EnabledModules => _enabledSoundModules;
 
         public List<SoundModule> GetCompatibleModules()
         {
             return BuiltInData.SoundModuleManager.GetCompatibleModules(this);
-            // CacheCompatibleModules();
-            // return _compatibleSoundModules;
         }
         #endregion
 

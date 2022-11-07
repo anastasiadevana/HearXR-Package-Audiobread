@@ -2,6 +2,8 @@ using UnityEngine;
 
 namespace HearXR.Audiobread
 {
+    // TODO: Have built-in parameters, like distance and angle that get set automagically.
+
     /// <summary>
     /// Describes a parameter and its behavior.
     /// </summary>
