@@ -38,7 +38,7 @@ namespace HearXR.Audiobread
         public string Name => name;
         
         public List<SoundParameterDefinition> Parameters => _parameters;
-
+            
         // TODO: Use this.
         public float ChanceToPlay => chanceToPlay;
 
