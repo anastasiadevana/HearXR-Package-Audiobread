@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using HearXR.Audiobread.SoundProperties;
 
 namespace HearXR.Audiobread
 {
@@ -18,9 +17,11 @@ namespace HearXR.Audiobread
 
         List<SoundModuleDefinition> ModuleSoundDefinitions { get; }
         
-        // VolumeDefinition VolumeDefinition { get; }
-        
         List<SoundParameterDefinition> Parameters { get; }
+        
+        float ChanceToPlay { get; }
+
+        string SoundDesignerNotes { get; }
 
         List<SoundModule> GetCompatibleModules();
 

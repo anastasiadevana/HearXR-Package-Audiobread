@@ -179,7 +179,7 @@ namespace HearXR.Audiobread
                 // TODO: SoundParameterDefinition should handle easing here.
                 _parameters[parameter] = parameterValue;
                 // Debug.Log($"Set parameter {parameter} to {parameterValue} on {this}");
-                Debug.Log($"{parameterValue}");
+                // Debug.Log($"{parameterValue}");
             }
         }
 
@@ -210,10 +210,10 @@ namespace HearXR.Audiobread
                 }
             }
 
-            if (_parameters.Count > 0)
-            {
-                Debug.Log($"{_parameters.Count} {this}");   
-            }
+            // if (_parameters.Count > 0)
+            // {
+            //     Debug.Log($"{_parameters.Count} {this}");   
+            // }
 
             PostInitCalculators();
         }
