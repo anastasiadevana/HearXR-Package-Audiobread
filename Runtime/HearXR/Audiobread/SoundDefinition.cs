@@ -37,12 +37,24 @@ namespace HearXR.Audiobread
 
         public string Name => name;
         
-        public List<SoundParameterDefinition> Parameters => _parameters;
-            
-        // TODO: Use this.
-        public float ChanceToPlay => chanceToPlay;
+        public List<SoundParameterDefinition> Parameters
+        {
+            get => _parameters;
+            set => _parameters = value;
+        }
 
-        public string SoundDesignerNotes => soundDesignerNotes;
+        // TODO: Use this.
+        public float ChanceToPlay
+        {
+            get => chanceToPlay;
+            set => chanceToPlay = value;
+        }
+
+        public string SoundDesignerNotes
+        {
+            get => soundDesignerNotes;
+            set => soundDesignerNotes = value;
+        }
 
         public List<SoundModule> EnabledModules => _enabledSoundModules;
 
@@ -87,7 +99,6 @@ namespace HearXR.Audiobread
         {
             if (_enabledSoundModules.Contains(module)) return null;
             _enabledSoundModules.Add(module);
-            // Debug.Log($"Just added {module} currently enabled {_enabledSoundModules.Count}");
             var soundModuleSoundDefinition = module.CreateModuleSoundDefinition();
             _moduleSoundDefinitions.Add(soundModuleSoundDefinition);
             return soundModuleSoundDefinition;
