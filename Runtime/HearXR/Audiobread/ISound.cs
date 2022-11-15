@@ -38,6 +38,8 @@ namespace HearXR.Audiobread
         
         GameObject SoundSourceObject { get; set; }
         
+        MidiNoteInfo MidiNoteInfo { get; set; }
+        
         SchedulableSoundState SchedulableState { get; }
         #endregion
 

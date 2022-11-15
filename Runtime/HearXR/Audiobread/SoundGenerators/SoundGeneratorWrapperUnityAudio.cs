@@ -159,6 +159,9 @@ namespace HearXR.Audiobread
                 return false;
             }
             
+            // Assign MIDI note info.
+            _primedGenerator.MidiNoteInfo = _midiNoteInfo;
+            
             ((ISoundInternal) _primedGenerator).PrepareToPlay();
             return true;
         }

@@ -31,6 +31,12 @@ namespace HearXR.Audiobread
             base.PostSetSoundSourceObject();
             SetSoundSourceObjectMultiple(GetChildren(), SoundSourceObject);
         }
+
+        protected override void PostSetMidiNoteInfo()
+        {
+            base.PostSetMidiNoteInfo();
+            SetMidiNoteInfoMultiple(GetChildren(), MidiNoteInfo);
+        }
         #endregion
 
         #region Sound<TDefinition, TSelf> Overrides

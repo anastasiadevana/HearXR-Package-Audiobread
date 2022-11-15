@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace HearXR.Audiobread
 {
+    // TODO: THIS IS NO LONGER USED. DELETE.
     public class SequenceSound : BaseContainerSound<SequenceSoundDefinition, SequenceSound>
     {
         #region Protected Fields

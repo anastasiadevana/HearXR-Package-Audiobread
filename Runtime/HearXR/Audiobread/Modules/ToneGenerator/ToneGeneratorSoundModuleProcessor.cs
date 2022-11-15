@@ -57,6 +57,16 @@ namespace HearXR.Audiobread
 
             settings.frequency = frequency;
             settings.waveShape = waveShape;
+            
+            // If we have MIDI note info, override the frequency completely.
+            if (MySound.MidiNoteInfo != null)
+            {
+                // Debug.Log("Sound has midi note info");
+                
+                // Convert MIDI note number to frequency.
+                settings.frequency = Audiobread.NoteNumberToFrequency(MySound.MidiNoteInfo.noteNumber);
+            }
+            
             _toneGeneratorSound.Settings = settings;
         }
     }

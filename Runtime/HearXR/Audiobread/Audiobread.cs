@@ -23,6 +23,8 @@ namespace HearXR.Audiobread
         #region Constants
         public const double INACTIVE_START_TIME = -1.0d;
         public const double INVALID_TIME_DURATION = -1.0d;
+        public const int NOTE_NUMBER_C4 = 60;
+        public const int NOTE_NUMBER_A4 = 69;
         #endregion
         
         #region Private Fields
@@ -151,6 +153,47 @@ namespace HearXR.Audiobread
                 stopThese[i].Stop(flags);
             }
         }
+
+        public ISound PlayMidiNote(ISoundDefinition soundDefinition, MidiNoteInfo midiNoteInfo, PlaySoundFlags playFlags = PlaySoundFlags.None)
+        {
+            if (soundDefinition == null)
+            {
+                Debug.LogError("HEAR XR: Audiobread: Please provide a sound definition to play.");
+                return default;
+            }
+            
+            var sound = soundDefinition.CreateSound();
+            if (!sound.IsValid())
+            {
+                Debug.LogError("HEAR XR: Audiobread: Unable to instantiate sound.");
+                return default;
+            }
+            
+            sound.MidiNoteInfo = midiNoteInfo;
+            sound.Play(playFlags);
+            return sound;
+        }
+
+        public ISound PlayMidiNote(ISoundDefinition soundDefinition,  MidiNoteInfo midiNoteInfo, GameObject soundSourceObject, PlaySoundFlags playFlags = PlaySoundFlags.None)
+        {
+            if (soundDefinition == null)
+            {
+                Debug.LogError("HEAR XR: Please provide a sound definition to play.");
+                return default;
+            }
+
+            var sound = soundDefinition.CreateSound();
+            if (!sound.IsValid())
+            {
+                Debug.LogError("HEAR XR: Audiobread: Unable to instantiate sound.");
+                return default;
+            }
+
+            sound.SoundSourceObject = soundSourceObject;
+            sound.MidiNoteInfo = midiNoteInfo;
+            sound.Play(playFlags);
+            return sound;
+        }
         #endregion
         
         #region Static Internal Methods
@@ -191,6 +234,21 @@ namespace HearXR.Audiobread
         internal static double AbsDouble(double value)
         {
             return (value >= 0.0d) ? value : value * -1.0d;
+        }
+
+        internal static float NoteNumberToFrequency(int noteNumber)
+        {
+            return 440.0f * NoteNumberToFrequency(noteNumber, NOTE_NUMBER_A4);
+        }
+
+        internal static float NoteNumberToFrequency(int noteNumber, int baseNote)
+        {
+            return SemitonesToFrequency(noteNumber - baseNote);
+        }
+
+        private static float SemitonesToFrequency(float semitones)
+        {
+            return Mathf.Pow(2.0f, semitones / 12.0f);
         }
         
         // TODO: This should go in Common.

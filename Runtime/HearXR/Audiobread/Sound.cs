@@ -112,6 +112,18 @@ namespace HearXR.Audiobread
         }
         protected GameObject _soundSourceObject;
 
+        public MidiNoteInfo MidiNoteInfo
+        {
+            get => _midiNoteInfo;
+            set
+            {
+                _midiNoteInfo = value;
+                PostSetMidiNoteInfo();
+            }
+        }
+
+        protected MidiNoteInfo _midiNoteInfo;
+
         public ISound ParentSound
         {
             get => _parentSound;
@@ -207,11 +219,7 @@ namespace HearXR.Audiobread
         internal abstract void AddSoundPropertyInfluence(SoundProperty property, ValueContainer influence);
         internal abstract void RemoveSoundPropertyInfluence<T>(ValueContainer influence) where T : SoundProperty;
         //internal abstract void RemoveSoundPropertyInfluence(SoundProperty property, ValueContainer influence);
-        
-        // NOTE: Moved to SoundModuleProcessor
-        //protected abstract void RefreshCalculators();
-        // END
-        
+
         protected abstract void DoRefreshSoundDefinition();
         #endregion
 
@@ -219,6 +227,8 @@ namespace HearXR.Audiobread
         internal virtual void DoUpdate() {}
 
         protected virtual void PostSetSoundSourceObject() {}
+
+        protected virtual void PostSetMidiNoteInfo() {}
 
         protected virtual void PostSetParent(ISound previousParent, ISound newParent)
         {
@@ -746,6 +756,14 @@ namespace HearXR.Audiobread
                 sounds[i].SoundSourceObject = soundSourceObject;
             }
         }
+
+        protected static void SetMidiNoteInfoMultiple(IReadOnlyList<ISound> sounds, MidiNoteInfo midiNoteInfo)
+        {
+            for (var i = 0; i < sounds.Count; ++i)
+            {
+                sounds[i].MidiNoteInfo = midiNoteInfo;
+            }
+        }
         
         protected static void UpdateSoundMultiple(IReadOnlyList<ISound> sounds) 
         {
@@ -908,7 +926,7 @@ namespace HearXR.Audiobread
             PostInit(initSoundFlags);
             if (!IsValid()) return;
 
-            ((ISoundInternal) this).PrepareToPlay();
+            // ((ISoundInternal) this).PrepareToPlay();
         }
         #endregion
 
@@ -924,6 +942,29 @@ namespace HearXR.Audiobread
 
         public override void Play(PlaySoundFlags playSoundFlags = PlaySoundFlags.None)
         {
+            // If we have MIDI note information...
+            if (_midiNoteInfo != null)
+            {
+                // If we have a valid start time, change to scheduled sound.
+                if (_midiNoteInfo.startTime > Audiobread.INACTIVE_START_TIME)
+                {
+                    _instancePlaybackInfo.scheduledStart = true;
+                    _instancePlaybackInfo.startTime = _midiNoteInfo.startTime;
+                }
+                
+                // If we have valid duration, add that.
+                if (_midiNoteInfo.duration > Audiobread.INVALID_TIME_DURATION)
+                {
+                    _instancePlaybackInfo.scheduledEnd = true;
+                    _instancePlaybackInfo.duration = _midiNoteInfo.duration;
+                }
+            }
+            
+            if (!IsReadyToPlay())
+            {
+                ((ISoundInternal) this).PrepareToPlay();
+            }
+            
             // TODO: Make sure all flags are accounted for.
             if (!CanPlay(playSoundFlags)) return;
 

@@ -81,6 +81,11 @@ namespace HearXR.Audiobread
 
             SetStatus(SoundStatus.Paused, false);
             
+            if (_instancePlaybackInfo.scheduledEnd)
+            {
+                Debug.LogWarning("TODO: Container sounds don't support duration yet. Use Stop() instead.");
+            }
+
             // TODO: Handle throttling.
             // TODO: This should go higher.
             // if (_soundDefinition.Throttle)
@@ -115,6 +120,15 @@ namespace HearXR.Audiobread
             if (_child != null)
             {
                 _child.SoundSourceObject = SoundSourceObject;
+            }
+        }
+
+        protected override void PostSetMidiNoteInfo()
+        {
+            base.PostSetMidiNoteInfo();
+            if (_child != null)
+            {
+                _child.MidiNoteInfo = MidiNoteInfo;
             }
         }
         

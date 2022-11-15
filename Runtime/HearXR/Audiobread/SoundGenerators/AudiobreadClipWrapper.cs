@@ -246,9 +246,8 @@ namespace HearXR.Audiobread
 
             ((ISoundInternal<AudiobreadClipDefinition>) player).Init(_soundDefinition);
             player.SoundSourceObject = _soundSourceObject;
-            
+            player.MidiNoteInfo = _midiNoteInfo;
             player.ParentSound = _parentSound;
-            //player.ParentSound = this;
 
             if (!player.IsValid()) return false;
 

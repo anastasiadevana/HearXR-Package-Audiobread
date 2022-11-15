@@ -59,6 +59,14 @@ namespace HearXR.Audiobread
         {
             // Always treat as scheduledStart.
             _instancePlaybackInfo.scheduledStart = true;
+            
+            // If this was a MIDI note call, copy over the duration.
+            if (_midiNoteInfo != null && _midiNoteInfo.duration > Audiobread.INVALID_TIME_DURATION)
+            {
+                _instancePlaybackInfo.duration = _midiNoteInfo.duration;
+                _instancePlaybackInfo.scheduledEnd = true;
+            }
+            
             base.DoPlay(playFlags);
         }
 
@@ -120,7 +128,6 @@ namespace HearXR.Audiobread
                 }
                 else
                 {
-                    Debug.Log("ToneGenerator: Create audio clip");
                     _audioClip = AudioClip.Create(_soundDefinition.Name, _clipTotalSamples, _clipChannels, _clipSampleRate, true, OnAudioClipRead, OnAudioClipSetPosition);   
                 }
                 _audioClipCreated = true;   
