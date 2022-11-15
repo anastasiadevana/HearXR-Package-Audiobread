@@ -142,6 +142,13 @@ namespace HearXR.Audiobread.Core
                 {
                     if (setValuesType == SetValuesType.OnBeforePlay)
                     {
+                        // Ignore the duration property if it's played as a MIDI note.
+                        if (MySound.MidiNoteInfo != null &&
+                            MySound.MidiNoteInfo.duration > Audiobread.INVALID_TIME_DURATION)
+                        {
+                            continue;
+                        }
+                        
                         // TODO: Validate the value?
                         var duration = _calculators[properties[i]].ValueContainer.DoubleValue;
                         // Debug.Log($"Setting duration to {duration}");

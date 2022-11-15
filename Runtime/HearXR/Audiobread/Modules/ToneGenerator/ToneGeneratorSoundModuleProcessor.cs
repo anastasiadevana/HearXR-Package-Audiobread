@@ -31,17 +31,19 @@ namespace HearXR.Audiobread
             PlaySoundFlags playSoundFlags = PlaySoundFlags.None)
         {
             if (!MySound.IsValid() || _invalid) return;
+
+            bool hasMidiInfo = MySound.MidiNoteInfo != null;
             
             var properties = _soundPropertiesBySetType[setValuesType];
 
-            // Creating separate variables for frequency and wave shape because we want to change the on a sound at the same time.
+            // Creating separate variables for frequency and wave shape because we want to change them on a sound at the same time.
             var settings = _toneGeneratorSound.Settings;
             var frequency = settings.frequency;
             var waveShape = settings.waveShape;
             
             for (var i = 0; i < properties.Length; ++i)
             {
-                if (properties[i] == ToneGeneratorSoundModuleDefinition.FrequencyProperty)
+                if (properties[i] == ToneGeneratorSoundModuleDefinition.FrequencyProperty && !hasMidiInfo)
                 {
                     // Debug.Log($"Regenerating tone frequency on {setValuesType}");
                     frequency = _calculators[properties[i]].ValueContainer.FloatValue;
@@ -55,18 +57,16 @@ namespace HearXR.Audiobread
                 }
             }
 
-            settings.frequency = frequency;
-            settings.waveShape = waveShape;
-            
             // If we have MIDI note info, override the frequency completely.
-            if (MySound.MidiNoteInfo != null)
+            if (hasMidiInfo)
             {
-                // Debug.Log("Sound has midi note info");
-                
                 // Convert MIDI note number to frequency.
-                settings.frequency = Audiobread.NoteNumberToFrequency(MySound.MidiNoteInfo.noteNumber);
+                frequency = Audiobread.NoteNumberToFrequency(MySound.MidiNoteInfo.noteNumber);
             }
             
+            settings.frequency = frequency;
+            settings.waveShape = waveShape;
+
             _toneGeneratorSound.Settings = settings;
         }
     }
