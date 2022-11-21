@@ -122,7 +122,7 @@ namespace HearXR.Audiobread.SoundProperties
             if (_fadeDirection == Fade.Direction.In || _fadeDirection == Fade.Direction.Out)
             {
                 fadeFrom = _fadeFactor;
-                Audiobread.Instance.StopCoroutine(_fadeCoroutine);
+                AudiobreadManager.Instance.StopCoroutine(_fadeCoroutine);
                 _fadeDirection = Fade.Direction.None;
             }
             
@@ -142,7 +142,7 @@ namespace HearXR.Audiobread.SoundProperties
             // TODO: Add ability to preview fades in editor.
             if (Application.isPlaying)
             {
-                _fadeCoroutine = Audiobread.Instance.StartCoroutine(DoFade(fadeFrom, 0.0f, duration));   
+                _fadeCoroutine = AudiobreadManager.Instance.StartCoroutine(DoFade(fadeFrom, 0.0f, duration));   
             }
             _fadeDirection = Fade.Direction.Out;
         }
@@ -169,7 +169,7 @@ namespace HearXR.Audiobread.SoundProperties
             {
                 fadeFrom = _fadeFactor;
                 // TODO: I guess don't do this as a coroutine :/ because we can't test it in editor.
-                Audiobread.Instance.StopCoroutine(_fadeCoroutine);
+                AudiobreadManager.Instance.StopCoroutine(_fadeCoroutine);
                 _fadeDirection = Fade.Direction.None;
                 _shouldFadeIn = false;
             }
@@ -201,7 +201,7 @@ namespace HearXR.Audiobread.SoundProperties
             if (Application.isPlaying)
             {
                 // TODO: No magic numbers.
-                _fadeCoroutine = Audiobread.Instance.StartCoroutine(DoFade(_fadeFrom, 1.0f, _fadeDuration));
+                _fadeCoroutine = AudiobreadManager.Instance.StartCoroutine(DoFade(_fadeFrom, 1.0f, _fadeDuration));
             }
             _fadeDirection = Fade.Direction.In;
         }
@@ -221,7 +221,7 @@ namespace HearXR.Audiobread.SoundProperties
             if (_fadeDirection == Fade.Direction.In || _fadeDirection == Fade.Direction.Out)
             {
                 fadeFrom = _fadeFactor;
-                Audiobread.Instance.StopCoroutine(_fadeCoroutine);
+                AudiobreadManager.Instance.StopCoroutine(_fadeCoroutine);
                 _fadeDirection = Fade.Direction.None;
             }
             
@@ -241,7 +241,7 @@ namespace HearXR.Audiobread.SoundProperties
             // TODO: Add ability to preview fades in editor.
             if (Application.isPlaying)
             {
-                _fadeCoroutine = Audiobread.Instance.StartCoroutine(DoFade(fadeFrom, 0.0f, duration));   
+                _fadeCoroutine = AudiobreadManager.Instance.StartCoroutine(DoFade(fadeFrom, 0.0f, duration));   
             }
             _fadeDirection = Fade.Direction.Out;
             return true;

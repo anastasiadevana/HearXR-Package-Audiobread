@@ -84,7 +84,7 @@ namespace HearXR.Audiobread
             _guid = Guid.NewGuid();
 
 #if UNITY_EDITOR
-            _soundRegistry = !Application.isPlaying ? SoundRegistry.Instance : Audiobread.Instance.Registry;
+            _soundRegistry = !Application.isPlaying ? SoundRegistry.Instance : AudiobreadManager.Instance.Registry;
 #else
             _soundRegistry = Audiobread.Instance.Registry;
 #endif
@@ -946,14 +946,14 @@ namespace HearXR.Audiobread
             if (_midiNoteInfo != null)
             {
                 // If we have a valid start time, change to scheduled sound.
-                if (_midiNoteInfo.startTime > Audiobread.INACTIVE_START_TIME)
+                if (_midiNoteInfo.startTime > AudiobreadManager.INACTIVE_START_TIME)
                 {
                     _instancePlaybackInfo.scheduledStart = true;
                     _instancePlaybackInfo.startTime = _midiNoteInfo.startTime;
                 }
                 
                 // If we have valid duration, add that.
-                if (_midiNoteInfo.duration > Audiobread.INVALID_TIME_DURATION)
+                if (_midiNoteInfo.duration > AudiobreadManager.INVALID_TIME_DURATION)
                 {
                     _instancePlaybackInfo.scheduledEnd = true;
                     _instancePlaybackInfo.duration = _midiNoteInfo.duration;
@@ -987,7 +987,7 @@ namespace HearXR.Audiobread
                 InvokeOnBeforePlay(playSoundFlags);
             }
 
-            if (_instancePlaybackInfo.startTime > Audiobread.INACTIVE_START_TIME)
+            if (_instancePlaybackInfo.startTime > AudiobreadManager.INACTIVE_START_TIME)
             {
                 _instancePlaybackInfo.scheduledStart = true;
             }

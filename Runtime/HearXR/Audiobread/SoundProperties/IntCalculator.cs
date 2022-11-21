@@ -41,7 +41,7 @@ namespace HearXR.Audiobread.SoundProperties
                 _rawValue = _definition.value;
                 return;
             }
-            _rawValue = Audiobread.GetClampedRandomValue(_definition.value, _definition.variance, _property.MinLimit, _property.MaxLimit);
+            _rawValue = AudiobreadManager.GetClampedRandomValue(_definition.value, _definition.variance, _property.MinLimit, _property.MaxLimit);
         }
     }
 }

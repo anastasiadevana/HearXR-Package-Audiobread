@@ -117,7 +117,7 @@ namespace HearXR.Audiobread
         {
             lock (_nonStoppedGenerators)
             {
-                var newState = Audiobread.GetPlaybackStateFromChildren(PlaybackState, GetGenerators(), _nonStoppedGenerators.Count);
+                var newState = AudiobreadManager.GetPlaybackStateFromChildren(PlaybackState, GetGenerators(), _nonStoppedGenerators.Count);
                 if (newState != PlaybackState)
                 {
                     SetPlaybackState(newState);

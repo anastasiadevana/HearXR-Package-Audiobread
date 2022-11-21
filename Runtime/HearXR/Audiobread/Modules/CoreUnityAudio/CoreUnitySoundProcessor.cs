@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using HearXR.Audiobread.SoundProperties;
 using UnityEngine;
 
@@ -18,6 +16,7 @@ namespace HearXR.Audiobread.Core
         private bool _hasFadeIn;
         private bool _hasFadeOut;
         private StopControllerStopCallback _stopCallbackWaiting;
+        private ValueContainer _midiNoteVelocityInfluence = new FloatValueContainer(1.0f);
         #endregion
 
         #region Constructor
@@ -82,6 +81,13 @@ namespace HearXR.Audiobread.Core
             if (!MySound.IsValid() || !_initSoundSource) return;
 
             var hasMidiInfo = MySound.MidiNoteInfo != null;
+            
+            // Add MIDI velocity influence.
+            if (setValuesType == SetValuesType.OnBeforePlay && hasMidiInfo)
+            {
+                _midiNoteVelocityInfluence.FloatValue = MySound.MidiNoteInfo.velocity;
+                _volumeCalculator.AddInfluence(_midiNoteVelocityInfluence);
+            }
 
             var properties = _soundPropertiesBySetType[setValuesType];
 
@@ -101,7 +107,10 @@ namespace HearXR.Audiobread.Core
                     {
                         if (hasMidiInfo)
                         {
-                            Debug.LogWarning("This sound is triggered with a midi note number. Ignoring the note number setting.");
+                            if (setValuesType == SetValuesType.OnBeforePlay)
+                            {
+                                Debug.LogWarning("This sound is triggered with a midi note number. Ignoring the note number setting.");   
+                            }
                         }
                         else
                         {
@@ -164,7 +173,7 @@ namespace HearXR.Audiobread.Core
                         // TODO: Shouldn't this be handled here?
                         // Ignore the duration property if it's played as a MIDI note.
                         if (MySound.MidiNoteInfo != null &&
-                            MySound.MidiNoteInfo.duration > Audiobread.INVALID_TIME_DURATION)
+                            MySound.MidiNoteInfo.duration > AudiobreadManager.INVALID_TIME_DURATION)
                         {
                             Debug.LogWarning("This sound is triggered with a midi note duration. Ignoring the duration setting.");   
                             continue;
@@ -236,7 +245,7 @@ namespace HearXR.Audiobread.Core
         private void SetNoteNumber(int noteNumber)
         {
             var baseNoteNumber = _pitchedInstrumentSound.BaseNoteNumber(noteNumber);
-            var value = Audiobread.NoteNumberToFrequency(noteNumber, baseNoteNumber);
+            var value = AudiobreadManager.NoteNumberToFrequency(noteNumber, baseNoteNumber);
                     
             _audioSource.pitch = value; 
         }

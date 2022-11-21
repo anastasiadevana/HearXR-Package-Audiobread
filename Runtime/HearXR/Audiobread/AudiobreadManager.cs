@@ -7,7 +7,7 @@ namespace HearXR.Audiobread
 {
     [DefaultExecutionOrder(-200)]
     [AddComponentMenu("Audiobread/Audiobread Manager")]
-    public class Audiobread : SoundManager
+    public class AudiobreadManager : SoundManager
     {
         #region Editor Fields
         [SerializeField] private int _audioSourcePoolSize = 20;
@@ -16,7 +16,7 @@ namespace HearXR.Audiobread
         
         #region Properties
         // TODO: This override below doesn't do a null check.
-        public new static Audiobread Instance => SoundManager.Instance as Audiobread;
+        public new static AudiobreadManager Instance => SoundManager.Instance as AudiobreadManager;
         public AudiobreadPool Pool => _audiobreadPool;
         #endregion
         

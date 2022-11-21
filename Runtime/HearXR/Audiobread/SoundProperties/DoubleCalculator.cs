@@ -35,7 +35,7 @@ namespace HearXR.Audiobread.SoundProperties
                 }   
             }
             
-            Audiobread.ClampDouble(_value, _property.MinLimit, _property.MaxLimit);
+            AudiobreadManager.ClampDouble(_value, _property.MinLimit, _property.MaxLimit);
             
             _valueContainer.DoubleValue = _value;
         }
@@ -74,7 +74,7 @@ namespace HearXR.Audiobread.SoundProperties
                 return;
             }
             
-            double randomValue = (double) Audiobread.GetClampedRandomValue(_definition.value, _definition.variance, 
+            double randomValue = (double) AudiobreadManager.GetClampedRandomValue(_definition.value, _definition.variance, 
                 _property.MinLimit, _property.MaxLimit);
 
             _randomizedOffset = _baseValue - randomValue;

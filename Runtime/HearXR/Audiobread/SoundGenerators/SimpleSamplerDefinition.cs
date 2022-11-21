@@ -7,7 +7,7 @@ namespace HearXR.Audiobread
     {
         #region Editor Fields
         [SerializeField] private AudioClip _audioClip;
-        [SerializeField] private int _clipNoteNumber = Audiobread.NOTE_NUMBER_C4;
+        [SerializeField] private int _clipNoteNumber = AudiobreadManager.NOTE_NUMBER_C4;
         #endregion
         
         #region Properties

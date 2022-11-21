@@ -12,7 +12,7 @@ namespace HearXR.Audiobread
         internal TestSound()
         {
 #if UNITY_EDITOR
-            _audiobreadPool = !Application.isPlaying ? AudiobreadPool.Instance : Audiobread.Instance.Pool;
+            _audiobreadPool = !Application.isPlaying ? AudiobreadPool.Instance : AudiobreadManager.Instance.Pool;
 #else
             _audiobreadPool = Audiobread.Instance.Pool;
 #endif

@@ -52,7 +52,7 @@ namespace HearXR.Audiobread
 
                 if (properties[i] == ToneGeneratorSoundModuleDefinition.WaveShapeProperty)
                 {
-                    waveShape = Audiobread.IntToEnum<WaveShapeEnum>(_calculators[properties[i]].ValueContainer.IntValue);
+                    waveShape = AudiobreadManager.IntToEnum<WaveShapeEnum>(_calculators[properties[i]].ValueContainer.IntValue);
                     continue;
                 }
             }
@@ -61,7 +61,7 @@ namespace HearXR.Audiobread
             if (hasMidiInfo)
             {
                 // Convert MIDI note number to frequency.
-                frequency = Audiobread.NoteNumberToFrequency(MySound.MidiNoteInfo.noteNumber);
+                frequency = AudiobreadManager.NoteNumberToFrequency(MySound.MidiNoteInfo.noteNumber);
             }
             
             settings.frequency = frequency;

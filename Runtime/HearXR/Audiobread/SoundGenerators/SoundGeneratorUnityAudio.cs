@@ -83,7 +83,7 @@ namespace HearXR.Audiobread
             // If this was a MIDI note call, copy over the duration.
             if (_midiNoteInfo != null)
             {
-                if (_midiNoteInfo.duration > Audiobread.INVALID_TIME_DURATION)
+                if (_midiNoteInfo.duration > AudiobreadManager.INVALID_TIME_DURATION)
                 {
                     _instancePlaybackInfo.duration = _midiNoteInfo.duration;
                     _instancePlaybackInfo.scheduledStart = true;

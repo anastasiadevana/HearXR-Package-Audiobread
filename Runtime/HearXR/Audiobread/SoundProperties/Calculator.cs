@@ -100,11 +100,11 @@ namespace HearXR.Audiobread.SoundProperties
 
         public override void AddInfluence(ValueContainer influence)
         {
-            ValueContainer<T> tInfluence = (ValueContainer<T>) influence;
+            var tInfluence = (ValueContainer<T>) influence;
             
             if (_influences.Contains(tInfluence))
             {
-                Debug.LogError("This value is already affecting this sound property.");
+                Debug.LogWarning("This value is already affecting this sound property.");
                 return;
             }
             _influences.Add(tInfluence);
@@ -113,7 +113,7 @@ namespace HearXR.Audiobread.SoundProperties
 
         public override void RemoveInfluence(ValueContainer influence)
         {
-            ValueContainer<T> tInfluence = (ValueContainer<T>) influence;
+            var tInfluence = (ValueContainer<T>) influence;
             
             if (_influences.Contains(tInfluence))
             {

@@ -67,13 +67,13 @@ namespace HearXR.Audiobread.SoundProperties
 
             // Calculate and clamp min/max values.
             var clampedMin =
-                Audiobread.ClampDouble((_valueProp.floatValue - _varianceProp.floatValue), minLimit, maxLimit);
+                AudiobreadManager.ClampDouble((_valueProp.floatValue - _varianceProp.floatValue), minLimit, maxLimit);
             var clampedMax =
-                Audiobread.ClampDouble((_valueProp.floatValue + _varianceProp.floatValue), minLimit, maxLimit);
+                AudiobreadManager.ClampDouble((_valueProp.floatValue + _varianceProp.floatValue), minLimit, maxLimit);
 
             // Normalize the min/max values to 0-1 range.
-            var normalizedMin = (float) Audiobread.InverseLerpDouble(minLimit, maxLimit, clampedMin);
-            var normalizedMax = (float) Audiobread.InverseLerpDouble(minLimit, maxLimit, clampedMax);
+            var normalizedMin = (float) AudiobreadManager.InverseLerpDouble(minLimit, maxLimit, clampedMin);
+            var normalizedMax = (float) AudiobreadManager.InverseLerpDouble(minLimit, maxLimit, clampedMax);
 
             // Draw the min-max slider overlay (shift it upwards to overlay with the slider).
             Rect overlay = position;
@@ -106,7 +106,7 @@ namespace HearXR.Audiobread.SoundProperties
 
             position.y += 13;
             EditorGUIUtility.labelWidth = 60;
-            var totalPropertyRange = Audiobread.AbsDouble(_soundProperty.MaxLimit - _soundProperty.MinLimit);
+            var totalPropertyRange = AudiobreadManager.AbsDouble(_soundProperty.MaxLimit - _soundProperty.MinLimit);
             EditorGUI.Slider(position, _varianceProp, 0.0f, (float) totalPropertyRange, "Variance");
         }
     }

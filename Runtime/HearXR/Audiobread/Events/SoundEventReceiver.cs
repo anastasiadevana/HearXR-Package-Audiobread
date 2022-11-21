@@ -114,11 +114,11 @@ namespace HearXR.Audiobread
                     {
                         case SoundAction.Play:
                             // TODO: Handle persistent sounds. MAYBE persistence should be on the sound definition side?
-                            Audiobread.Instance.PlaySound(soundEventReactions[i].soundDefinition, target);
+                            AudiobreadManager.Instance.PlaySound(soundEventReactions[i].soundDefinition, target);
                             break;
                         
                         case SoundAction.Stop:
-                            Audiobread.Instance.StopSounds(soundEventReactions[i].soundDefinition, target);
+                            AudiobreadManager.Instance.StopSounds(soundEventReactions[i].soundDefinition, target);
                             break;
                         
                         /*

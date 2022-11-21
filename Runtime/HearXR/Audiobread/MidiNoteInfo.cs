@@ -5,8 +5,9 @@ namespace HearXR.Audiobread
     [Serializable]
     public class MidiNoteInfo
     {
-        public byte noteNumber;
-        public float normalizedVelocity;
+        public int noteNumber;
+        // 0 - 1 range
+        public float velocity;
         public double startTime;
         public double duration;
     }

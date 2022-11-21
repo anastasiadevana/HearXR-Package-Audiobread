@@ -9,7 +9,7 @@ namespace HearXR.Audiobread.SoundProperties
     public class NoteNumber : IntSoundProperty
     {
         public override string ShortName { get; } = "Note";
-        public override int DefaultValue { get; } = Audiobread.NOTE_NUMBER_C4;
+        public override int DefaultValue { get; } = AudiobreadManager.NOTE_NUMBER_C4;
     
         public override bool HasMinLimit { get; } = true;
         public override int MinLimit { get; } = 0;
