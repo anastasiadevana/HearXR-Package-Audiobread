@@ -12,55 +12,6 @@ namespace HearXR.Audiobread
         #endregion
 
         #region Sound Abstract Methods
-        // protected override void PostParseSoundDefinition()
-        // {
-        //     base.PostParseSoundDefinition();
-        //     Debug.Log($"Post parse {this} sound definition");
-        // }
-
-        protected override void ApplySoundPropertyValues(SetValuesType setValuesType)
-        {
-            base.ApplySoundPropertyValues(setValuesType);
-            
-            if (!IsValid()) return;
-        
-            // TODO: SoundModule hookup.
-            // var properties = _soundPropertiesBySetType[setValuesType];
-            //
-            // for (int i = 0; i < properties.Length; ++i)
-            // {
-            //     if (!_calculators.ContainsKey(properties[i]))
-            //     {
-            //         Debug.LogError($"HEAR XR {this} doesn't have the calculator for {properties[i].name}");
-            //     }
-            //
-            //     _calculators[properties[i]].Calculate();
-            //     var value = _calculators[properties[i]].ValueContainer.FloatValue;
-            //
-            //     if (properties[i] == _volumeProperty)
-            //     {
-            //         _audioSource.volume = value;
-            //     }
-            //     else if (properties[i] == _pitchProperty)
-            //     {
-            //         _audioSource.pitch = value;
-            //     }
-            //     else if (properties[i] == _delayProperty)
-            //     {
-            //         continue; // Delay is used at the moment of playing.
-            //     }
-            //     else if (properties[i] == _offsetProperty)
-            //     {
-            //         var audioClip = _soundDefinition.AudioClip;
-            //         _audioSource.timeSamples = TimeSamplesHelper.ValidateAudioClipOffset(in audioClip, value);
-            //     }
-            //     else
-            //     {
-            //         Debug.LogWarning($"HEAR XR: {this} Unable to apply property {properties[i].name}");
-            //     }
-            // }
-        }
-
         protected override void DoPlay(PlaySoundFlags playFlags)
         {
             // If asked to play when already playing, reset loop counts.

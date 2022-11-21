@@ -19,7 +19,8 @@ namespace HearXR.Audiobread
         {
             ClipPlayer,
             ToneGenerator,
-            TestPlayer
+            TestPlayer,
+            Sampler
         }
         #endregion
         
@@ -28,6 +29,7 @@ namespace HearXR.Audiobread
         #endregion
         
         #region Properties
+        public SimpleSampler Sampler => _sampler;
         public AudiobreadClip Player => _player;
         public TestAudiobreadClip TestPlayer => _testPlayer;
         public ToneGenerator Generator => _generator;
@@ -45,6 +47,7 @@ namespace HearXR.Audiobread
         
         #region Private Fields
         private AudioSourceMode _audioSourceMode;
+        private SimpleSampler _sampler;
         private AudiobreadClip _player;
         private TestAudiobreadClip _testPlayer;
         private ToneGenerator _generator;
@@ -64,6 +67,11 @@ namespace HearXR.Audiobread
 
             _hasAudioSource = ValidateFindOrCreateComponent(ref _audioSource);
 
+            if (_sampler == null)
+            {
+                _sampler = new SimpleSampler(this);
+            }
+            
             if (_player == null)
             {
                 _player = new AudiobreadClip(this);
@@ -107,6 +115,9 @@ namespace HearXR.Audiobread
                 
                 case AudioSourceMode.TestPlayer:
                     _testPlayer.PrepareToBeStolen();
+                    break;
+                case AudioSourceMode.Sampler:
+                    _sampler.PrepareToBeStolen();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

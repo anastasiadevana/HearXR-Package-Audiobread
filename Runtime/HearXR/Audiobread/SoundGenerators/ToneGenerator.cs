@@ -53,7 +53,7 @@ namespace HearXR.Audiobread
             }
         }
         #endregion
-        
+
         #region Sound Abstract Methods
         protected override void DoPlay(PlaySoundFlags playFlags)
         {
@@ -117,7 +117,7 @@ namespace HearXR.Audiobread
                 _audioClipAssigned = false;
             }
         }
-
+        
         private void CreateAudioClip()
         {
             if (!_audioClipCreated)
@@ -142,6 +142,7 @@ namespace HearXR.Audiobread
             _audioClipAssigned = true;
         }
         
+        // TODO: Instead of using an audio clip, try to use OnAudioFilterRead. The preload on the audio clip is causing some weirdness.
         private void OnAudioClipRead(float[] buffer)
         {
             // Using direct generation methods.

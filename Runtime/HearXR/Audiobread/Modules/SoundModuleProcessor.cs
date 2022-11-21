@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using HearXR.Audiobread.SoundProperties;
 using UnityEngine;
 
+// TODO: Refactor how sound properties work. Currently each module "owns" a sound property.
+//       Instead we should separate. Something provides available sound properties on a sound, and other modules can
+//       influence the value of that sound property.
+//       For example, Pitch can be changed directly, or by setting a note number. Right now it's not possible because
+//       the Core Unity module "owns" the Pitch property.
 namespace HearXR.Audiobread
 {
     /// <summary>
@@ -281,6 +286,8 @@ namespace HearXR.Audiobread
             //       Then just flip TRUE / FALSE for when this property is in use.
             
             var soundPropertyInfo = _moduleSoundDefinition.GetSoundProperties();
+            
+            // Debug.Log($"{this}: {MySound} has {soundPropertyInfo.Count} sound properties");
             
             // TODO: Some of these things can be made static per sub-module.
 

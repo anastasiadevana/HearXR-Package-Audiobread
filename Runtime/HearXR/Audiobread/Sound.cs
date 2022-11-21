@@ -1224,8 +1224,6 @@ namespace HearXR.Audiobread
 
         protected virtual void PostInitModules(InitSoundFlags initSoundFlags = InitSoundFlags.None) {}
 
-        protected virtual void ApplySoundPropertyValues(SetValuesType setValuesType) {}
-        
         protected virtual bool CanPlay(PlaySoundFlags playSoundFlags = PlaySoundFlags.None)
         {
             if (!IsValid() || (IsPlayingOrTransitioning() &&
