@@ -80,6 +80,17 @@ namespace HearXR.Audiobread
         #region Sound Abstract Methods
         protected override void DoPlay(PlaySoundFlags playFlags)
         {
+            // If this was a MIDI note call, copy over the duration.
+            if (_midiNoteInfo != null)
+            {
+                if (_midiNoteInfo.duration > Audiobread.INVALID_TIME_DURATION)
+                {
+                    _instancePlaybackInfo.duration = _midiNoteInfo.duration;
+                    _instancePlaybackInfo.scheduledStart = true;
+                    _instancePlaybackInfo.scheduledEnd = true;
+                }
+            }
+            
             // If asked to play when already playing, reset loop counts.
             if (IsPlayingOrTransitioning())
             {
@@ -136,7 +147,7 @@ namespace HearXR.Audiobread
             
             if (_instancePlaybackInfo.scheduledEnd)
             {
-                _audioSource.SetScheduledEndTime(_clipStartTime + _instancePlaybackInfo.duration);
+               _audioSource.SetScheduledEndTime(_clipStartTime + _instancePlaybackInfo.duration);
                 // Debug.LogError($"START TIME: {_clipStartTime} CURRENT: {AudioSettings.dspTime} DURATION: {_instancePlaybackInfo.duration} END: {_clipStartTime + _instancePlaybackInfo.duration}");
             }
 

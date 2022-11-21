@@ -53,11 +53,9 @@ namespace HearXR.Audiobread
         #endregion
         
         #region IPitchedInstrumentSound
-        public void SetNoteNumber(int noteNumber)
+        public int BaseNoteNumber(int noteNumber)
         {
-            // var frequency = Audiobread.NoteNumberToFrequency(noteNumber, _soundDefinition.ClipNoteNumber);
-            
-            Debug.Log($"Set sound pitched instrument note number {noteNumber}");
+            return _soundDefinition.ClipNoteNumber;
         }
         #endregion
     }

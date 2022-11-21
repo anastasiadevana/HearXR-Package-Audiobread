@@ -2,6 +2,6 @@ namespace HearXR.Audiobread
 {
     public interface IPitchedInstrumentSound
     {
-        void SetNoteNumber(int noteNumber);
+        int BaseNoteNumber(int noteNumber);
     }
 }

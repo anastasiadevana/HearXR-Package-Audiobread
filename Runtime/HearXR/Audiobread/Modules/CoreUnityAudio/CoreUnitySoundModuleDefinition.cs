@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Reflection;
 using HearXR.Audiobread.SoundProperties;
 using UnityEngine;
 
@@ -10,6 +9,7 @@ namespace HearXR.Audiobread.Core
         #region Static Private Fields
         private static bool _propertiesCached;
         private static Pitch _pitchProperty;
+        private static NoteNumber _noteNumberProperty;
         private static Volume _volumeProperty;
         private static Delay _delayProperty;
         private static TimeDuration _timeDurationProperty;
@@ -22,6 +22,15 @@ namespace HearXR.Audiobread.Core
             {
                 CacheProperties();
                 return _pitchProperty;
+            }
+        }
+        
+        public static NoteNumber NoteNumberProperty
+        {
+            get
+            {
+                CacheProperties();
+                return _noteNumberProperty;
             }
         }
 
@@ -54,6 +63,7 @@ namespace HearXR.Audiobread.Core
         #endregion
         
         public PitchDefinition pitchPropertyDefinition;
+        public NoteNumberDefinition noteNumber;
         public VolumeDefinition volumePropertyDefinition;
         public DelayDefinition delayPropertyDefinition;
         public TimeDurationDefinition durationPropertyDefinition;
@@ -65,6 +75,7 @@ namespace HearXR.Audiobread.Core
         {
             CacheProperties();
             soundProperties.Add(_pitchProperty, pitchPropertyDefinition);
+            soundProperties.Add(_noteNumberProperty, noteNumber);
             soundProperties.Add(_volumeProperty, volumePropertyDefinition);
             soundProperties.Add(_delayProperty, delayPropertyDefinition);
             soundProperties.Add(_timeDurationProperty, durationPropertyDefinition);
@@ -75,6 +86,7 @@ namespace HearXR.Audiobread.Core
         {
             if (_propertiesCached) return;
             _pitchProperty = BuiltInData.Properties.GetSoundPropertyByType<Pitch>();
+            _noteNumberProperty = BuiltInData.Properties.GetSoundPropertyByType<NoteNumber>();
             _volumeProperty = BuiltInData.Properties.GetSoundPropertyByType<Volume>();
             _delayProperty = BuiltInData.Properties.GetSoundPropertyByType<Delay>();
             _timeDurationProperty = BuiltInData.Properties.GetSoundPropertyByType<TimeDuration>();

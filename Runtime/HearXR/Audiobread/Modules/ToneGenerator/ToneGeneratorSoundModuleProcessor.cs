@@ -32,7 +32,7 @@ namespace HearXR.Audiobread
         {
             if (!MySound.IsValid() || _invalid) return;
 
-            bool hasMidiInfo = MySound.MidiNoteInfo != null;
+            var hasMidiInfo = MySound.MidiNoteInfo != null;
             
             var properties = _soundPropertiesBySetType[setValuesType];
 

@@ -59,14 +59,7 @@ namespace HearXR.Audiobread
         {
             // Always treat as scheduledStart.
             _instancePlaybackInfo.scheduledStart = true;
-            
-            // If this was a MIDI note call, copy over the duration.
-            if (_midiNoteInfo != null && _midiNoteInfo.duration > Audiobread.INVALID_TIME_DURATION)
-            {
-                _instancePlaybackInfo.duration = _midiNoteInfo.duration;
-                _instancePlaybackInfo.scheduledEnd = true;
-            }
-            
+
             base.DoPlay(playFlags);
         }
 

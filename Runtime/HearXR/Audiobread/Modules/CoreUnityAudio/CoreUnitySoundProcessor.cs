@@ -8,18 +8,33 @@ namespace HearXR.Audiobread.Core
     public class CoreUnitySoundProcessor : SoundModuleProcessor<CoreUnitySoundModule, CoreUnitySoundModuleDefinition>, 
                                             IStopControllerProcessor, ITimeBeforeListener
     {
+        #region Private Fields
         private bool _initSoundSource;
         private AudiobreadSource _audiobreadSource;
         private AudioSource _audioSource;
-
+        private IPitchedInstrumentSound _pitchedInstrumentSound;
+        private bool _isPitchedInstrument;
         private VolumeCalculator _volumeCalculator;
         private bool _hasFadeIn;
-        // private Fade _fadeIn;
         private bool _hasFadeOut;
-        // private Fade _fadeOut;
-        
-        public CoreUnitySoundProcessor(CoreUnitySoundModule soundModule, ISound sound) : base(soundModule, sound) {}
+        private StopControllerStopCallback _stopCallbackWaiting;
+        #endregion
 
+        #region Constructor
+        public CoreUnitySoundProcessor(CoreUnitySoundModule soundModule, ISound sound) : base(soundModule, sound) {}
+        #endregion
+
+        #region SoundModuleProcessor Overrides
+        protected override void DoInit()
+        {
+            base.DoInit();
+            if (MySound is IPitchedInstrumentSound)
+            {
+                _pitchedInstrumentSound = MySound as IPitchedInstrumentSound;
+                _isPitchedInstrument = true;
+            }
+        }
+        
         protected override void DoApplySoundDefinitionToUnityAudio(AudiobreadSource audiobreadSource)
         {
             base.DoApplySoundDefinitionToUnityAudio(audiobreadSource);
@@ -31,10 +46,8 @@ namespace HearXR.Audiobread.Core
             base.PostInitCalculators();
             
             _hasFadeIn = ModuleSoundDefinition.fadeInDefinition.duration > Mathf.Epsilon;
-            // _fadeIn = (_hasFadeIn) ? ModuleSoundDefinition.fadeInDefinition : null;
             _hasFadeOut = ModuleSoundDefinition.fadeOutDefinition.duration > Mathf.Epsilon;
-            // _fadeOut = (_hasFadeOut) ? ModuleSoundDefinition.fadeOutDefinition : null;
-            
+
             // Add fades to the volume calculator.
             _volumeCalculator = (VolumeCalculator) _calculators[BuiltInData.Properties.GetSoundPropertyByType<Volume>()];
             _volumeCalculator.SetFades(ModuleSoundDefinition.fadeInDefinition, ModuleSoundDefinition.fadeOutDefinition);
@@ -49,25 +62,7 @@ namespace HearXR.Audiobread.Core
                 MySound.RegisterTimeBeforeListener(this, ModuleSoundDefinition.fadeOutDefinition.duration);   
             }
         }
-
-        public void HandleTimeRemainingEvent(double timeRemaining)
-        {
-            _volumeCalculator.StartFadeOut();
-        }
-
-        private StopControllerStopCallback _stopCallbackWaiting;
-
-        private void HandleFadeOutFinished()
-        {
-            _stopCallbackWaiting?.Invoke();
-            _stopCallbackWaiting = null;
-        }
-
-        private void HandleFadeInFinished()
-        {
-            
-        }
-
+        
         protected override void OnSoundBegan(ISound sound, double startTime)
         {
             base.OnSoundBegan(sound, startTime);
@@ -75,25 +70,19 @@ namespace HearXR.Audiobread.Core
             // TODO: Compare sound with _sound.
             _volumeCalculator.OnSoundBegan();
         }
-
-        private void FindAudioSource(AudiobreadSource audiobreadSource)
-        {
-            if (_initSoundSource) return;
-            _audiobreadSource = audiobreadSource;
-            _audioSource = _audiobreadSource.gameObject.GetComponent<AudioSource>();
-            _initSoundSource = true;
-        }
-
+        
         protected override void OnUnityAudioGeneratorTick(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo)
         {
             ApplySoundModifiers(ref instancePlaybackInfo, SetValuesType.OnUpdate);
         }
-
+        
         protected override void ApplySoundModifiers(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, SetValuesType setValuesType, 
             PlaySoundFlags playSoundFlags = PlaySoundFlags.None)
         {
             if (!MySound.IsValid() || !_initSoundSource) return;
-            
+
+            var hasMidiInfo = MySound.MidiNoteInfo != null;
+
             var properties = _soundPropertiesBySetType[setValuesType];
 
             for (var i = 0; i < properties.Length; ++i)
@@ -101,12 +90,42 @@ namespace HearXR.Audiobread.Core
                 if (!_calculators[properties[i]].Active) continue;
                 
                 // Debug.Log($"{setValuesType}--{properties.Length} {properties[i].ShortName}");
+
+                if (properties[i] == CoreUnitySoundModuleDefinition.NoteNumberProperty)
+                {
+                    if (!_isPitchedInstrument)
+                    {
+                        Debug.LogWarning("Cannot apply note number property to this type of sound.");
+                    }
+                    else
+                    {
+                        if (hasMidiInfo)
+                        {
+                            Debug.LogWarning("This sound is triggered with a midi note number. Ignoring the note number setting.");
+                        }
+                        else
+                        {
+                            SetNoteNumber(_calculators[CoreUnitySoundModuleDefinition.NoteNumberProperty].ValueContainer.IntValue);   
+                        }
+                    }
+                    continue;
+                }
                 
                 // Pitch
                 if (properties[i] == CoreUnitySoundModuleDefinition.PitchProperty)
                 {
-                    var value = _calculators[properties[i]].ValueContainer.FloatValue;
-                    _audioSource.pitch = value;
+                    if (_isPitchedInstrument)
+                    {
+                        if (setValuesType == SetValuesType.OnBeforePlay)
+                        {
+                            Debug.LogWarning("This sound is a pitched instrument. Use the note number sound property to adjust pitch.");   
+                        }
+                    }
+                    else
+                    {
+                        var value = _calculators[properties[i]].ValueContainer.FloatValue;
+                        _audioSource.pitch = value;
+                    }
                     continue;
                 }
                 
@@ -142,10 +161,12 @@ namespace HearXR.Audiobread.Core
                 {
                     if (setValuesType == SetValuesType.OnBeforePlay)
                     {
+                        // TODO: Shouldn't this be handled here?
                         // Ignore the duration property if it's played as a MIDI note.
                         if (MySound.MidiNoteInfo != null &&
                             MySound.MidiNoteInfo.duration > Audiobread.INVALID_TIME_DURATION)
                         {
+                            Debug.LogWarning("This sound is triggered with a midi note duration. Ignoring the duration setting.");   
                             continue;
                         }
                         
@@ -167,13 +188,59 @@ namespace HearXR.Audiobread.Core
                 //     _audioSource.timeSamples = TimeSamplesHelper.ValidateAudioClipOffset(in audioClip, value);
                 // }
             }
-            
+
             // Deal with volume fades.
             if (setValuesType == SetValuesType.OnPreparedToPlay)
             {
                 _volumeCalculator.PrepareToPlay();
             }
+            
+            // If we have MIDI note info, override the frequency completely.
+            if (setValuesType == SetValuesType.OnBeforePlay && _isPitchedInstrument && hasMidiInfo)
+            {
+                SetNoteNumber(MySound.MidiNoteInfo.noteNumber);
+            }
         }
+        #endregion
+
+        #region ITimeBeforeListener Methods
+        public void HandleTimeRemainingEvent(double timeRemaining)
+        {
+            _volumeCalculator.StartFadeOut();
+        }
+        #endregion
+
+        #region Event Handlers
+        private void HandleFadeOutFinished()
+        {
+            _stopCallbackWaiting?.Invoke();
+            _stopCallbackWaiting = null;
+        }
+
+        private void HandleFadeInFinished() {}
+        #endregion
+
+        #region Private Methods
+        private void FindAudioSource(AudiobreadSource audiobreadSource)
+        {
+            if (_initSoundSource) return;
+            _audiobreadSource = audiobreadSource;
+            _audioSource = _audiobreadSource.gameObject.GetComponent<AudioSource>();
+            _initSoundSource = true;
+        }
+
+        /// <summary>
+        /// Apply MIDI note number.
+        /// </summary>
+        /// <param name="noteNumber"></param>
+        private void SetNoteNumber(int noteNumber)
+        {
+            var baseNoteNumber = _pitchedInstrumentSound.BaseNoteNumber(noteNumber);
+            var value = Audiobread.NoteNumberToFrequency(noteNumber, baseNoteNumber);
+                    
+            _audioSource.pitch = value; 
+        }
+        #endregion
 
         #region IStopControllerProcessor Methods
         public bool CanStopNow(StopSoundFlags stopSoundFlags)
