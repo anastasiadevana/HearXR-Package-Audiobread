@@ -17,10 +17,11 @@ namespace HearXR.Audiobread
         #region Constructor
         internal SimpleSamplerWrapper()
         {
+            // TODO: Code duplication. Also, not cool.
 #if UNITY_EDITOR
             _audiobreadPool = !Application.isPlaying ? AudiobreadPool.Instance : AudiobreadManager.Instance.Pool;
 #else
-            _audiobreadPool = Audiobread.Instance.Pool;
+            _audiobreadPool = AudiobreadManager.Instance.Pool;
 #endif
         }
         #endregion

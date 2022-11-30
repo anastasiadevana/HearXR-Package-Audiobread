@@ -83,10 +83,11 @@ namespace HearXR.Audiobread
         {
             _guid = Guid.NewGuid();
 
+            // TODO: We can do better than this, I recon.
 #if UNITY_EDITOR
             _soundRegistry = !Application.isPlaying ? SoundRegistry.Instance : AudiobreadManager.Instance.Registry;
 #else
-            _soundRegistry = Audiobread.Instance.Registry;
+            _soundRegistry = AudiobreadManager.Instance.Registry;
 #endif
         }
         #endregion
