@@ -7,7 +7,14 @@ namespace HearXR.Audiobread
     {
         #region Editor Fields
         [SerializeField] private AudioClip _audioClip;
-        public AudioClip AudioClip => _audioClip;
+        #endregion
+        
+        #region Properties
+        public AudioClip AudioClip
+        {
+            get => _audioClip;
+            set => _audioClip = value;
+        }
         #endregion
 
         #region ISoundDefinition Methods
