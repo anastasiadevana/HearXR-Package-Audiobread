@@ -26,6 +26,13 @@ namespace HearXR.Audiobread.SoundProperties
         public override void Generate()
         {
             if (!Active) return;
+            
+            if (!_definition.randomize || !_property.Randomizable)
+            {
+                _rawValue = _definition.value;
+                return;
+            }
+            
             _rawValue = Random.Range(0, _definition.NumItems);
         }
     }
