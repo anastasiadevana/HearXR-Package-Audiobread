@@ -13,6 +13,7 @@ namespace HearXR.Audiobread.Core
         private static Volume _volumeProperty;
         private static Delay _delayProperty;
         private static TimeDuration _timeDurationProperty;
+        private static SpatializationType _spatializationTypeProperty;
         #endregion
         
         #region Static Properties
@@ -60,6 +61,15 @@ namespace HearXR.Audiobread.Core
                 return _timeDurationProperty;
             }
         }
+        
+        public static SpatializationType SpatializationTypeProperty
+        {
+            get
+            {
+                CacheProperties();
+                return _spatializationTypeProperty;
+            }
+        }
         #endregion
         
         public PitchDefinition pitchPropertyDefinition;
@@ -67,7 +77,8 @@ namespace HearXR.Audiobread.Core
         public VolumeDefinition volumePropertyDefinition;
         public DelayDefinition delayPropertyDefinition;
         public TimeDurationDefinition durationPropertyDefinition;
-        
+        public SpatializationTypeDefinition spatializationTypePropertyDefinition;
+
         [Header("Fade In"), FadeValues(typeof(Volume), Fade.Direction.In)] public Fade fadeInDefinition;
         [Header("Fade Out"), FadeValues(typeof(Volume), Fade.Direction.Out)] public Fade fadeOutDefinition;
 
@@ -79,6 +90,7 @@ namespace HearXR.Audiobread.Core
             soundProperties.Add(_volumeProperty, volumePropertyDefinition);
             soundProperties.Add(_delayProperty, delayPropertyDefinition);
             soundProperties.Add(_timeDurationProperty, durationPropertyDefinition);
+            soundProperties.Add(_spatializationTypeProperty, spatializationTypePropertyDefinition);
         }
         
         #region Private Static Methods
@@ -90,6 +102,7 @@ namespace HearXR.Audiobread.Core
             _volumeProperty = BuiltInData.Properties.GetSoundPropertyByType<Volume>();
             _delayProperty = BuiltInData.Properties.GetSoundPropertyByType<Delay>();
             _timeDurationProperty = BuiltInData.Properties.GetSoundPropertyByType<TimeDuration>();
+            _spatializationTypeProperty = BuiltInData.Properties.GetSoundPropertyByType<SpatializationType>();
             _propertiesCached = true;
         }
         #endregion

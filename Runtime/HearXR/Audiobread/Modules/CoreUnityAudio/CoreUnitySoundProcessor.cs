@@ -16,7 +16,7 @@ namespace HearXR.Audiobread.Core
         private bool _hasFadeIn;
         private bool _hasFadeOut;
         private StopControllerStopCallback _stopCallbackWaiting;
-        private ValueContainer _midiNoteVelocityInfluence = new FloatValueContainer(1.0f);
+        private readonly ValueContainer _midiNoteVelocityInfluence = new FloatValueContainer(1.0f);
         #endregion
 
         #region Constructor
@@ -188,6 +188,33 @@ namespace HearXR.Audiobread.Core
                     }
 
                     continue;
+                }
+                
+                // Spatialization type
+                if (properties[i] == CoreUnitySoundModuleDefinition.SpatializationTypeProperty)
+                {
+                    if (setValuesType == SetValuesType.OnBeforePlay)
+                    {
+                        var spatializationType = AudiobreadManager.IntToEnum<SpatializationTypeEnum>(_calculators[properties[i]].ValueContainer.IntValue);
+
+                        switch (spatializationType)
+                        {
+                            case SpatializationTypeEnum.NonSpatial:
+                                _audioSource.spatialize = false;
+                                _audioSource.spatialBlend = 0.0f;
+                                break;
+                            
+                            case SpatializationTypeEnum.StereoPanning:
+                                _audioSource.spatialize = false;
+                                _audioSource.spatialBlend = 1.0f;
+                                break;
+                            
+                            case SpatializationTypeEnum.Spatialized:
+                                _audioSource.spatialize = true;
+                                _audioSource.spatialBlend = 1.0f;
+                                break;
+                        }
+                    }
                 }
                 
                 // TODO: Add offset.

@@ -70,13 +70,6 @@ namespace HearXR.Audiobread
         Middle,
         Outro
     }
-    
-    public enum SpatializationType
-    {
-        TwoDee,
-        ThreeDee,
-        Spatialized
-    }
 
     public enum SetValuesType
     {
@@ -112,5 +105,12 @@ namespace HearXR.Audiobread
         Square,
         Sawtooth,
         Triangle
+    }
+    
+    public enum SpatializationTypeEnum
+    {
+        NonSpatial,
+        StereoPanning,
+        Spatialized
     }
 }

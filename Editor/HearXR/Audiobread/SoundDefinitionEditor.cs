@@ -90,8 +90,9 @@ namespace HearXR.Audiobread
             
             foreach (var module in _compatibleModules)
             {
-                // Ignore default modules.
-                if (module.EnabledByDefault) continue;
+                // Ignore default modules if they're enabled.
+                // (Sometimes a default module doesn't get created by Unity, so this way we can still add it manually).
+                if (module.EnabledByDefault && _soundDefinition.ModuleEnabled(module)) continue;
 
                 if (_soundDefinition.ModuleEnabled(module))
                 {

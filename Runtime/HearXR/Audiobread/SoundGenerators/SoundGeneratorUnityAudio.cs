@@ -270,14 +270,7 @@ namespace HearXR.Audiobread
             SetLooping();
 
             ApplySoundDefinitionToUnityAudio?.Invoke(_audiobreadSource);
-            // foreach (var smProcessor in _soundModuleProcessors)
-            // {
-            //     // TODO:
-            // }
-            
-            // TODO: Set spatialization
-            // SetSpatializationType(_parentSound.SoundDefinition.SpatializationType);
-            
+
             // TODO: Set Mixer Group.
         }
 
@@ -581,34 +574,6 @@ namespace HearXR.Audiobread
         
         #region Abstract Methods
         protected abstract void SetUpAudioSource();
-        #endregion
-        
-        #region Unsorted Methods
-        private void SetSpatializationType(SpatializationType spatializationType)
-        {
-            throw new NotImplementedException();
-            // Assign _2dSound here
-            //     switch (spatializationType)
-            //     {
-            //         case SpatializationType.TwoDee:
-            //             _audioSource.spatialize = false;
-            //             _audioSource.spatializePostEffects = false;
-            //             _audioSource.spatialBlend = 0.0f;
-            //             break;
-            //         case SpatializationType.ThreeDee:
-            //             _audioSource.spatialize = false;
-            //             _audioSource.spatializePostEffects = false;
-            //             _audioSource.spatialBlend = 1.0f;
-            //             break;
-            //         case SpatializationType.Spatialized:
-            //             _audioSource.spatialize = true;
-            //             _audioSource.spatializePostEffects = true;
-            //             _audioSource.spatialBlend = 1.0f;
-            //             break;
-            //     }
-
-            //UpdateFollowingState(); // TODO:
-        }
         #endregion
     }
 }
