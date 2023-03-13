@@ -1,13 +1,18 @@
+#if MSA
+using MSA;
+#endif
+
 using UnityEngine;
 
 namespace HearXR.Audiobread
 {
-    [CreateAssetMenu (menuName = "Audiobread/Sound Modules/Low Pass")]
-    public class LowPassSoundModule : SoundModule
+    [CreateAssetMenu (menuName = "Audiobread/Sound Modules/MSA")]
+    public class MSASoundModule : SoundModule
     {
         #region Sound Module Abstract Properties
-        public override string DisplayName => "Low Pass";
-        public override bool EnabledByDefault => false;
+        public override string DisplayName => "MSA";
+
+        public override bool EnabledByDefault => (AudioSettings.GetSpatializerPluginName() == "MSA Spatializer");
         #endregion
         
         #region Sound Module Abstract Methods
@@ -24,7 +29,7 @@ namespace HearXR.Audiobread
 
         public override SoundModuleDefinition CreateModuleSoundDefinition()
         {
-            var soundModuleProperties = CreateInstance<LowPassSoundModuleDefinition>();
+            var soundModuleProperties = CreateInstance<MSASoundModuleDefinition>();
             soundModuleProperties.name = DisplayName;
             soundModuleProperties.soundModule = this;
             return soundModuleProperties;
@@ -32,7 +37,7 @@ namespace HearXR.Audiobread
 
         public override SoundModuleProcessor CreateSoundModuleProcessor(ISound sound)
         {
-            return new LowPassSoundModuleProcessor(this, sound);
+            return new MSASoundModuleProcessor(this, sound);
         }
         #endregion
         
@@ -41,11 +46,14 @@ namespace HearXR.Audiobread
         {
             base.HandleInitPoolItem(ref audiobreadSource);
             
-            // See if the item already has a low pass effect.
-            var lpFilter = audiobreadSource.GetComponent<AudioLowPassFilter>();
-            if (lpFilter != null) return;
-            lpFilter = audiobreadSource.gameObject.AddComponent<AudioLowPassFilter>();
-            lpFilter.enabled = false;
+#if MSA
+            // See if the item already has an MSA Source.
+            var msaSource = audiobreadSource.GetComponent<MSASource>();
+            if (msaSource != null) return;
+            
+            msaSource = audiobreadSource.gameObject.AddComponent<MSASource>();
+            msaSource.enabled = false;
+#endif
         }
         #endregion
     }

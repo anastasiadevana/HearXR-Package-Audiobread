@@ -175,7 +175,7 @@ namespace HearXR.Audiobread.Core
                         if (MySound.MidiNoteInfo != null &&
                             MySound.MidiNoteInfo.duration > AudiobreadManager.INVALID_TIME_DURATION)
                         {
-                            Debug.LogWarning("This sound is triggered with a midi note duration. Ignoring the duration setting.");   
+                            Debug.LogWarning($"This sound is triggered with a midi note duration ({MySound.MidiNoteInfo.duration}). Ignoring the duration setting.");
                             continue;
                         }
                         

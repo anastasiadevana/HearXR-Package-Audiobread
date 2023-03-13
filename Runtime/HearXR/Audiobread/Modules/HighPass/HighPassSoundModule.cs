@@ -37,15 +37,15 @@ namespace HearXR.Audiobread
         #endregion
         
         #region Sound Module Virtual Methods
-        public override void HandleInitPoolItem(ref AudiobreadSource poolItem)
+        public override void HandleInitPoolItem(ref AudiobreadSource audiobreadSource)
         {
-            base.HandleInitPoolItem(ref poolItem);
+            base.HandleInitPoolItem(ref audiobreadSource);
             
-            // See if the item already has a low pass effect.
-            var lowPassEffect = poolItem.GetComponent<AudioHighPassFilter>();
-            if (lowPassEffect != null) return;
-            var lpFilter = poolItem.gameObject.AddComponent<AudioHighPassFilter>();
-            lpFilter.enabled = false;
+            // See if the item already has a high pass effect.
+            var hpFilter = audiobreadSource.GetComponent<AudioHighPassFilter>();
+            if (hpFilter != null) return;
+            hpFilter = audiobreadSource.gameObject.AddComponent<AudioHighPassFilter>();
+            hpFilter.enabled = false;
         }
         #endregion
     }

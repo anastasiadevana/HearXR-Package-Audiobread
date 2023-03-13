@@ -26,7 +26,7 @@ namespace HearXR.Audiobread
         #endregion
         
         #region Virtual Methods
-        public virtual void HandleInitPoolItem(ref AudiobreadSource poolItem) {}
+        public virtual void HandleInitPoolItem(ref AudiobreadSource audiobreadSource) {}
         #endregion
     }
 }

@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
-using HearXR.Audiobread.SoundProperties;
 using UnityEngine;
+
+// #if UNITY_EDITOR
+// using System.IO;
+// using UnityEditor;
+// #endif
 
 namespace HearXR.Audiobread
 {
@@ -12,12 +16,40 @@ namespace HearXR.Audiobread
         #region Editor Fields
         [SerializeField] private int _audioSourcePoolSize = 20;
         [SerializeField] private int _preloadPoolWith = 20;
+        [SerializeField] private SoundGeneratorDefaultSettings _soundGeneratorDefaultSettings;
         #endregion
         
         #region Properties
         // TODO: This override below doesn't do a null check.
         public new static AudiobreadManager Instance => SoundManager.Instance as AudiobreadManager;
         public AudiobreadPool Pool => _audiobreadPool;
+        
+        public SoundGeneratorDefaultSettings SoundGeneratorDefaultSettings
+        {
+            get
+            {
+                if (_soundGeneratorDefaultSettings == null)
+                {
+// #if UNITY_EDITOR
+//                     // TODO: This would be cool, but it does not assign the reference to the AudiobreadManager at runtime.
+//                     // TODO: Just have the file itself have an instance, probably
+//                     _soundGeneratorDefaultSettings = ScriptableObject.CreateInstance<SoundGeneratorDefaultSettings>();
+//                     var path = "Assets/AudiobreadData/SoundGeneratorDefaultSettings.asset";
+//                     
+//                     AssetDatabase.CreateAsset(_soundGeneratorDefaultSettings, path);
+//                     AssetDatabase.SaveAssets();
+//                     AssetDatabase.Refresh();
+//                     EditorUtility.FocusProjectWindow();
+//                     Selection.activeObject = _soundGeneratorDefaultSettings;
+//                     Debug.Log("Created new asset file for SoundGeneratorDefaultSettings");
+// #else
+                    Debug.LogError("Please create SoundGeneratorDefaultSettings asset and assign it to the AudiobreadManager.");
+// #endif
+                }
+
+                return _soundGeneratorDefaultSettings;
+            }
+        }
         #endregion
         
         #region Constants

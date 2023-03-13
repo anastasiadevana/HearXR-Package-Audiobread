@@ -543,7 +543,6 @@ namespace HearXR.Audiobread
         
         protected virtual void ResetToDefaults()
         {
-            // TODO: Have proper defaults configuration as part of Audiobread settings.
             if (_audiobreadSource == null || _audiobreadSource.AudioSource == null)
             {
                 // TODO: can we do anything better here?
@@ -552,20 +551,22 @@ namespace HearXR.Audiobread
                 return;
             }
             
+            var defaultSettings = AudiobreadManager.Instance.SoundGeneratorDefaultSettings;
+            
             _parentSound = null;
             _soundSourceObject = null;
-
+ 
             _audioSource.clip = default;
-            _audioSource.volume = 1.0f;
-            _audioSource.pitch = 1.0f;
-
-            _audioSource.loop = false;
-            _audioSource.mute = false;
-            _audioSource.playOnAwake = false;
+            _audioSource.volume = defaultSettings.volume;
+            _audioSource.pitch = defaultSettings.pitch;
             
-            _audioSource.spatialize = false;
-            _audioSource.spatializePostEffects = false;
-            _audioSource.spatialBlend = 0.0f;
+            _audioSource.loop = defaultSettings.loop;
+            _audioSource.mute = defaultSettings.mute;
+            _audioSource.playOnAwake = defaultSettings.playOnAwake;
+            
+            _audioSource.spatialize = defaultSettings.spatialize;
+            _audioSource.spatializePostEffects = defaultSettings.spatializePostEffects;
+            _audioSource.spatialBlend = defaultSettings.spatialBlend;
 
             ResetStatus(SoundStatus.None);
             SetPlaybackState(PlaybackState.Stopped);
