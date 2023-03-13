@@ -193,7 +193,7 @@ namespace HearXR.Audiobread.Core
                 // Spatialization type
                 if (properties[i] == CoreUnitySoundModuleDefinition.SpatializationTypeProperty)
                 {
-                    if (setValuesType == SetValuesType.OnBeforePlay)
+                    if (setValuesType == SetValuesType.OnPreparedToPlay)
                     {
                         var spatializationType = AudiobreadManager.IntToEnum<SpatializationTypeEnum>(_calculators[properties[i]].ValueContainer.IntValue);
 
