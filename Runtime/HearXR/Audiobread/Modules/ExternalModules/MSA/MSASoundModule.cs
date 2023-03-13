@@ -12,7 +12,8 @@ namespace HearXR.Audiobread
         #region Sound Module Abstract Properties
         public override string DisplayName => "MSA";
 
-        public override bool EnabledByDefault => (AudioSettings.GetSpatializerPluginName() == "MSA Spatializer");
+        //public override bool EnabledByDefault => (AudioSettings.GetSpatializerPluginName() == "MSA Spatializer");
+        public override bool EnabledByDefault => false;
         #endregion
         
         #region Sound Module Abstract Methods
