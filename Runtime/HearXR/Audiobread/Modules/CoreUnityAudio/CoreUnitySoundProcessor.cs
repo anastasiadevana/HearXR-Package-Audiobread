@@ -10,7 +10,6 @@ namespace HearXR.Audiobread.Core
         private bool _initSoundSource;
         private AudiobreadSource _audiobreadSource;
         private AudioSource _audioSource;
-        private IPitchedInstrumentSound _pitchedInstrumentSound;
         private bool _isPitchedInstrument;
         private VolumeCalculator _volumeCalculator;
         private bool _hasFadeIn;
@@ -27,9 +26,8 @@ namespace HearXR.Audiobread.Core
         protected override void DoInit()
         {
             base.DoInit();
-            if (MySound is IPitchedInstrumentSound)
+            if (MySound.Pitched)
             {
-                _pitchedInstrumentSound = MySound as IPitchedInstrumentSound;
                 _isPitchedInstrument = true;
             }
         }
@@ -271,7 +269,7 @@ namespace HearXR.Audiobread.Core
         /// <param name="noteNumber"></param>
         private void SetNoteNumber(int noteNumber)
         {
-            var baseNoteNumber = _pitchedInstrumentSound.BaseNoteNumber(noteNumber);
+            var baseNoteNumber = MySound.BaseNoteNumber;
             var value = AudiobreadManager.NoteNumberToFrequency(noteNumber, baseNoteNumber);
                     
             _audioSource.pitch = value; 

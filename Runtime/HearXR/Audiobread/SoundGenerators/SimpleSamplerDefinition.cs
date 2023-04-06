@@ -3,16 +3,14 @@ using UnityEngine;
 namespace HearXR.Audiobread
 {
     [CreateAssetMenu(fileName = "SimpleSampler", menuName = "Audiobread/Sound Generator/Simple Sampler")]
-    public class SimpleSamplerDefinition : SoundDefinition, IPitchedInstrumentSoundDefinition
+    public class SimpleSamplerDefinition : SoundDefinition
     {
         #region Editor Fields
         [SerializeField] private AudioClip _audioClip;
-        [SerializeField] private int _clipNoteNumber = AudiobreadManager.NOTE_NUMBER_C4;
         #endregion
         
         #region Properties
         public AudioClip AudioClip => _audioClip;
-        public int ClipNoteNumber => _clipNoteNumber;
         #endregion
 
         #region ISoundDefinition Methods

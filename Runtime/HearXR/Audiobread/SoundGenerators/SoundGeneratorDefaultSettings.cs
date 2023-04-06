@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace HearXR.Audiobread
 {
@@ -17,6 +18,12 @@ namespace HearXR.Audiobread
         public bool spatialize = false;
         public bool spatializePostEffects = false;
         [Range (0.0f, 1.0f)] public float spatialBlend = 0.0f;
+        
+        public bool bypassReverbZones = false;
+        public bool bypassEffects = false;
+        public bool bypassListenerEffects = false;
+
+        public AudioMixerGroup audioMixerGroup = default;
         #endregion
     }
 }

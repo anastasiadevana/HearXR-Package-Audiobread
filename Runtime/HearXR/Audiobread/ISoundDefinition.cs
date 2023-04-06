@@ -26,5 +26,9 @@ namespace HearXR.Audiobread
         List<SoundModule> GetCompatibleModules();
 
         List<SoundModule> EnabledModules { get; }
+                
+        bool Pitched { get; }
+        
+        int BaseNoteNumber { get; }
     }
 }

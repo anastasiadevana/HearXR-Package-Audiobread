@@ -41,6 +41,10 @@ namespace HearXR.Audiobread
         MidiNoteInfo MidiNoteInfo { get; set; }
         
         SchedulableSoundState SchedulableState { get; }
+                
+        bool Pitched { get; }
+        
+        int BaseNoteNumber { get; }
         #endregion
 
         #region Methods

@@ -159,6 +159,7 @@ namespace HearXR.Audiobread
         #region SoundModuleProcessor Abstract Properties
         public override Guid GUID => _guid;
         public override SoundModule SoundModule => _soundModule;
+        protected TModule MySoundModule => _soundModule;
         #endregion
 
         #region Constructor

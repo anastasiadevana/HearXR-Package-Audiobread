@@ -561,6 +561,13 @@ namespace HearXR.Audiobread
             _audioSource.spatializePostEffects = defaultSettings.spatializePostEffects;
             _audioSource.spatialBlend = defaultSettings.spatialBlend;
 
+            _audioSource.bypassReverbZones = defaultSettings.bypassReverbZones;
+            
+            _audioSource.bypassEffects = defaultSettings.bypassEffects;
+            _audioSource.bypassListenerEffects = defaultSettings.bypassListenerEffects;
+
+            _audioSource.outputAudioMixerGroup = defaultSettings.audioMixerGroup;
+            
             ResetStatus(SoundStatus.None);
             SetPlaybackState(PlaybackState.Stopped);
             SetSchedulableState(SchedulableSoundState.None);

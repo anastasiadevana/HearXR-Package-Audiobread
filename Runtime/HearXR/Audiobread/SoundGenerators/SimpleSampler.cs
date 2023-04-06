@@ -1,26 +1,12 @@
-using UnityEngine;
-
 namespace HearXR.Audiobread
 {
     // TODO: The code between SimpleSampler and AudioClip is identical. Have them inherit from the same abstract class.
-    public class SimpleSampler : SoundGeneratorUnityAudio<SimpleSamplerDefinition, SimpleSampler>, IPitchedInstrumentSound
+    public class SimpleSampler : SoundGeneratorUnityAudio<SimpleSamplerDefinition, SimpleSampler>
     {
-        // #region Private Fields
-        // private new SimpleSamplerDefinition _soundDefinition;
-        // #endregion
-        
         #region Constructor
         public SimpleSampler(AudiobreadSource audiobreadSource) : base(audiobreadSource) {}
         #endregion
 
-        // #region Sound Overrides
-        // protected override void PostSetSoundDefinition(InitSoundFlags initSoundFlags = InitSoundFlags.None)
-        // {
-        //     base.PostSetSoundDefinition(initSoundFlags);
-        //     _soundDefinition = base._soundDefinition;
-        // }
-        // #endregion
-        
         #region Sound Abstract Methods
         protected override void DoReleaseResources()
         {
@@ -49,13 +35,6 @@ namespace HearXR.Audiobread
         public override string ToString()
         {
             return $"- SIMPLE SAMPLER - [{Guid}] [{_soundDefinition.AudioClip.name}]";
-        }
-        #endregion
-        
-        #region IPitchedInstrumentSound
-        public int BaseNoteNumber(int noteNumber)
-        {
-            return _soundDefinition.ClipNoteNumber;
         }
         #endregion
     }

@@ -181,9 +181,11 @@ namespace HearXR.Audiobread
 
         #region ISound Properties to Abstract
         public abstract ISoundDefinition SoundDefinition { get; }
+        // TODO: Move these abstract methods into a correct region.
         public abstract void Play(PlaySoundFlags playSoundFlags = PlaySoundFlags.None);
-        // public abstract bool CanBeRegistered { get; } // TODO: Delete if not used.
         public abstract void ReleaseResources();
+        public abstract bool Pitched { get; }
+        public abstract int BaseNoteNumber { get; }
         #endregion
 
         #region ISchedulable Methods to Abstract
@@ -856,6 +858,8 @@ namespace HearXR.Audiobread
         #region ISound<ISoundDefinition> Properties
         public override ISoundDefinition SoundDefinition => _soundDefinition;
         protected TDefinition _soundDefinition;
+        public override bool Pitched => _soundDefinition.Pitched;
+        public override int BaseNoteNumber => _soundDefinition.BaseNoteNumber;
         #endregion
 
         #region Private Fields

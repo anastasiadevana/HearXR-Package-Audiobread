@@ -18,6 +18,10 @@ namespace HearXR.Audiobread
         
         // TODO: Move to Unity one.
         public AudioMixerGroup audioMixerGroup;
+        
+        [SerializeField] private bool _pitched = false;
+
+        [SerializeField] private int _baseNoteNumber;
 
         [Space(20)] public List<SoundParameterDefinition> _parameters;
         
@@ -62,6 +66,9 @@ namespace HearXR.Audiobread
         {
             return BuiltInData.SoundModuleManager.GetCompatibleModules(this);
         }
+        
+        public bool Pitched => _pitched;
+        public int BaseNoteNumber => _baseNoteNumber;
         #endregion
 
         #region ISoundDefinition Methods
