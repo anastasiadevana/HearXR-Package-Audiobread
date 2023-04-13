@@ -8,6 +8,7 @@ namespace HearXR.Audiobread
         #region Sound Module Abstract Properties
         public override string DisplayName => "Low Pass";
         public override bool EnabledByDefault => false;
+        public override bool PropagateToChildren => true;
         #endregion
         
         #region Sound Module Abstract Methods
@@ -19,6 +20,12 @@ namespace HearXR.Audiobread
         public override bool IsCompatibleWith(in ISoundDefinition soundDefinition)
         {
             if (soundDefinition is SoundDefinition) return true;
+            return false;
+        }
+
+        public override bool IsCompatibleWithChild(in ISoundDefinition soundDefinition)
+        {
+            if (soundDefinition is ISoundGeneratorUnityAudioDefinition) return true;
             return false;
         }
 

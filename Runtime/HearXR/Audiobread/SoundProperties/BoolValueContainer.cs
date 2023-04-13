@@ -2,10 +2,11 @@ using UnityEngine;
 
 namespace HearXR.Audiobread.SoundProperties
 {
-    public class EnumValueContainer : ValueContainer<int>
+    public class BoolValueContainer : ValueContainer<int>
     {
-        public EnumValueContainer(int defaultValue) : base(defaultValue) {}
+        public BoolValueContainer(int defaultValue) : base(defaultValue) {}
 
+        // TODO: Can move all of these errors one level up, then override just the correct response in the inheritor class.
         public override double DoubleValue
         {
             get
@@ -41,21 +42,5 @@ namespace HearXR.Audiobread.SoundProperties
             get => IntValue;
             set => IntValue = value;
         }
-        
-        
-        
-        /*
-        public static T ParseEnum<T>(string value, T defaultValue) where T : struct, IConvertible
-        {
-            //if (!typeof(T).IsEnum) throw new ArgumentException("T must be an enumerated type");
-            if (string.IsNullOrEmpty(value)) return defaultValue;
-
-            foreach (T item in Enum.GetValues(typeof(T)))
-            {
-                if (item.ToString().ToLower().Equals(value.Trim().ToLower())) return item;
-            }
-            return defaultValue;
-        }
-        */
     }
 }

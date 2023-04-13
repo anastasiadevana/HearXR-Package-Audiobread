@@ -3,7 +3,7 @@ using UnityEngine;
 namespace HearXR.Audiobread
 {
     [CreateAssetMenu(fileName = "SimpleSampler", menuName = "Audiobread/Sound Generator/Simple Sampler")]
-    public class SimpleSamplerDefinition : SoundDefinition
+    public class SimpleSamplerDefinition : SoundDefinition, ISoundGeneratorUnityAudioDefinition
     {
         #region Editor Fields
         [SerializeField] private AudioClip _audioClip;

@@ -160,27 +160,8 @@ namespace HearXR.Audiobread
             //       This will cause orphaned references to be hanging around.
             //       Maybe this function defaults to unsetting all persistence flags.
             
-            // TODO: Iterate BACKWARDS! (doh)
-            // Do not stop sounds while we're iterating, since that can screw up the iterator.
-            List<ISound> stopThese = new List<ISound>();
-            for (int i = 0; i < _sounds.Count; ++i)
-            {
-                if (soundDefinition != null)
-                {
-                    // TODO: !!!!!!!!!
-                    //if (_sounds[i].SoundDefinition.GetInstanceID() != soundDefinition.GetInstanceID()) { continue; }
-                }
-                
-                if (soundSourceObject != null)
-                {
-                    // TODO: !!!!!!!!!
-                    //if (_sounds[i].SoundSourceObject.GetInstanceID() != soundSourceObject.GetInstanceID()) { continue; }
-                }
-
-                stopThese.Add(_sounds[i]);
-            }
-
-            for (int i = 0; i < stopThese.Count; ++i)
+            var stopThese = FilterSounds(soundDefinition, soundSourceObject);
+            for (var i = 0; i < stopThese.Count; ++i)
             {
                 stopThese[i].Stop(flags);
             }
@@ -225,6 +206,42 @@ namespace HearXR.Audiobread
             sound.MidiNoteInfo = midiNoteInfo;
             sound.Play(playFlags);
             return sound;
+        }
+
+        public void SetParameter(Parameter parameter, float parameterValue, ISoundDefinition soundDefinition = null,
+            GameObject soundSourceObject = null)
+        {
+            // TODO: Set up a couple of convenience overloads for this function.
+            var applyParametersTo = FilterSounds(soundDefinition, soundSourceObject);
+
+            for (var i = 0; i < applyParametersTo.Count; ++i)
+            {
+                applyParametersTo[i].SetParameter(parameter, parameterValue);
+            }
+        }
+        #endregion
+
+        #region Private Methods
+        private List<ISound> FilterSounds(ISoundDefinition soundDefinition = null, GameObject soundSourceObject = null)
+        {
+            var result = new List<ISound>();
+            
+            for (var i = 0; i < _sounds.Count; ++i)
+            {
+                if (soundDefinition != null)
+                {
+                    if (_sounds[i].SoundDefinition != soundDefinition) continue;
+                }
+                
+                if (soundSourceObject != null)
+                {
+                    if (_sounds[i].SoundSourceObject != soundSourceObject) continue;
+                }
+
+                result.Add(_sounds[i]);
+            }
+
+            return result;
         }
         #endregion
         

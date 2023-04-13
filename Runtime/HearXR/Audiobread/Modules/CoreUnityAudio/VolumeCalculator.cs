@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace HearXR.Audiobread.SoundProperties
@@ -37,7 +36,6 @@ namespace HearXR.Audiobread.SoundProperties
         }
 
         #region Events
-        // public event Action<Fade.Direction> OnFadeFinished;
         public event Action OnFadeOutFinished;
         public event Action OnFadeInFinished;
         #endregion

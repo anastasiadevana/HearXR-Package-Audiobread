@@ -3,7 +3,7 @@ using UnityEngine;
 namespace HearXR.Audiobread
 {
     [CreateAssetMenu(fileName = "Clip", menuName = "Audiobread/Sound Generator/Clip")]
-    public class AudiobreadClipDefinition : SoundDefinition
+    public class AudiobreadClipDefinition : SoundDefinition, ISoundGeneratorUnityAudioDefinition
     {
         #region Editor Fields
         [SerializeField] private AudioClip _audioClip;

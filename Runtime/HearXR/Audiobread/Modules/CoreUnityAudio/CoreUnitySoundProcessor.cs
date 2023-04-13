@@ -191,28 +191,32 @@ namespace HearXR.Audiobread.Core
                 // Spatialization type
                 if (properties[i] == CoreUnitySoundModuleDefinition.SpatializationTypeProperty)
                 {
-                    if (setValuesType == SetValuesType.OnPreparedToPlay)
-                    {
-                        var spatializationType = AudiobreadManager.IntToEnum<SpatializationTypeEnum>(_calculators[properties[i]].ValueContainer.IntValue);
-
-                        switch (spatializationType)
-                        {
-                            case SpatializationTypeEnum.NonSpatial:
-                                _audioSource.spatialize = false;
-                                _audioSource.spatialBlend = 0.0f;
-                                break;
-                            
-                            case SpatializationTypeEnum.StereoPanning:
-                                _audioSource.spatialize = false;
-                                _audioSource.spatialBlend = 1.0f;
-                                break;
-                            
-                            case SpatializationTypeEnum.Spatialized:
-                                _audioSource.spatialize = true;
-                                _audioSource.spatialBlend = 1.0f;
-                                break;
-                        }
-                    }
+                    // TODO: This needs to be better integrated with a spatialization plugin.
+                    // if (setValuesType == SetValuesType.OnPreparedToPlay)
+                    // {
+                    //     var spatializationType = AudiobreadManager.IntToEnum<SpatializationTypeEnum>(_calculators[properties[i]].ValueContainer.IntValue);
+                    //
+                    //     switch (spatializationType)
+                    //     {
+                    //         case SpatializationTypeEnum.NonSpatial:
+                    //             _audioSource.spatialize = false;
+                    //             Debug.Log("Set spatialize to false");
+                    //             _audioSource.spatialBlend = 0.0f;
+                    //             break;
+                    //         
+                    //         case SpatializationTypeEnum.StereoPanning:
+                    //             _audioSource.spatialize = false;
+                    //             Debug.Log("Set spatialize to false");
+                    //             _audioSource.spatialBlend = 1.0f;
+                    //             break;
+                    //         
+                    //         case SpatializationTypeEnum.Spatialized:
+                    //             _audioSource.spatialize = true;
+                    //             Debug.Log("Set spatialize to true");
+                    //             _audioSource.spatialBlend = 1.0f;
+                    //             break;
+                    //     }
+                    // }
                 }
                 
                 // TODO: Add offset.

@@ -15,7 +15,8 @@ namespace HearXR.Audiobread
         
         bool WasChanged { get; set; }
 
-        List<SoundModuleDefinition> ModuleSoundDefinitions { get; }
+        List<SoundModuleDefinition> ModuleSoundDefinitions { get; } // TODO: Rename this to SoundModuleDefinitions
+        Dictionary<SoundModule, SoundModuleDefinition> PropagatedSoundModuleDefinitions { get; set; }
         
         List<SoundParameterDefinition> Parameters { get; }
         

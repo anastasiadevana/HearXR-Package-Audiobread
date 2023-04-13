@@ -5,7 +5,7 @@ using UnityEngine;
 namespace HearXR.Audiobread
 {
     public abstract class SoundGeneratorUnityAudio<TDefinition, TSelf> : Sound<TDefinition, TSelf>, ISoundGeneratorUnityAudio
-        where TDefinition : class, ISoundDefinition
+        where TDefinition : class, ISoundDefinition, ISoundGeneratorUnityAudioDefinition
         where TSelf : Sound
     {
         #region Events
@@ -265,8 +265,7 @@ namespace HearXR.Audiobread
             base.ApplySoundDefinitionAndProperties(initSoundFlags);
 
             SetUpAudioSource();
-
-            //Debug.Log($"HEAR XR: {this} applying sound definition and properties");
+            
             SetLooping();
 
             ApplySoundDefinitionToUnityAudio?.Invoke(_audiobreadSource);
@@ -558,6 +557,7 @@ namespace HearXR.Audiobread
             _audioSource.playOnAwake = defaultSettings.playOnAwake;
             
             _audioSource.spatialize = defaultSettings.spatialize;
+            
             _audioSource.spatializePostEffects = defaultSettings.spatializePostEffects;
             _audioSource.spatialBlend = defaultSettings.spatialBlend;
 

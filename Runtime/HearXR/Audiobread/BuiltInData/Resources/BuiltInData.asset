@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: BuiltInData
   m_EditorClassIdentifier: 
   _events: {fileID: 11400000, guid: ba5ce3468290d4200b5eda54c2348aec, type: 2}
+  _parameters: {fileID: 11400000, guid: 555f50911cf4e40c7bc100113fd72fc9, type: 2}
   _properties: {fileID: 11400000, guid: 05c057a97dcb54e82a1d989d539f97ec, type: 2}
   _soundModuleManager: {fileID: 11400000, guid: eee962fff56ac4592a784785b1b19478, type: 2}

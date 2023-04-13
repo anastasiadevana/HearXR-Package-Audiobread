@@ -39,6 +39,8 @@ namespace HearXR.Audiobread
 
         public List<SoundModuleDefinition> ModuleSoundDefinitions => _moduleSoundDefinitions;
 
+        public Dictionary<SoundModule, SoundModuleDefinition> PropagatedSoundModuleDefinitions { get; set; } = new Dictionary<SoundModule, SoundModuleDefinition>();
+
         public string Name => name;
         
         public List<SoundParameterDefinition> Parameters

@@ -139,6 +139,15 @@ namespace HearXR.Audiobread
             if (!shouldInitChildren) return;
             
             var childDefinitions = _soundDefinition.GetChildren();
+
+            if (_soundModuleGroupProcessor != null && _soundModuleGroupProcessor.PropagatedSoundModuleDefinitions.Count > 0)
+            {
+                for (var i = 0; i < childDefinitions.Length; ++i)
+                {
+                    childDefinitions[i].PropagatedSoundModuleDefinitions = _soundModuleGroupProcessor.PropagatedSoundModuleDefinitions;
+                }
+            }
+            
             ISound[] children = new ISound[childDefinitions.Length];
             for (int i = 0; i < childDefinitions.Length; ++i)
             {

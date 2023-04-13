@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onEnable: {fileID: 11400000, guid: ff5881bb0550f4f3a8d425732e033d10, type: 2}
   onDisable: {fileID: 11400000, guid: b1f3f7a36e3d84fd98f0bed5df6f1d84, type: 2}
+  onUpdate: {fileID: 11400000, guid: 1b5c38d437db14e7085ed906bf60cec5, type: 2}

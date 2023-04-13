@@ -47,6 +47,7 @@ namespace HearXR.Audiobread
             public SoundDefinition soundDefinition;
             public TargetType targetType; // TODO: Move to sound action
             public GameObject specifyOtherTarget; // TODO: Move to sound action
+            public BuiltInParameter builtInParameter;
             public List<SoundAction> actions;
         }
 
@@ -122,6 +123,10 @@ namespace HearXR.Audiobread
                             break;
                         
                         /*
+                        case SoundAction.SetParameter:
+                            // AudiobreadManager.Instance.SetAutoParameter(soundEventReactions[i].soundDefinition)
+                            break;
+                         
                         case SoundAction.PlayMultiple:
                             throw new NotImplementedException();
                             break;
@@ -159,10 +164,6 @@ namespace HearXR.Audiobread
                             break;
                         
                         case SoundAction.UnmuteMultiple:
-                            throw new NotImplementedException();
-                            break;
-                        
-                        case SoundAction.SetParameter:
                             throw new NotImplementedException();
                             break;
                         

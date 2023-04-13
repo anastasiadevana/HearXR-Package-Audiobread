@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace HearXR.Audiobread
@@ -10,10 +11,49 @@ namespace HearXR.Audiobread
         internal SoundModuleGroupProcessor(ISound sound)
         {
             _sound = sound;
-            
-            foreach (var soundModuleSoundDefinitions in sound.SoundDefinition.ModuleSoundDefinitions)
+
+            foreach (var propagatedDefinitions in sound.SoundDefinition.PropagatedSoundModuleDefinitions)
             {
-                var moduleProcessor = soundModuleSoundDefinitions.soundModule.CreateSoundModuleProcessor(sound);
+                var module = propagatedDefinitions.Key;
+                var definition = propagatedDefinitions.Value;
+                
+                // If the propagated module is compatible with this sound, and there isn't already this module attached to the sound...
+                if (module.IsCompatibleWithChild(_sound.SoundDefinition) && 
+                    sound.SoundDefinition.ModuleSoundDefinitions.FirstOrDefault(x => x.soundModule == module) == null)
+                {
+                    // Add this module to the current sound's definition.
+                    Debug.Log($"{_sound} we will apply the {module.DisplayName} to this sound."); 
+                    sound.SoundDefinition.ModuleSoundDefinitions.Add(definition);
+                }
+                // If it's not compatible with this sound, then propagate it further.
+                else
+                {
+                    if (!_propagatedSoundModuleDefinitions.ContainsKey(module))
+                    {
+                        // Debug.Log($"{_sound} Continue propagating module {module.DisplayName} to children.");
+                        _propagatedSoundModuleDefinitions.Add(module, definition);
+                    }
+                }
+            }
+            
+            foreach (var soundModuleSoundDefinition in sound.SoundDefinition.ModuleSoundDefinitions)
+            {
+                // This sound module can be propagated to children and this sound is NOT compatible with it,
+                // we should propagate to children
+                if (soundModuleSoundDefinition.soundModule.PropagateToChildren && !soundModuleSoundDefinition.soundModule.IsCompatibleWithChild(_sound.SoundDefinition))
+                {
+                    // If the list of propagated modules doesn't already contain it, add it.
+                    if (!_propagatedSoundModuleDefinitions.ContainsKey(soundModuleSoundDefinition.soundModule))
+                    {
+                        // Debug.Log($"Propagate module {soundModuleSoundDefinition.soundModule.DisplayName} to children.");
+                        _propagatedSoundModuleDefinitions.Add(soundModuleSoundDefinition.soundModule, soundModuleSoundDefinition);
+                    }
+
+                    // In any case, do not apply the definition to this sound..
+                    continue;
+                }
+                
+                var moduleProcessor = soundModuleSoundDefinition.soundModule.CreateSoundModuleProcessor(sound);
 
                 if (moduleProcessor is IStopControllerProcessor)
                 {
@@ -32,9 +72,14 @@ namespace HearXR.Audiobread
         }
         #endregion
 
+        #region Properties
+        public Dictionary<SoundModule, SoundModuleDefinition> PropagatedSoundModuleDefinitions => _propagatedSoundModuleDefinitions;
+        #endregion
+        
         #region Private Fields
         private ISound _sound;
         private readonly List<SoundModuleProcessor> _soundModuleProcessors = new List<SoundModuleProcessor>();
+        private readonly Dictionary<SoundModule, SoundModuleDefinition> _propagatedSoundModuleDefinitions = new Dictionary<SoundModule, SoundModuleDefinition>();
         private bool _hasStopControllers;
         private List<SoundModuleProcessor> _stopControllers = new List<SoundModuleProcessor>();
         #endregion

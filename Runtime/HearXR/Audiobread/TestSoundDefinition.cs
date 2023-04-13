@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using HearXR.Audiobread.SoundProperties;
 using UnityEngine;
 
+// TODO: Delete this already.
 namespace HearXR.Audiobread
 {
     /// <summary>
     /// TestSoundDefinition with new property stuff.
     /// </summary>
     [CreateAssetMenu(fileName = "TestSoundDefinition", menuName = "Audiobread/Test Sound Definition")]
-    public class TestSoundDefinition : SoundDefinition
+    public class TestSoundDefinition : SoundDefinition, ISoundGeneratorUnityAudioDefinition
     {
         #region Editor Fields
         [SerializeField] private AudioClip _audioClip;

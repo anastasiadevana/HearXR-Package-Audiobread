@@ -6,11 +6,12 @@ namespace HearXR.Audiobread
     // TODO: Find all instances of Resources.Load of built-in data and get rid of them.
     // TODO: Rename this from BuiltInData to something else. Because it will handle more than built-in stuff.
     [ExecuteAlways]
-    [CreateAssetMenu (menuName = "Audiobread/Built In Data")]
+    // [CreateAssetMenu (menuName = "Audiobread/Built In Data")]
     public class BuiltInData : ScriptableObject
     {
         #region Editor Fields
         [SerializeField] private BuiltInSoundEventSet _events;
+        [SerializeField] private BuiltInParameterSet _parameters;
         [SerializeField] private BuiltInSoundPropertySet _properties;
         [SerializeField] private SoundModuleManager _soundModuleManager;
         #endregion
@@ -40,6 +41,8 @@ namespace HearXR.Audiobread
         /// Use this if you have a reference to an instantiated BuiltInData.
         /// </summary>
         public BuiltInSoundEventSet events => _events;
+
+        public BuiltInParameterSet parameters => _parameters;
         public BuiltInSoundPropertySet properties => _properties;
         public SoundModuleManager soundModuleManager => _soundModuleManager;
 
@@ -48,6 +51,8 @@ namespace HearXR.Audiobread
         /// Static properties.
         /// </summary>
         public static BuiltInSoundEventSet Events => Instance._events;
+
+        public static BuiltInParameterSet Parameters => Instance._parameters;
         public static BuiltInSoundPropertySet Properties => Instance._properties;
         public static SoundModuleManager SoundModuleManager => Instance._soundModuleManager;
         #endregion

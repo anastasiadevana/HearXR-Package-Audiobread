@@ -3,7 +3,7 @@ using UnityEngine;
 namespace HearXR.Audiobread
 {
     [CreateAssetMenu(fileName = "Tone Generator", menuName = "Audiobread/Sound Generator/Tone Generator")]
-    public class ToneGeneratorDefinition : SoundDefinition, IToneGeneratorSoundDefinition
+    public class ToneGeneratorDefinition : SoundDefinition, IToneGeneratorSoundDefinition, ISoundGeneratorUnityAudioDefinition
     {
         public override T CreateSound<T>(InitSoundFlags initSoundFlags = InitSoundFlags.None)
         {

@@ -24,7 +24,8 @@ namespace HearXR.Audiobread
         // Validate if these are false against the sound event list.
         [SerializeField] private bool _raiseOnEnable = true;
         [SerializeField] private bool _raiseOnDisable = true;
-        [FormerlySerializedAs("_soundEventList")] [SerializeField] private List<SoundEventList> _soundEventOverrides = new List<SoundEventList>();
+        [SerializeField] private bool _raiseOnUpdate = false;
+        [SerializeField] private List<SoundEventList> _soundEventOverrides = new List<SoundEventList>();
         
         private List<BuiltInSoundEvent> _builtInSoundEventList = new List<BuiltInSoundEvent>();
 
@@ -47,6 +48,11 @@ namespace HearXR.Audiobread
         private void OnDisable()
         {
             TryRaiseBuiltInEvent(_raiseOnDisable, BuiltInData.Events.onDisable);
+        }
+
+        private void Update()
+        {
+            TryRaiseBuiltInEvent(_raiseOnUpdate, BuiltInData.Events.onUpdate);
         }
 
         private void TryRaiseBuiltInEvent(bool doRaise, BuiltInSoundEvent soundEvent)

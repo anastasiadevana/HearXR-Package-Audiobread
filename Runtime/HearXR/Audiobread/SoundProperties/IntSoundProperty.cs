@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace HearXR.Audiobread.SoundProperties
+﻿namespace HearXR.Audiobread.SoundProperties
 {
     public abstract class IntSoundProperty : SoundProperty<int>
     {

@@ -9,6 +9,7 @@ namespace HearXR.Audiobread
         #region Sound Module Abstract Properties
         public override string DisplayName => "Core Child Picker";
         public override bool EnabledByDefault => true;
+        public override bool PropagateToChildren => false;
         #endregion
         
         #region Sound Module Abstract Methods
@@ -20,6 +21,11 @@ namespace HearXR.Audiobread
         public override bool IsCompatibleWith(in ISoundDefinition soundDefinition)
         {
             if (soundDefinition is IContainerSoundDefinition) return true;
+            return false;
+        }
+
+        public override bool IsCompatibleWithChild(in ISoundDefinition soundDefinition)
+        {
             return false;
         }
 

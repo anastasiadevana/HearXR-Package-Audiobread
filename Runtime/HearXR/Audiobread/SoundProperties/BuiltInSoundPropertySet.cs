@@ -7,7 +7,7 @@ using UnityEngine;
 // TODO: Do we even need this file as a SCRIPTABLE OBJECT? Nothing is assigned in the editor.
 namespace HearXR.Audiobread.SoundProperties
 {
-    [CreateAssetMenu (menuName = "Audiobread/Built In Sound Property Set")]
+    // [CreateAssetMenu (menuName = "Audiobread/Built In Sound Property Set")]
     public class BuiltInSoundPropertySet : ScriptableObject
     {
         public void Awake()
