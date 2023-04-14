@@ -14,8 +14,10 @@ namespace HearXR.Audiobread
         //List<SoundModuleProcessor> SoundModuleProcessors { get; }
         
         SoundModuleGroupProcessor SoundModuleGroupProcessor { get; }
+        
+        Dictionary<Parameter, float> ParameterValues { get; }
 
-        // bool TryGetMatchingSoundModuleProcessor(in SoundModule referenceSoundModule, out SoundModuleProcessor matchingSoundModuleProcessor);
+        void AddTrackedParameters(List<Parameter> parameters);
     }
     
     internal interface ISoundInternal<in TDefinition> : ISoundInternal where TDefinition : ISoundDefinition

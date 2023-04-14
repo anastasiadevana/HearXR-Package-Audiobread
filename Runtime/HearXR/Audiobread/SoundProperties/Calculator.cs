@@ -108,7 +108,6 @@ namespace HearXR.Audiobread.SoundProperties
                 return;
             }
             _influences.Add(tInfluence);
-            // Debug.Log($"Added influence. New count {_influences.Count}");
         }
 
         public override void RemoveInfluence(ValueContainer influence)
@@ -118,7 +117,6 @@ namespace HearXR.Audiobread.SoundProperties
             if (_influences.Contains(tInfluence))
             {
                 _influences.Remove(tInfluence);
-                //Debug.Log($"Removed influence. New count {_influences.Count}");
             }
         }
 

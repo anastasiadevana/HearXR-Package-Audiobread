@@ -23,7 +23,6 @@ namespace HearXR.Audiobread
             return curve.Evaluate(parameterValue);
         }
         
-        
         public Parameter Parameter
         {
             get => parameter;

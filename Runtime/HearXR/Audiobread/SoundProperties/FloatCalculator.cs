@@ -39,6 +39,11 @@ namespace HearXR.Audiobread.SoundProperties
             // Adjusted value.
             // TODO: Work in parameters (move from volume)
             _value = (_rawValue + influenceAddition) * influenceFactor;
+
+            // Add parameter factor
+            // TODO: We should handle the parameters differently depending on the property.
+            // TODO: On each parameter we need to choose to add / remove / override / multiply / etc.
+            _value *= _parameterFactor;
             
             Mathf.Clamp(_value, _property.MinLimit, _property.MaxLimit);
             
@@ -54,7 +59,7 @@ namespace HearXR.Audiobread.SoundProperties
             {
                 if (!parameterValues.ContainsKey(_parameterArray[i].parameter))
                 {
-                    // TODO: Barf better.
+                    // TODO: Barf better...
                     continue;
                 }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using HearXR.Audiobread.SoundProperties;
 using UnityEngine;
 
@@ -131,9 +132,9 @@ namespace HearXR.Audiobread
             set
             {
                 if (_parentSound == value) return;
-                ISound previousParentSound = _parentSound;
+                var previousParentSound = _parentSound;
                 _parentSound = value;
-                _haveParent = (_parentSound != null);
+                _haveParent = (value != null);
                 PostSetParent(previousParentSound, _parentSound);
             }
         }
@@ -142,6 +143,7 @@ namespace HearXR.Audiobread
         public bool HasChildren => _hasChildren;
         protected bool _hasChildren;
 
+        // TODO: Strangely, this falsely returns true when the pool starts swapping.
         public bool HasParent => _haveParent;
         private bool _haveParent;
 
@@ -159,15 +161,6 @@ namespace HearXR.Audiobread
         #endregion
         
         #region Protected Fields
-        // NOTE: Moved to SoundModuleProcessor
-        // Sound properties relevant to this Sound.
-        // TODO: Instead of regenerating these values (especially for the AudiobreadClip) every single time, instead 
-        //       instantiate each sound with the dictionaries already allocated for all known properties.
-        //       Then just flip TRUE / FALSE for when this property is in use.
-        // protected SoundProperty[] _soundProperties;
-        // protected Dictionary<SoundProperty, Calculator> _calculators; // TODO: See who and why is accessing this.
-        // END move
-        
         protected SoundModuleGroupProcessor _soundModuleGroupProcessor;
         protected bool _hasSoundModuleGroupProcessor;
         #endregion
@@ -186,6 +179,7 @@ namespace HearXR.Audiobread
         public abstract void ReleaseResources();
         public abstract bool Pitched { get; }
         public abstract int BaseNoteNumber { get; }
+        public abstract Dictionary<Parameter, float> ParameterValues { get; }
         #endregion
 
         #region ISchedulable Methods to Abstract
@@ -210,6 +204,8 @@ namespace HearXR.Audiobread
             ResetStatus(SoundStatus.None);
             OnDeInit();
         }
+        
+        public abstract void AddTrackedParameters(List<Parameter> parameters);
         #endregion
 
         #region Abstract Methods
@@ -221,7 +217,6 @@ namespace HearXR.Audiobread
         internal abstract void AddSoundPropertyInfluence<T>(ValueContainer influence) where T : SoundProperty;
         internal abstract void AddSoundPropertyInfluence(SoundProperty property, ValueContainer influence);
         internal abstract void RemoveSoundPropertyInfluence<T>(ValueContainer influence) where T : SoundProperty;
-        //internal abstract void RemoveSoundPropertyInfluence(SoundProperty property, ValueContainer influence);
 
         protected abstract void DoRefreshSoundDefinition();
         #endregion
@@ -237,30 +232,7 @@ namespace HearXR.Audiobread
         {
             // TODO: Not sure how this would happen or what to do about this.
             if (newParent == null || newParent == previousParent) return;
-
-            /*((ISoundInternal) newParent).InvokeOnSetParent(this);*/
             ((ISoundInternal) this).InvokeOnSetParent(newParent);
-
-            // TODO: SoundModule hookup.
-            // if (newParent.GetCalculators(out Dictionary<SoundProperty, Calculator> parentCalculators))
-            // {
-            //     // Debug.Log($"Parent has calculators {parentCalculators.Count}");
-            //     
-            //     if (_soundProperties == null)
-            //     {
-            //         Debug.LogError("There are no sound properties!");
-            //     }
-            //     for (int i = 0; i < _soundProperties.Length; ++i)
-            //     {
-            //         // Debug.Log($"Try to add influence of {_soundProperties[i]}");
-            //         
-            //         if (parentCalculators.ContainsKey(_soundProperties[i]))
-            //         {
-            //             // Debug.Log($"Added influence on {_soundProperties[0]} {newParent} >>> {this}");
-            //             _calculators[_soundProperties[i]].AddInfluence(parentCalculators[_soundProperties[i]].ValueContainer);
-            //         }
-            //     }
-            // }
         }
 
         protected virtual void PostSetStatus(SoundStatus statusFlag, bool wasSet, bool isSet) {}
@@ -317,7 +289,6 @@ namespace HearXR.Audiobread
             BeforePlayEvent += _soundModuleGroupProcessor.HandleBeforePlay;
             ParentSetEvent += _soundModuleGroupProcessor.HandleSetParent;
             OnBegan += _soundModuleGroupProcessor.HandleOnSoundBegan;
-            OnSetParameter += _soundModuleGroupProcessor.HandleOnSetParameter;
         }
         
         protected virtual void UnsubscribeSoundModuleProcessorFromEvents()
@@ -332,36 +303,12 @@ namespace HearXR.Audiobread
             BeforePlayEvent -= _soundModuleGroupProcessor.HandleBeforePlay;
             ParentSetEvent -= _soundModuleGroupProcessor.HandleSetParent;
             OnBegan -= _soundModuleGroupProcessor.HandleOnSoundBegan;
-            OnSetParameter -= _soundModuleGroupProcessor.HandleOnSetParameter;
         }
         #endregion
         
         #region ISound Methods
-        // TODO: From Audiobread-ONE
-        // public void Play(GameObject soundSourceObject, PlaySoundFlags flags = PlaySoundFlags.None)
-        // {
-        //     SoundSourceObject = soundSourceObject;
-        //     Play(flags);
-        // }
-        //
-        // public override void Play(PlaySoundFlags playFlags = PlaySoundFlags.None)
-        // {
-        //     SoundSourceObject = (Application.isPlaying)
-        //         ? Audiobread.Instance.ValidateSoundSource(soundSourceObject)
-        //         : null;
-        // }
-        // TODO: \end 
-
-        // TODO: Organize these parameter stuff into appropriate places.
-        internal event Action<Parameter, float> OnSetParameter;
+        // TODO: Move stuff to appropriate regions.
         public abstract void SetParameter(Parameter parameter, float parameterValue);
-        protected void InvokeOnSetParameter(Parameter parameter, float parameterValue)
-        {
-            // Debug.Log($"InvokeOnSetParameter!!! {OnSetParameter == null} {this.GetType()}");
-            
-            OnSetParameter?.Invoke(parameter, parameterValue);
-        }
-        
 
         public void UpdateSound()
         {
@@ -386,22 +333,6 @@ namespace HearXR.Audiobread
             calculators = null;
             return true;
         }
-
-        // bool ISoundInternal.TryGetMatchingSoundModuleProcessor(in SoundModule referenceSoundModule, out SoundModuleProcessor matchingSoundModuleProcessor)
-        // {
-        //     matchingSoundModuleProcessor = null;
-        //     
-        //     for (int i = 0; i < _soundModuleProcessors.Count; ++i)
-        //     {
-        //         if (_soundModuleProcessors[i].SoundModule == referenceSoundModule)
-        //         {
-        //             matchingSoundModuleProcessor = _soundModuleProcessors[i];
-        //             return true;
-        //         }
-        //     }
-        //
-        //     return false;
-        // }
 
         public ISound GetTopParent()
         {
@@ -543,7 +474,6 @@ namespace HearXR.Audiobread
 
         public abstract TProperties GetModuleSoundDefinitions<TProperties>(SoundModule soundModule) where TProperties : SoundModuleDefinition;
 
-        // protected Dictionary<ITimeBeforeListener, double> _timeBeforeListeners = new Dictionary<ITimeBeforeListener, double>();
         protected List<TimeBeforeListenerSettings> _timeBeforeListeners = new List<TimeBeforeListenerSettings>();
 
         protected class TimeBeforeListenerSettings
@@ -860,21 +790,28 @@ namespace HearXR.Audiobread
         protected TDefinition _soundDefinition;
         public override bool Pitched => _soundDefinition.Pitched;
         public override int BaseNoteNumber => _soundDefinition.BaseNoteNumber;
+        public override Dictionary<Parameter, float> ParameterValues
+        {
+            get
+            {
+                if (HasParent)
+                {
+                    return ((ISoundInternal) ParentSound).ParameterValues;
+                }
+                else
+                {
+                    return _parameterValues;
+                }
+            }
+        }
         #endregion
 
         #region Private Fields
         private BuiltInData _builtInData;
-        // private readonly Dictionary<Parameter, float> _parameters = new Dictionary<Parameter, float>();
-        #endregion
-        
-        #region Protected Fields
-        // protected Volume _volumeProperty;
-        // protected Pitch _pitchProperty;
-        // protected Delay _delayProperty;
-        // protected Offset _offsetProperty;
-        // protected TimeBetween _timeBetweenProperty;
-        // protected Repeats _repeatsProperty;
-        // protected Dictionary<SetValuesType, SoundProperty[]> _soundPropertiesBySetType;
+        private bool _initParametersComplete;
+        private readonly Dictionary<Parameter, float> _parameterValues = new Dictionary<Parameter, float>();
+        private readonly List<BuiltInParameter> _builtInParameters = new List<BuiltInParameter>();
+        private readonly List<Parameter> _parameterList = new List<Parameter>();
         #endregion
 
         #region Constructor
@@ -911,7 +848,7 @@ namespace HearXR.Audiobread
             
             if (!IsValid()) return;
 
-            // InitParameters(initSoundFlags);
+            InitParameters(initSoundFlags);
             
             InitModules(initSoundFlags);
             PostInitModules(initSoundFlags);
@@ -1124,23 +1061,19 @@ namespace HearXR.Audiobread
 
         public override void SetParameter(Parameter parameter, float parameterValue)
         {
-            // Debug.Log($"Set parameter {parameter}");
-            
             if (parameter == null)
             {
                 return;
             }
-        
-            // TODO: Call SoundModuleProcessor.
-            InvokeOnSetParameter(parameter, parameterValue);
-
-            // TODO: Validate input here!
-            // TODO: Handle various groups of sound instances.
-            // if (_parameters.ContainsKey(parameter))
-            // {
-            //     // TODO: SoundParameterDefinition should handle easing here.
-            //     _parameters[parameter] = parameterValue;
-            // }
+            
+            Debug.Log($"Set parameter {parameter} on sound {this} to {parameterValue}");
+            
+            // TODO: Validate input here
+            if (_parameterValues.ContainsKey(parameter))
+            {
+                // TODO: Parameters should handle easing here.
+                _parameterValues[parameter] = parameterValue;
+            }
         }
         #endregion
         
@@ -1153,9 +1086,11 @@ namespace HearXR.Audiobread
         {
             base.DoUpdate();
             
-            // NOTE: Moved to SoundModuleProcessor
-            //CalculateSoundPropertyValues(SetValuesType.OnUpdate);
-            // END
+            // Update built-in parameter values.
+            if (!HasParent)
+            {
+                UpdateAutoParameters();
+            }
             
 #if UNITY_EDITOR
             if (_soundDefinition.WasChanged)
@@ -1202,6 +1137,18 @@ namespace HearXR.Audiobread
             // _calculators = null;
             _soundDefinition = null;
         }
+
+        protected override void PostSetParent(ISound previousParent, ISound newParent)
+        {
+            base.PostSetParent(previousParent, newParent);
+            
+            // Propagate parameters to the parent.
+            if (newParent == null) return;
+            
+            ((ISoundInternal) newParent).AddTrackedParameters(_parameterList);
+            _parameterValues.Clear();
+            _builtInParameters.Clear();
+        }
         #endregion
         
         #region Overrideable Methods
@@ -1238,123 +1185,80 @@ namespace HearXR.Audiobread
         }
 
         protected virtual void DoReleaseResources() {}
-        #endregion
         
-        #region Event Invokers
-        // protected void InvokeSoundDefinitionChanged()
-        // {
-        //     SoundDefinitionChangedEvent?.Invoke();
-        // }
-        // protected void InvokeSoundUpdateTickEvent()
-        // {
-        //     SoundUpdateTickEvent?.Invoke();
-        // }
-        //
-        // protected void InvokeUnityAudioGeneratorTickEvent()
-        // {
-        //     UnityAudioGeneratorTickEvent?.Invoke();
-        // }
-        // protected void InvokeOnBeforeChildPlay(PlaySoundFlags playSoundFlags)
-        // {
-        //     BeforeChildPlayEvent?.Invoke(playSoundFlags);
-        // }
-        //
-        // protected void InvokeOnBeforePlay(PlaySoundFlags playSoundFlags)
-        // {
-        //     BeforePlayEvent?.Invoke(playSoundFlags);
-        // }
+        public override void AddTrackedParameters(List<Parameter> parameters)
+        {
+            // If has parent, push it up.
+            if (HasParent)
+            {
+                ((ISoundInternal) ParentSound).AddTrackedParameters(parameters);
+                return;
+            }
+            
+            // Otherwise, add the parameters here.
+            for (var i = 0; i < parameters.Count; ++i)
+            {
+                if (!_parameterList.Contains(parameters[i]))
+                {
+                    _parameterList.Add(parameters[i]);
+                }
+            }
+
+            InitParameterValues();
+        }
         #endregion
 
         #region Private Methods
-        
-        // NOTE: Moved to SoundModuleProcessor.
-        // private void InitSoundProperties(InitSoundFlags initSoundFlags = InitSoundFlags.None)
-        // {
-        //     // Gather all the SoundProperty-SoundPropertyDefinition pairs from inheriting classes.
-        //     var soundPropertyInto = new Dictionary<SoundProperty, Definition>();
-        //     GatherSoundPropertyInfo(ref soundPropertyInto);
-        //     
-        //     // Generate a calculator for each sound property.
-        //     _calculators = new Dictionary<SoundProperty, Calculator>();
-        //     _soundProperties = new SoundProperty[soundPropertyInto.Count];
-        //     int i = 0;
-        //     foreach (KeyValuePair<SoundProperty, Definition> item in soundPropertyInto)
-        //     {
-        //         _soundProperties[i] = item.Key;
-        //         _calculators.Add(item.Key, item.Key.CreateCalculator());
-        //         _calculators[item.Key].SetDefinition(item.Value);
-        //         ++i;
-        //     }
-        //     
-        //     // Organize sound properties by set type.
-        //     _soundPropertiesBySetType = new Dictionary<SetValuesType, SoundProperty[]>();
-        //     foreach (KeyValuePair<SetValuesType, SoundProperty[]> item in _builtInData.properties.PropertiesBySetType)
-        //     {
-        //         List<SoundProperty> tempSoundPropertyList = new List<SoundProperty>();
-        //         for (i = 0; i < item.Value.Length; ++i)
-        //         {
-        //             if (soundPropertyInto.ContainsKey(item.Value[i]))
-        //             {
-        //                 tempSoundPropertyList.Add(item.Value[i]);
-        //             }
-        //         }
-        //         _soundPropertiesBySetType.Add(item.Key, tempSoundPropertyList.ToArray()); 
-        //     }   
-        // }
+        private void InitParameters(InitSoundFlags initSoundFlags = InitSoundFlags.None)
+        {
+            if (!_initParametersComplete)
+            {
+                if (_soundDefinition.Parameters != null && _soundDefinition.Parameters.Count > 0)
+                {
+                    for (var i = 0; i < _soundDefinition.Parameters.Count; ++i)
+                    {
+                        if (!_parameterList.Contains(_soundDefinition.Parameters[i].parameter))
+                        {
+                            _parameterList.Add(_soundDefinition.Parameters[i].parameter);
+                        }
+                    }
+                }
 
-        // private void InitParameters(InitSoundFlags initSoundFlags = InitSoundFlags.None)
-        // {
-        //     if (_soundDefinition.Parameters == null || _soundDefinition.Parameters.Count == 0)
-        //     {
-        //         return;
-        //     }
-        //
-        //     for (int i = 0; i < _soundDefinition.Parameters.Count; ++i)
-        //     {
-        //         if (!_parameters.ContainsKey(_soundDefinition.Parameters[i].parameter))
-        //         {
-        //             _parameters.Add(_soundDefinition.Parameters[i].parameter,
-        //                 _soundDefinition.Parameters[i].parameter.defaultValue);
-        //         }
-        //     }
-        // }
-        
-        // NOTE: Moved to SoundModuleProcessor
-        // private void InitSoundPropertyValues(SetValuesType setValuesType, PlaySoundFlags playSoundFlags)
-        // {
-        //     if (!IsValid()) return;
-        //     
-        //     SoundProperty[] properties = _soundPropertiesBySetType[setValuesType];
-        //     for (int i = 0; i < properties.Length; ++i)
-        //     {
-        //         if (!_calculators.ContainsKey(properties[i]))
-        //         {
-        //             Debug.LogError($"HEAR XR {this} doesn't have the calculator for {properties[i].name}");
-        //         }
-        //     
-        //         //_calculators[properties[i]].OnStartSound(playSoundFlags);
-        //         _calculators[properties[i]].Generate();
-        //         _calculators[properties[i]].Calculate();
-        //     }
-        // }
-        // END
-        
-        // NOTE: Moved to SoundModuleProcessor
-        // private void CalculateSoundPropertyValues(SetValuesType setValuesType)
-        // {
-        //     if (!IsValid()) return;
-        //     
-        //     SoundProperty[] properties = _soundPropertiesBySetType[setValuesType];
-        //     
-        //     for (int i = 0; i < properties.Length; ++i)
-        //     {
-        //         if (!_calculators.ContainsKey(properties[i]))
-        //         {
-        //             Debug.LogError($"HEAR XR {this} doesn't have the calculator for {properties[i].name}");
-        //         }
-        //         _calculators[properties[i]].Calculate();
-        //     }
-        // }
+                _initParametersComplete = true;
+            }
+            
+            // If this sound has a parent, push the parameter list up.
+            if (ParentSound != null)
+            {
+                ((ISoundInternal) ParentSound).AddTrackedParameters(_parameterList);
+                return;
+            }
+            
+            InitParameterValues();
+        }
+
+        private void InitParameterValues()
+        {
+            for (var i = 0; i < _parameterList.Count; ++i)
+            {
+                if (!_parameterValues.ContainsKey(_parameterList[i]))
+                {
+                    _parameterValues.Add(_parameterList[i], _parameterList[i].defaultValue);
+                    if (_parameterList[i] is BuiltInParameter && !_builtInParameters.Contains(_parameterList[i]))
+                    {
+                        _builtInParameters.Add(_parameterList[i] as BuiltInParameter);
+                    }
+                }
+            }
+        }
+
+        private void UpdateAutoParameters()
+        {
+            for (var i = 0; i < _builtInParameters.Count; ++i)
+            {
+                _parameterValues[_builtInParameters[i]] = _builtInParameters[i].Calculate(this, SetValuesType.OnUpdate);
+            }
+        }
         #endregion
 
         #region Helper Methods

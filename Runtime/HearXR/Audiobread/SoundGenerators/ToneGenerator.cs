@@ -191,7 +191,7 @@ namespace HearXR.Audiobread
         #region Helper Methods
         public override string ToString()
         {
-            return $"- TONE GENERATOR - [{Guid}] [{_settings.frequency}]";
+            return $"- TONE GENERATOR - [{Guid}]";
         }
         #endregion
     }

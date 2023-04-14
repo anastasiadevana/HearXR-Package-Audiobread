@@ -152,9 +152,7 @@ namespace HearXR.Audiobread
             BeforePlayEvent += moduleProcessor.HandleBeforePlay;
             ParentSetEvent += moduleProcessor.HandleSetParent;
             OnSoundBegan += moduleProcessor.HandleOnSoundBegan;
-            OnSetParameter += moduleProcessor.HandleOnSetParameter;
             ApplySoundDefinitionToUnityAudio += moduleProcessor.ApplySoundDefinitionToUnityAudio;
-            // OnContainerBeforeFirstPlay += moduleProcessor.HandleOnContainerBeforeFirstPlay;
         }
         
         private void UnsubscribeSoundModuleProcessorFromEvents(ref SoundModuleProcessor moduleProcessor)
@@ -169,9 +167,7 @@ namespace HearXR.Audiobread
             BeforePlayEvent -= moduleProcessor.HandleBeforePlay;
             ParentSetEvent -= moduleProcessor.HandleSetParent;
             OnSoundBegan -= moduleProcessor.HandleOnSoundBegan;
-            OnSetParameter -= moduleProcessor.HandleOnSetParameter;
             ApplySoundDefinitionToUnityAudio -= moduleProcessor.ApplySoundDefinitionToUnityAudio;
-            // OnContainerBeforeFirstPlay -= moduleProcessor.HandleOnContainerBeforeFirstPlay;
         }
         
         private event Action InitSoundModuleProcessor;
@@ -226,14 +222,6 @@ namespace HearXR.Audiobread
         internal void HandleOnSoundBegan(ISound sound, double startTime)
         {
             OnSoundBegan?.Invoke(sound, startTime);
-        }
-
-        private event Action<Parameter, float> OnSetParameter;
-
-        internal void HandleOnSetParameter(Parameter parameter, float parameterValue)
-        {
-            // Debug.Log("Handle on set parameter!!!");
-            OnSetParameter?.Invoke(parameter, parameterValue);
         }
 
         protected event Action<AudiobreadSource> ApplySoundDefinitionToUnityAudio;
