@@ -17,9 +17,7 @@ namespace HearXR.Audiobread
 
         List<SoundModuleDefinition> ModuleSoundDefinitions { get; } // TODO: Rename this to SoundModuleDefinitions
         Dictionary<SoundModule, SoundModuleDefinition> PropagatedSoundModuleDefinitions { get; set; }
-        
-        List<SoundParameterDefinition> Parameters { get; }
-        
+
         float ChanceToPlay { get; }
 
         string SoundDesignerNotes { get; }

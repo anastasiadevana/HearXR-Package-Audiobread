@@ -23,8 +23,6 @@ namespace HearXR.Audiobread
 
         [SerializeField] private int _baseNoteNumber;
 
-        [Space(20)] public List<SoundParameterDefinition> _parameters;
-        
         [SerializeField] protected List<SoundModuleDefinition> _moduleSoundDefinitions = new List<SoundModuleDefinition>();
         
         [SerializeField, HideInInspector] private List<SoundModule> _enabledSoundModules = new List<SoundModule>();
@@ -42,12 +40,6 @@ namespace HearXR.Audiobread
         public Dictionary<SoundModule, SoundModuleDefinition> PropagatedSoundModuleDefinitions { get; set; } = new Dictionary<SoundModule, SoundModuleDefinition>();
 
         public string Name => name;
-        
-        public List<SoundParameterDefinition> Parameters
-        {
-            get => _parameters;
-            set => _parameters = value;
-        }
 
         // TODO: Use this.
         public float ChanceToPlay

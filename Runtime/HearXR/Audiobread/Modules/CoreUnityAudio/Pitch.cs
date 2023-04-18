@@ -28,7 +28,7 @@ namespace HearXR.Audiobread.SoundProperties
         public override bool RandomizeOnChildPlay { get; } = true;
         public override bool ContinuousUpdate { get; } = true;
         
-        public override Calculator.CalculationMethod CalculationMethod { get; } = Calculator.CalculationMethod.Multiplication;
+        public override CalculationMethod CalculationMethod { get; } = CalculationMethod.Multiplication;
         public override bool InfluenceChildNodes { get; } = true;
     }
 }

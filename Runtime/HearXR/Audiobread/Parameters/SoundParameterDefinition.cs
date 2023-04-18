@@ -13,6 +13,7 @@ namespace HearXR.Audiobread
         public Parameter parameter;
         public SoundProperty soundProperty;
         public AnimationCurve curve;
+        public CalculationMethod calculationMethod = CalculationMethod.Multiplication;
 
         // TODO: Make curves Scriptable Objects, so that they can be reused.
 
@@ -41,5 +42,10 @@ namespace HearXR.Audiobread
             set => curve = value;
         }
 
+        public CalculationMethod CalculationMethod
+        {
+            get => calculationMethod;
+            set => calculationMethod = value;
+        }
     }   
 }

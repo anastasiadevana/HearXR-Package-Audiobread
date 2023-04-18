@@ -14,25 +14,21 @@ namespace HearXR.Audiobread
         
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            var numLines = 4;
+            var numLines = 5;
             return (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing) * numLines + 14;
         }
-
-        // private Object _parameter;
-        // private Object _soundProperty;
         
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             var parameterProp = property.FindPropertyRelative("parameter");
             var soundPropertyProp = property.FindPropertyRelative("soundProperty");
             var curveProp = property.FindPropertyRelative("curve");
-
-            // _parameter = parameterProp.objectReferenceValue;
-            // _soundProperty = soundPropertyProp.objectReferenceValue;
+            var calculationMethodProp = property.FindPropertyRelative("calculationMethod");
 
             EditorGUI.BeginChangeCheck();
             
             position.height = EditorGUIUtility.singleLineHeight;
+            
             parameterProp.objectReferenceValue = EditorGUI.ObjectField(position, new GUIContent("Parameter"), parameterProp.objectReferenceValue, typeof(Parameter),
                 false);
             position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
@@ -41,6 +37,11 @@ namespace HearXR.Audiobread
                 false);
             position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
+            var selected = (CalculationMethod) calculationMethodProp.enumValueIndex;
+            selected = (CalculationMethod) EditorGUI.EnumPopup(position, new GUIContent("Calculation Method"), selected);
+            calculationMethodProp.enumValueIndex = (int) selected;
+            position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+            
             if (EditorGUI.EndChangeCheck())
             {
                 // Limit the curve by the min-max of the parameter and sound property.

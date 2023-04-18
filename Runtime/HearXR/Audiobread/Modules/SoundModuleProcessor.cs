@@ -160,19 +160,18 @@ namespace HearXR.Audiobread
         protected override void DoInit()
         {
             _moduleSoundDefinition = MySound.GetModuleSoundDefinitions<TModuleDefinition>(SoundModule);
+
             InitCalculators();
-            
-            // TODO: Do not pull from SoundDefinition?
-            
+
             // Add parameters
-            if (MySound.SoundDefinition.Parameters != null && MySound.SoundDefinition.Parameters.Count > 0)
+            if (_moduleSoundDefinition.Parameters != null && _moduleSoundDefinition.Parameters.Count > 0)
             {
-                for (var i = 0; i < MySound.SoundDefinition.Parameters.Count; ++i)
+                for (var i = 0; i < _moduleSoundDefinition.Parameters.Count; ++i)
                 {
-                    if (_calculators.ContainsKey(MySound.SoundDefinition.Parameters[i].soundProperty))
+                    if (_calculators.ContainsKey(_moduleSoundDefinition.Parameters[i].soundProperty))
                     {
-                        _calculators[MySound.SoundDefinition.Parameters[i].soundProperty]
-                                .AddParameterDefinition(MySound.SoundDefinition.Parameters[i]);
+                        _calculators[_moduleSoundDefinition.Parameters[i].soundProperty]
+                                .AddParameterDefinition(_moduleSoundDefinition.Parameters[i]);
                     }
                 }
             }
@@ -235,16 +234,24 @@ namespace HearXR.Audiobread
             
             ApplySoundModifiers(ref instancePlaybackInfo, SetValuesType.OnBeforePlay, playSoundFlags);
         }
+        
+        protected override void OnUnityAudioGeneratorTick(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo)
+        {
+            if (Bypass) return;
+            ApplySoundModifiers(ref instancePlaybackInfo, SetValuesType.OnUpdate);
+        }
 
         private void InitCalculators()
         {
+            // Debug.Log($"Init calculators for sound {MySound.SoundDefinition} for module {SoundModule.DisplayName}");
+            
             // TODO: Instead of regenerating these values (especially for the AudiobreadClip) every single time, instead 
             //       instantiate each sound with the dictionaries already allocated for all known properties.
             //       Then just flip TRUE / FALSE for when this property is in use.
             
             var soundPropertyInfo = _moduleSoundDefinition.GetSoundProperties();
             
-            // Debug.Log($"{this}: {MySound} has {soundPropertyInfo.Count} sound properties");
+            // Debug.Log($"{this}: {MySound.SoundDefinition} has {soundPropertyInfo.Count} sound properties");
             
             // TODO: Some of these things can be made static per sub-module.
 

@@ -6,16 +6,6 @@ namespace HearXR.Audiobread.SoundProperties
 {
     public abstract class Calculator
     {
-        public enum CalculationMethod
-        {
-            None,
-            Addition,
-            Multiplication,
-            Override,
-            PickBiggest,
-            PickSmallest
-        }
-
         public bool Active { get; protected set; }
         
         public abstract ValueContainer ValueContainer { get; }
@@ -73,6 +63,8 @@ namespace HearXR.Audiobread.SoundProperties
         protected T _randomizedOffset;
         protected T _baseValue;
         protected float _parameterFactor = 1.0f;
+        protected float? _parameterAddition = null;
+        protected float? _parameterOverride = null;
         #endregion
         
         protected Calculator(TProperty soundProperty)

@@ -1213,13 +1213,16 @@ namespace HearXR.Audiobread
         {
             if (!_initParametersComplete)
             {
-                if (_soundDefinition.Parameters != null && _soundDefinition.Parameters.Count > 0)
+                foreach (var soundModuleDefinition in _soundDefinition.ModuleSoundDefinitions)
                 {
-                    for (var i = 0; i < _soundDefinition.Parameters.Count; ++i)
+                    if (soundModuleDefinition.Parameters != null && soundModuleDefinition.Parameters.Count > 0)
                     {
-                        if (!_parameterList.Contains(_soundDefinition.Parameters[i].parameter))
+                        for (var i = 0; i < soundModuleDefinition.Parameters.Count; ++i)
                         {
-                            _parameterList.Add(_soundDefinition.Parameters[i].parameter);
+                            if (!_parameterList.Contains(soundModuleDefinition.Parameters[i].parameter))
+                            {
+                                _parameterList.Add(soundModuleDefinition.Parameters[i].parameter);
+                            }
                         }
                     }
                 }

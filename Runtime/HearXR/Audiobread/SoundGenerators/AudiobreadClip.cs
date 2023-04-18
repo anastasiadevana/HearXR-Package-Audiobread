@@ -34,7 +34,7 @@ namespace HearXR.Audiobread
         #region Helper Methods
         public override string ToString()
         {
-            return $"- AUDIO CLIP - [{Guid}] [{_soundDefinition.AudioClip.name}]";
+            return $"- AudiobreadClip - [{Guid}] [{_soundDefinition.AudioClip.name}]";
         }
         #endregion
     }

@@ -7,7 +7,6 @@ namespace HearXR.Audiobread.SoundProperties
     [CreateAssetMenu (menuName = "Audiobread/Sound Property/Repeats Property")]
     public class Repeats : IntSoundProperty
     {
-        // public override System.Type SoundModuleType { get; } = typeof(SoundModule); // TODO:
         public override string ShortName { get; } = "Rpt";
         public override int DefaultValue { get; } = 1;
         
@@ -27,7 +26,7 @@ namespace HearXR.Audiobread.SoundProperties
 
         public override bool ContinuousUpdate { get; } = false;
 
-        public override Calculator.CalculationMethod CalculationMethod { get; } = Calculator.CalculationMethod.Override;
+        public override CalculationMethod CalculationMethod { get; } = CalculationMethod.Override;
         public override bool InfluenceChildNodes { get; } = false;
     }
 }

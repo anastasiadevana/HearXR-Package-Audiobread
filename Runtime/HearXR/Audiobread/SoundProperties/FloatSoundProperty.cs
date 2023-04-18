@@ -2,8 +2,7 @@
 {
     public abstract class FloatSoundProperty : SoundProperty<float>
     {
-        public override Calculator.CalculationMethod CalculationMethod { get; } =
-            Calculator.CalculationMethod.Multiplication;
+        public override CalculationMethod CalculationMethod { get; } = CalculationMethod.Multiplication;
 
         public override ValueContainer<float> CreateValueContainer()
         {

@@ -113,4 +113,14 @@ namespace HearXR.Audiobread
         StereoPanning,
         Spatialized
     }
+    
+    public enum CalculationMethod
+    {
+        None,
+        Addition,
+        Multiplication,
+        Override,
+        PickBiggest,
+        PickSmallest
+    }
 }

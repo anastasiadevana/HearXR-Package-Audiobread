@@ -15,11 +15,7 @@ namespace HearXR.Audiobread
 
         private ToneGeneratorSettings _settings;
         private bool _initSettings;
-        
-        // private WaveShapeEnum _waveShape;
-        
-        // private float _toneFrequency;
-        
+
         // TODO: Should these be in here?
         private float _squareVolumeFactor = 0.4f;
         private float _sawtoothVolumeFactor = 0.4f;
@@ -191,7 +187,7 @@ namespace HearXR.Audiobread
         #region Helper Methods
         public override string ToString()
         {
-            return $"- TONE GENERATOR - [{Guid}]";
+            return $"- ToneGenerator - [{Guid}]";
         }
         #endregion
     }

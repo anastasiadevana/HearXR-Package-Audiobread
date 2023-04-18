@@ -7,7 +7,6 @@ namespace HearXR.Audiobread.SoundProperties
     [CreateAssetMenu (menuName = "Audiobread/Sound Property/Time Between Property")]
     public class TimeBetween : FloatSoundProperty
     {
-        // public override System.Type SoundModuleType { get; } = typeof(SoundModule); // TODO:
         public override string ShortName { get; } = "Tim";
         public override float DefaultValue { get; } = 0.0f;
         
@@ -24,7 +23,7 @@ namespace HearXR.Audiobread.SoundProperties
         public override bool RandomizeOnChildPlay { get; } = true;
         public override bool ContinuousUpdate { get; } = false;
         
-        public override Calculator.CalculationMethod CalculationMethod { get; } = Calculator.CalculationMethod.Addition;
+        public override CalculationMethod CalculationMethod { get; } = CalculationMethod.Addition;
         public override bool InfluenceChildNodes { get; } = false;
     }
 }

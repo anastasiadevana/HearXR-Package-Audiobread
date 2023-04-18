@@ -118,7 +118,7 @@ namespace HearXR.Audiobread
           #region Helper Methods
           public override string ToString()
           {
-               return $"- TONE GENERATOR WRAPPER";
+               return $"- ToneGeneratorWrapper";
           }
           #endregion
      }

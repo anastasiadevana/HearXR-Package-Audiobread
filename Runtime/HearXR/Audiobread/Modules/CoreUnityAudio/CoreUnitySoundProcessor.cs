@@ -67,12 +67,7 @@ namespace HearXR.Audiobread.Core
             // TODO: Compare sound with _sound.
             _volumeCalculator.OnSoundBegan();
         }
-        
-        protected override void OnUnityAudioGeneratorTick(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo)
-        {
-            ApplySoundModifiers(ref instancePlaybackInfo, SetValuesType.OnUpdate);
-        }
-        
+
         protected override void ApplySoundModifiers(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, SetValuesType setValuesType, 
             PlaySoundFlags playSoundFlags = PlaySoundFlags.None)
         {

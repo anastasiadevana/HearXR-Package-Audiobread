@@ -117,7 +117,7 @@ namespace HearXR.Audiobread
         #region Helper Methods
         public override string ToString()
         {
-            return $"- SIMPLE SAMPLER - [{_soundDefinition.name}]";
+            return $"- SimpleSamplerWrapper - [{_soundDefinition.name}]";
         }
         #endregion
 

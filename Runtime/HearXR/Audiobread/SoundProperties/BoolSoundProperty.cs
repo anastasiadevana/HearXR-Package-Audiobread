@@ -2,8 +2,7 @@ namespace HearXR.Audiobread.SoundProperties
 {
     public abstract class BoolSoundProperty : SoundProperty<int>
     {
-        public override Calculator.CalculationMethod CalculationMethod { get; } =
-            Calculator.CalculationMethod.Override;
+        public override CalculationMethod CalculationMethod { get; } = CalculationMethod.Override;
 
         public override ValueContainer<int> CreateValueContainer()
         {

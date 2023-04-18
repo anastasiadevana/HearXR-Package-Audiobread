@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace HearXR.Audiobread.SoundProperties
@@ -35,15 +34,15 @@ namespace HearXR.Audiobread.SoundProperties
                     }
                 }   
             }
+            
+            // TODO: Parameters should just be another influence.
+            var parameterAddition = _parameterAddition ?? 0;
+            _value = (_rawValue + influenceAddition + parameterAddition) * influenceFactor * _parameterFactor;
 
-            // Adjusted value.
-            // TODO: Work in parameters (move from volume)
-            _value = (_rawValue + influenceAddition) * influenceFactor;
-
-            // Add parameter factor
-            // TODO: We should handle the parameters differently depending on the property.
-            // TODO: On each parameter we need to choose to add / remove / override / multiply / etc.
-            _value *= _parameterFactor;
+            if (_parameterOverride != null)
+            {
+                _value = (float) _parameterOverride;
+            }
             
             Mathf.Clamp(_value, _property.MinLimit, _property.MaxLimit);
             
@@ -63,8 +62,35 @@ namespace HearXR.Audiobread.SoundProperties
                     continue;
                 }
 
-                // TODO: Are parameters calculated with different methods as well? (multiplication, addition, etc)
-                _parameterFactor *= _parameterArray[i].GetSoundPropertyValue(parameterValues[_parameterArray[i].parameter]);
+                var value = _parameterArray[i].GetSoundPropertyValue(parameterValues[_parameterArray[i].parameter]);
+                
+                // TODO: Support other methods as well.
+                // TODO: Treat parameters just like another influence. Everything will be more streamlined.
+                switch (_parameterArray[i].CalculationMethod)
+                {
+                    case CalculationMethod.Multiplication:
+                        _parameterFactor *= value;
+                        break;
+                        
+                    case CalculationMethod.Addition:
+                        if (_parameterAddition == null)
+                        {
+                            _parameterAddition = value;
+                        }
+                        else
+                        {
+                            _parameterAddition += value;
+                        }
+                        break;
+                    
+                    case CalculationMethod.Override:
+                        _parameterOverride = value;
+                        break;
+                    
+                    default:
+                        Debug.LogError($"HEAR XR: Calculation method for {_property} {_property.CalculationMethod} is not supported.");
+                        break;
+                }
             }
 
             Calculate();

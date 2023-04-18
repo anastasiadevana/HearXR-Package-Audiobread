@@ -22,7 +22,7 @@ namespace HearXR.Audiobread
                     sound.SoundDefinition.ModuleSoundDefinitions.FirstOrDefault(x => x.soundModule == module) == null)
                 {
                     // Add this module to the current sound's definition.
-                    Debug.Log($"{_sound} we will apply the {module.DisplayName} to this sound."); 
+                    // Debug.Log($"{_sound} we will apply the {module.DisplayName} to this sound."); 
                     sound.SoundDefinition.ModuleSoundDefinitions.Add(definition);
                 }
                 // If it's not compatible with this sound, then propagate it further.
@@ -67,8 +67,8 @@ namespace HearXR.Audiobread
                 _soundModuleProcessors.Add(moduleProcessor);
                 // Debug.Log($"Add module {moduleProcessor.GetType()} to {_sound}");
             }
-            
-            // Debug.Log($"{_sound} sound has {_soundModuleProcessors.Count} modules");
+
+            // Debug.Log($"{_sound.SoundDefinition} sound has {_soundModuleProcessors.Count} modules and {_propagatedSoundModuleDefinitions.Count}");
         }
         #endregion
 

@@ -11,9 +11,17 @@ namespace HearXR.Audiobread
         public SoundModule soundModule;
         public bool bypass;
         
+        [Space(20)] public List<SoundParameterDefinition> parameters;
+        
         [NonSerialized] private bool _cachedProperties;
         [NonSerialized] private Dictionary<SoundProperty, Definition> _soundProperties = new Dictionary<SoundProperty, Definition>();
 
+        public List<SoundParameterDefinition> Parameters
+        {
+            get => parameters;
+            set => parameters = value;
+        }
+        
         public Dictionary<SoundProperty, Definition> GetSoundProperties()
         {
             if (!_cachedProperties)

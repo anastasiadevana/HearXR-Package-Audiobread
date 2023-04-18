@@ -2,8 +2,7 @@
 {
     public abstract class DoubleSoundProperty : SoundProperty<double>
     {
-        public override Calculator.CalculationMethod CalculationMethod { get; } =
-            Calculator.CalculationMethod.Multiplication;
+        public override CalculationMethod CalculationMethod { get; } = CalculationMethod.Multiplication;
 
         public override ValueContainer<double> CreateValueContainer()
         {

@@ -24,7 +24,7 @@ namespace HearXR.Audiobread.SoundProperties
 
         public abstract Calculator CreateCalculator();
         
-        public abstract Calculator.CalculationMethod CalculationMethod { get; }
+        public abstract CalculationMethod CalculationMethod { get; }
         
         public abstract bool InfluenceChildNodes { get; }
     }

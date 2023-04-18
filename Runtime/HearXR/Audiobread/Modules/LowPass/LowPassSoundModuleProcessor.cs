@@ -53,6 +53,7 @@ namespace HearXR.Audiobread
             }
             else
             {
+                // Debug.Log($"Enable low pass on {MySound}");
                 _lowPassFilter.enabled = true;
             }
             _initComplete = true;

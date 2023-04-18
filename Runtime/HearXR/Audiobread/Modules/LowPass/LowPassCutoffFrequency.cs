@@ -9,7 +9,6 @@ namespace HearXR.Audiobread
     [CreateAssetMenu (menuName = "Audiobread/Sound Property/Low Pass Cutoff Frequency")]
     public class LowPassCutoffFrequency : FloatSoundProperty
     {
-        // public override Type SoundModuleType { get; } = typeof(LowPassSoundModule);
         public override string ShortName { get; } = "Freq";
         public override float DefaultValue { get; } = 5000.0f;
     
@@ -28,7 +27,7 @@ namespace HearXR.Audiobread
         public override bool RandomizeOnChildPlay { get; } = true;
         public override bool ContinuousUpdate { get; } = true;
         
-        public override Calculator.CalculationMethod CalculationMethod { get; } = Calculator.CalculationMethod.PickSmallest;
+        public override CalculationMethod CalculationMethod { get; } = CalculationMethod.PickSmallest;
         public override bool InfluenceChildNodes { get; } = false;
     }
 }

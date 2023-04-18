@@ -118,7 +118,7 @@ namespace HearXR.Audiobread
         public override string ToString()
         {
             //return $"- CLIP - [{_soundDefinition.AudioClip.name}]";
-            return $"- CLIP - [{_soundDefinition.name}]";
+            return $"- AudiobreadClipWrapper - [{_soundDefinition.name}]";
         }
         #endregion
 
