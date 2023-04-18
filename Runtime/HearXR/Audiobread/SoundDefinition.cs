@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
@@ -24,6 +25,8 @@ namespace HearXR.Audiobread
         [SerializeField] private int _baseNoteNumber;
 
         [SerializeField] protected List<SoundModuleDefinition> _moduleSoundDefinitions = new List<SoundModuleDefinition>();
+
+        [NonSerialized] protected List<SoundModuleDefinition> _runtimeSoundModuleDefinitions = new List<SoundModuleDefinition>();
         
         [SerializeField, HideInInspector] private List<SoundModule> _enabledSoundModules = new List<SoundModule>();
         #endregion
@@ -36,7 +39,7 @@ namespace HearXR.Audiobread
         }
 
         public List<SoundModuleDefinition> ModuleSoundDefinitions => _moduleSoundDefinitions;
-
+        public List<SoundModuleDefinition> RuntimeSoundModuleDefinitions => _runtimeSoundModuleDefinitions;
         public Dictionary<SoundModule, SoundModuleDefinition> PropagatedSoundModuleDefinitions { get; set; } = new Dictionary<SoundModule, SoundModuleDefinition>();
 
         public string Name => name;
@@ -66,8 +69,10 @@ namespace HearXR.Audiobread
         #endregion
 
         #region ISoundDefinition Methods
-        public virtual ISound CreateSound(InitSoundFlags initSoundFlags = InitSoundFlags.None)
+        public ISound CreateSound(InitSoundFlags initSoundFlags = InitSoundFlags.None)
         {
+            // Copy over sound module definitions to the runtime variable.
+            _runtimeSoundModuleDefinitions = new List<SoundModuleDefinition>(_moduleSoundDefinitions);
             return CreateSound<ISound>(initSoundFlags);
         }
         

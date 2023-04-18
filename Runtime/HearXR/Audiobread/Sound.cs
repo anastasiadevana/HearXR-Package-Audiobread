@@ -1048,7 +1048,7 @@ namespace HearXR.Audiobread
 
         public override TModuleDefinition GetModuleSoundDefinitions<TModuleDefinition>(SoundModule soundModule)
         {
-            foreach (var soundModuleSoundDefinition in _soundDefinition.ModuleSoundDefinitions)
+            foreach (var soundModuleSoundDefinition in _soundDefinition.RuntimeSoundModuleDefinitions)
             {
                 if (soundModuleSoundDefinition.soundModule == soundModule)
                 {
@@ -1213,7 +1213,7 @@ namespace HearXR.Audiobread
         {
             if (!_initParametersComplete)
             {
-                foreach (var soundModuleDefinition in _soundDefinition.ModuleSoundDefinitions)
+                foreach (var soundModuleDefinition in _soundDefinition.RuntimeSoundModuleDefinitions)
                 {
                     if (soundModuleDefinition.Parameters != null && soundModuleDefinition.Parameters.Count > 0)
                     {

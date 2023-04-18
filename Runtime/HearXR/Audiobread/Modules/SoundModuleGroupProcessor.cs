@@ -19,11 +19,11 @@ namespace HearXR.Audiobread
                 
                 // If the propagated module is compatible with this sound, and there isn't already this module attached to the sound...
                 if (module.IsCompatibleWithChild(_sound.SoundDefinition) && 
-                    sound.SoundDefinition.ModuleSoundDefinitions.FirstOrDefault(x => x.soundModule == module) == null)
+                    sound.SoundDefinition.RuntimeSoundModuleDefinitions.FirstOrDefault(x => x.soundModule == module) == null)
                 {
                     // Add this module to the current sound's definition.
                     // Debug.Log($"{_sound} we will apply the {module.DisplayName} to this sound."); 
-                    sound.SoundDefinition.ModuleSoundDefinitions.Add(definition);
+                    sound.SoundDefinition.RuntimeSoundModuleDefinitions.Add(definition);
                 }
                 // If it's not compatible with this sound, then propagate it further.
                 else
@@ -36,7 +36,7 @@ namespace HearXR.Audiobread
                 }
             }
             
-            foreach (var soundModuleSoundDefinition in sound.SoundDefinition.ModuleSoundDefinitions)
+            foreach (var soundModuleSoundDefinition in sound.SoundDefinition.RuntimeSoundModuleDefinitions)
             {
                 // This sound module can be propagated to children and this sound is NOT compatible with it,
                 // we should propagate to children

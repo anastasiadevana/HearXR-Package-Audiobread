@@ -1,4 +1,4 @@
-using System;
+using UnityEngine;
 using System.Collections.Generic;
 
 namespace HearXR.Audiobread.SoundProperties
@@ -18,6 +18,11 @@ namespace HearXR.Audiobread.SoundProperties
                 _value = _influences[i].Value;
             }
 
+            if (_parameterOverride != null)
+            {
+                _value = (int) _parameterOverride;
+            }
+
             _valueContainer.IntValue = _value;
         }
         
@@ -25,7 +30,30 @@ namespace HearXR.Audiobread.SoundProperties
         {
             if (!Active) return;
             
-            // TODO: Incorporate parameter values calculation.
+            _parameterFactor = 1.0f;
+            for (var i = 0; i < _parameterArray.Length; ++i)
+            {
+                if (!parameterValues.ContainsKey(_parameterArray[i].parameter))
+                {
+                    // TODO: Barf better...
+                    continue;
+                }
+
+                var value = _parameterArray[i].GetSoundPropertyValue(parameterValues[_parameterArray[i].parameter]);
+                
+                // TODO: Support other methods as well.
+                // TODO: Treat parameters just like another influence. Everything will be more streamlined.
+                switch (_parameterArray[i].CalculationMethod)
+                {
+                    case CalculationMethod.Override:
+                        _parameterOverride = value;
+                        break;
+                    
+                    default:
+                        Debug.LogError($"HEAR XR: Calculation method for {_property} {_property.CalculationMethod} is not supported.");
+                        break;
+                }
+            }
             
             Calculate();
         }

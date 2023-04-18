@@ -15,7 +15,12 @@ namespace HearXR.Audiobread
         
         bool WasChanged { get; set; }
 
-        List<SoundModuleDefinition> ModuleSoundDefinitions { get; } // TODO: Rename this to SoundModuleDefinitions
+        // List<SoundModuleDefinition> ModuleSoundDefinitions { get; } // TODO: Rename this to SoundModuleDefinitions
+        /// <summary>
+        /// These sound module definitions get inherited from a parent at runtime.
+        /// We're keeping it in a separate variable so that it doesn't get saved to the SoundDefinition ScriptableObject.
+        /// </summary>
+        List<SoundModuleDefinition> RuntimeSoundModuleDefinitions { get; }
         Dictionary<SoundModule, SoundModuleDefinition> PropagatedSoundModuleDefinitions { get; set; }
 
         float ChanceToPlay { get; }
