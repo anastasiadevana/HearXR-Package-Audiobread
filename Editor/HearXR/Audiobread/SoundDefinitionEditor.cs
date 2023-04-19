@@ -187,6 +187,7 @@ namespace HearXR.Audiobread
         
         protected void RemoveModuleFromAsset(SoundModuleDefinition smp)
         {
+            if (smp == null) return;
             var smpAsset = AssetDatabase.LoadAssetAtPath(_assetPath, smp.GetType());
             AssetDatabase.RemoveObjectFromAsset(smpAsset);
             DestroyImmediate(smp);

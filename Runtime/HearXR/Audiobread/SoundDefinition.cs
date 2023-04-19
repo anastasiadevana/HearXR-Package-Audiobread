@@ -92,7 +92,11 @@ namespace HearXR.Audiobread
             _enabledSoundModules.Clear();
             foreach (var m in _moduleSoundDefinitions)
             {
-                _enabledSoundModules.Add(m.soundModule);
+                if (m != null)
+                {
+                    _enabledSoundModules.Add(m.soundModule);
+                }
+
             }
         }
         
