@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,13 +10,11 @@ namespace HearXR.Audiobread
     {
         private SoundDefinition _soundDefinition;
 
-        // private int _selectedTab;
-
         private string _assetPath;
         protected Rect _position;
         protected SerializedProperty _wasChangedProperty;
         protected List<SoundModule> _compatibleModules;
-        private static int _lastValidatedTime = -1;
+        private int _lastValidatedTime = -1;
         private const int _validationCooldown = 3;
         
         protected virtual void OnEnable()
@@ -127,52 +124,23 @@ namespace HearXR.Audiobread
             }
         }
 
-        private int GetCurrentTime()
-        {
-            var t = (DateTime.UtcNow - new DateTime(1970, 1, 1));
-            return (int) t.TotalSeconds;
-        }
-        
         private void ValidateRequiredModules()
         {
             // Don't do anything if the asset hasn't been created yet.
             if (string.IsNullOrEmpty(_assetPath)) return;
 
-            int currentTime = GetCurrentTime();
+            var currentTime = AudiobreadEditorUtilities.GetCurrentTime();
 
             if (_lastValidatedTime > 0 && (currentTime - _lastValidatedTime < _validationCooldown)) return;
-
-            lock (_soundDefinition)
+            
+            if (AudiobreadEditorUtilities.AddRequiredModulesToSoundDefinition(_soundDefinition, _assetPath))
             {
-                var addedModule = false;
-                
-                foreach (var module in _compatibleModules)
-                {
-                    // Add modules that should be enabled by default.
-                    if (!module.EnabledByDefault) continue;
-                    if (_soundDefinition.ModuleEnabled(module)) continue;
-                
-                    // Debug.Log($"Should enable module {module}");
-                    var smp = _soundDefinition.AddModule(module);
-                    if (smp != null)
-                    {
-                        addedModule = true;
-                        AddModuleToAsset(smp, false);   
-                    }
-                }
-
-                if (addedModule)
-                {
-                    // Debug.Log("Added modules. Save the asset.");
-                    AssetDatabase.SaveAssets();
-
-                    serializedObject.ApplyModifiedProperties();
-                    _soundDefinition.RescanEnabledModules();
-                    _soundDefinition.OnDefaultModulesAdded();
-                }
-
-                _lastValidatedTime = currentTime;
+                serializedObject.ApplyModifiedProperties();
+                _soundDefinition.RescanEnabledModules();
+                _soundDefinition.OnDefaultModulesAdded();
             }
+            
+            _lastValidatedTime = currentTime;
         }
         
         protected void AddModuleToAsset(SoundModuleDefinition soundModuleDefinition, bool saveAsset = true)

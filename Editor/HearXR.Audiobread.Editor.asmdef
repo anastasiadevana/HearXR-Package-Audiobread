@@ -2,7 +2,8 @@
     "name": "HearXR.Audiobread.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:c3e820e45250845a5a966666417e17e6"
+        "GUID:c3e820e45250845a5a966666417e17e6",
+        "GUID:478a2357cc57436488a56e564b08d223"
     ],
     "includePlatforms": [
         "Editor"
