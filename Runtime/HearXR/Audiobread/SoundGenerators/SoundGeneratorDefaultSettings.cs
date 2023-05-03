@@ -4,7 +4,7 @@ using UnityEngine.Audio;
 namespace HearXR.Audiobread
 {
     [ExecuteAlways]
-    [CreateAssetMenu(fileName = "SoundGeneratorDefaultSettings", menuName = "Audiobread/Sound Generator Default Settings")]
+    [CreateAssetMenu(fileName = "SoundGeneratorDefaultSettings", menuName = "Audiobread/Sound Generator Default Settings", order = 1000)]
     public class SoundGeneratorDefaultSettings : ScriptableObject
     {
         #region Public Fields

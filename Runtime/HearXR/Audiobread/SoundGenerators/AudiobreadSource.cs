@@ -15,11 +15,11 @@ namespace HearXR.Audiobread
         #region Data Structures
         // TODO: Right now these options are hard-coded, but we need to make this also modular.
         // TODO: Have some kind of interface that TestPlayer / ClipPlayer / ToneGenerator all implement.
+        // TODO: Do some sort of dependency injection type thingy.
         public enum AudioSourceMode
         {
             ClipPlayer,
             ToneGenerator,
-            TestPlayer,
             Sampler
         }
         #endregion
@@ -31,7 +31,6 @@ namespace HearXR.Audiobread
         #region Properties
         public SimpleSampler Sampler => _sampler;
         public AudiobreadClip Player => _player;
-        public TestAudiobreadClip TestPlayer => _testPlayer;
         public ToneGenerator Generator => _generator;
         
         public AudioSource AudioSource => _audioSource;
@@ -49,7 +48,6 @@ namespace HearXR.Audiobread
         private AudioSourceMode _audioSourceMode;
         private SimpleSampler _sampler;
         private AudiobreadClip _player;
-        private TestAudiobreadClip _testPlayer;
         private ToneGenerator _generator;
         private bool _hasAudioSource;
         private bool _init;
@@ -75,11 +73,6 @@ namespace HearXR.Audiobread
             if (_player == null)
             {
                 _player = new AudiobreadClip(this);
-            }
-
-            if (_testPlayer == null)
-            {
-                _testPlayer = new TestAudiobreadClip(this);
             }
 
             if (_generator == null)
@@ -112,10 +105,6 @@ namespace HearXR.Audiobread
                 case AudioSourceMode.ToneGenerator:
                     _generator.PrepareToBeStolen();
                     break;
-                
-                case AudioSourceMode.TestPlayer:
-                    _testPlayer.PrepareToBeStolen();
-                    break;
                 case AudioSourceMode.Sampler:
                     _sampler.PrepareToBeStolen();
                     break;
@@ -142,66 +131,6 @@ namespace HearXR.Audiobread
 
             return component != null;
         }
-        #endregion
-
-        private float _timeIndex;
-        
-        #region Filter Read
-//         private void OnAudioFilterRead(float[] buffer, int numChannels)
-//         {
-//             if (_audioSourceMode != AudioSourceMode.ToneGenerator) return;
-//             
-//             // Debug.Log("Yo");
-//             _generator.OnAudioFilterRead(buffer, numChannels);
-// /*
-//             var _waveShape = ToneGenerator.WaveShape.Sin;
-//             var _toneFrequency = 220f;
-//             var _clipFrequency = 44100f;
-//             var _squareVolumeFactor = 0.4f;
-//             var _sawtoothVolumeFactor = 0.4f;
-//
-//             // Using direct generation methods.
-//             for (var i = 0; i < buffer.Length; i += numChannels)
-//             {
-//                 switch (_waveShape)
-//                 {
-//                     case ToneGenerator.WaveShape.Sin:
-//                         //buffer[i] = CreateSine(_timeIndex, _frequency, _sampleRate);
-//                         buffer[i] = Mathf.Sin(Mathf.PI * 2.0f * _timeIndex * _toneFrequency / _clipFrequency);
-//                         break;
-//                 
-//                     case ToneGenerator.WaveShape.Square:
-//                         buffer[i] = ((Mathf.Repeat(_timeIndex * _toneFrequency / _clipFrequency,1) > 0.5f) ? 1.0f : -1.0f) * _squareVolumeFactor;
-//                         break;
-//                 
-//                     case ToneGenerator.WaveShape.Sawtooth:
-//                         buffer[i] = (Mathf.Repeat(_timeIndex * _toneFrequency / _clipFrequency,1) * 2.0f - 1.0f) * _sawtoothVolumeFactor;
-//                         break;
-//                 
-//                     case ToneGenerator.WaveShape.Triangle:
-//                         buffer[i] = Mathf.PingPong(_timeIndex * 2.0f * _toneFrequency / _clipFrequency,1) * 2.0f - 1.0f;
-//                         break;
-//                 
-//                     default:
-//                         throw new ArgumentOutOfRangeException();
-//                 }
-//
-//                 for (var j = 1; j < numChannels; ++j)
-//                 {
-//                     buffer[i + j] = buffer[i];
-//                 }
-//             
-//                 _timeIndex++;
-//         
-//                 // If timeIndex gets too big, reset it to 0
-//                 // TODO: No magic numbers
-//                 if (_timeIndex >= _clipFrequency * 2)
-//                 {
-//                     _timeIndex = 0;
-//                 }
-//             }
-//             */
-//         }
         #endregion
     }
 }
