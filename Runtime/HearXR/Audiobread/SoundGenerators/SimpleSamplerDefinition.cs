@@ -10,7 +10,11 @@ namespace HearXR.Audiobread
         #endregion
         
         #region Properties
-        public AudioClip AudioClip => _audioClip;
+        public AudioClip AudioClip
+        {
+            get => _audioClip;
+            set => _audioClip = value;
+        }
         #endregion
 
         #region ISoundDefinition Methods

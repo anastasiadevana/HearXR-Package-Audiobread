@@ -16,6 +16,8 @@ namespace HearXR.Audiobread
         private Vector2 _scrollPosition;
         private string _importFolder = "Assets";
         private bool _userSelectedFolder = false;
+        private readonly string[] _creationOptions = {"Audiobread Clip", "Simple Sampler"};
+        private int _definitionTypeIndex = 0;
         #endregion
         
         #region Unity Editor Methods
@@ -29,20 +31,24 @@ namespace HearXR.Audiobread
         {
             titleContent = new GUIContent("Audiobread Clip Importer");
             
+            EditorGUILayout.BeginVertical();
             _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition, GUILayout.Width(position.width));
 
-            EditorGUILayout.LabelField("Audiobread Clip Importer");
+            DisplayWindowContent();
             
-            AudioClipsDropArea();
-
             EditorGUILayout.EndScrollView();
+            EditorGUILayout.EndVertical();
         }
         #endregion
         
         #region Private Methods
-        private void AudioClipsDropArea()
+        private void DisplayWindowContent()
         {
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Audiobread Clip Importer");
+            
             // Display folder picker.
+            EditorGUILayout.Space();
             var startingPath = AudiobreadEditorUtilities.GetSelectedDirectory();
             if (!_userSelectedFolder)
             {
@@ -68,7 +74,12 @@ namespace HearXR.Audiobread
             }
             EditorGUILayout.LabelField($"Target folder: {_importFolder}");
 
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Import type: ");
+            _definitionTypeIndex = EditorGUILayout.Popup(_definitionTypeIndex, _creationOptions);
+
             // Display drag and drop area.
+            EditorGUILayout.Space();
             var evt = Event.current;
             var dropArea = GUILayoutUtility.GetRect(0.0f, 50.0f, GUILayout.ExpandWidth(true));
             
@@ -116,17 +127,35 @@ namespace HearXR.Audiobread
 
             for (var i = 0; i < clips.Count; ++i)
             {
-                var audiobreadClip = CreateInstance<AudiobreadClipDefinition>();
-                audiobreadClip.AudioClip = clips[i];
+                SoundDefinition soundDefinition = default;
 
-                var assetName = clips[i].name + "_AB_Clip.asset";
+                var assetName = "";
+                var assetType = "";
+                
+                if (_definitionTypeIndex == 0)
+                {
+                    var audiobreadClipDefinition = CreateInstance<AudiobreadClipDefinition>();
+                    audiobreadClipDefinition.AudioClip = clips[i];
+                    soundDefinition = audiobreadClipDefinition;
+                    assetName = clips[i].name + "_AB_Clip.asset";
+                    assetType = nameof(AudiobreadClipDefinition);
+                }
+                else
+                {
+                    var simpleSamplerDefinition = CreateInstance<SimpleSamplerDefinition>();
+                    simpleSamplerDefinition.AudioClip = clips[i];
+                    soundDefinition = simpleSamplerDefinition;
+                    assetName = clips[i].name + "_SimpleSampler.asset";
+                    assetType = nameof(SimpleSamplerDefinition);
+                }
+                
                 var path = Path.Combine(_importFolder, assetName);
 
-                AssetDatabase.CreateAsset(audiobreadClip, path);
-                Debug.Log($"Created new AudiobreadClip at {path}");
+                AssetDatabase.CreateAsset(soundDefinition, path);
+                Debug.Log($"Created new {assetType} at {path}");
                 yield return null;
                 
-                AudiobreadEditorUtilities.AddRequiredModulesToSoundDefinition(audiobreadClip, path);
+                AudiobreadEditorUtilities.AddRequiredModulesToSoundDefinition(soundDefinition, path);
             }
             
             AssetDatabase.SaveAssets();
