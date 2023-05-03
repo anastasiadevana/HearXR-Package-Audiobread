@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace HearXR.Audiobread
 {
-    [CreateAssetMenu (menuName = "Audiobread/Sound Modules/Core Child Picker")]
+    // [CreateAssetMenu (menuName = "Audiobread/Sound Modules/Core Child Picker")]
     public class CoreChildPickerSoundModule : SoundModule, IChildPickerModule
     {
         #region Sound Module Abstract Properties

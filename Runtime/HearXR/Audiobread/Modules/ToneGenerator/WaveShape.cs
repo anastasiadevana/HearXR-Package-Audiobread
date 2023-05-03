@@ -7,7 +7,7 @@ namespace HearXR.Audiobread
     [Serializable]
     public class WaveShapeDefinition : EnumDefinition<WaveShape, WaveShapeEnum> {}
 
-    [CreateAssetMenu (menuName = "Audiobread/Sound Property/Wave Shape")]
+    // [CreateAssetMenu (menuName = "Audiobread/Sound Property/Wave Shape")]
     public class WaveShape : EnumSoundProperty
     {
         public override string ShortName { get; } = "Shape";    

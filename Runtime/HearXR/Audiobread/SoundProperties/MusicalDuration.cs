@@ -4,7 +4,7 @@ namespace HearXR.Audiobread.SoundProperties
 {
     [System.Serializable] public class MusicalDurationDefinition : IntDefinition<MusicalDuration> {}
     
-    [CreateAssetMenu (menuName = "Audiobread/Sound Property/Musical Duration Property")]
+    // [CreateAssetMenu (menuName = "Audiobread/Sound Property/Musical Duration Property")]
     public class MusicalDuration : IntSoundProperty
     {
         // public override System.Type SoundModuleType { get; } = typeof(SoundModule); // TODO:

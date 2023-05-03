@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace HearXR.Audiobread.Core
 {
-    [CreateAssetMenu (menuName = "Audiobread/Sound Modules/Core Unity Audio")]
+    // [CreateAssetMenu (menuName = "Audiobread/Sound Modules/Core Unity Audio")]
     public class CoreUnitySoundModule : SoundModule
     {
         #region Sound Module Abstract Properties

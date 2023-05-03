@@ -4,7 +4,7 @@ using UnityEngine;
 namespace HearXR.Audiobread
 {
     // TODO: Do not allow to show, if type is OneShot.
-    [CreateAssetMenu (menuName = "Audiobread/Sound Modules/Core Scheduler")]
+    // [CreateAssetMenu (menuName = "Audiobread/Sound Modules/Core Scheduler")]
     public class CoreSchedulerSoundModule : SoundModule, IChildSchedulerModule
     {
         #region Sound Module Abstract Properties

@@ -4,7 +4,7 @@ namespace HearXR.Audiobread.SoundProperties
 {
     [System.Serializable] public class DelayDefinition : FloatDefinition<Delay> {}
     
-    [CreateAssetMenu (menuName = "Audiobread/Sound Property/Delay Property")]
+    // [CreateAssetMenu (menuName = "Audiobread/Sound Property/Delay Property")]
     public class Delay : FloatSoundProperty
     {
         public override string ShortName { get; } = "Del";

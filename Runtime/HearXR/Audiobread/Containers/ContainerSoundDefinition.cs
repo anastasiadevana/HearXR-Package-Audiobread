@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace HearXR.Audiobread
 {
-    [CreateAssetMenu(fileName = "Container", menuName = "Audiobread/Sounds/Container Sound")]
+    [CreateAssetMenu(fileName = "Container", menuName = "Audiobread/Container Sound", order = 0)]
     public class ContainerSoundDefinition : BaseContainerSoundDefinition
     {
         #region Editor Fields

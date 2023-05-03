@@ -5,7 +5,7 @@ using UnityEngine;
 // TODO: Add a Unity main menu item to rescan all the resources for Sound Modules and properties.
 namespace HearXR.Audiobread
 {
-    [CreateAssetMenu (menuName = "Audiobread/Sound Modules/Sound Module Manager")]
+    // [CreateAssetMenu (menuName = "Audiobread/Sound Modules/Sound Module Manager")]
     public class SoundModuleManager : ScriptableObject
     {
         #region Private Fields

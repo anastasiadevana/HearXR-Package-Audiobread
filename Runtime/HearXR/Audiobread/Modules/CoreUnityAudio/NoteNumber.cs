@@ -5,7 +5,7 @@ namespace HearXR.Audiobread.SoundProperties
     
     [System.Serializable] public class NoteNumberDefinition : IntDefinition<NoteNumber> {}
 
-    [CreateAssetMenu(menuName = "Audiobread/Sound Property/Note Number Property")]
+    // [CreateAssetMenu(menuName = "Audiobread/Sound Property/Note Number Property")]
     public class NoteNumber : IntSoundProperty
     {
         public override string ShortName { get; } = "Note";

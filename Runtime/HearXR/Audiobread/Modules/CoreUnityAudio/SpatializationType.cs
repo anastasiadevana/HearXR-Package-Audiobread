@@ -7,7 +7,7 @@ namespace HearXR.Audiobread
     [Serializable]
     public class SpatializationTypeDefinition : EnumDefinition<SpatializationType, SpatializationTypeEnum> {}
 
-    [CreateAssetMenu (menuName = "Audiobread/Sound Property/Spatialization Type")]
+    // [CreateAssetMenu (menuName = "Audiobread/Sound Property/Spatialization Type")]
     public class SpatializationType : EnumSoundProperty
     {
         public override string ShortName { get; } = "Sptl";    

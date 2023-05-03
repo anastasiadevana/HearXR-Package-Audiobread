@@ -6,7 +6,7 @@ namespace HearXR.Audiobread
 {
     [System.Serializable] public class LowPassResonanceQDefinition : FloatDefinition<LowPassResonanceQ> {}
     
-    [CreateAssetMenu (menuName = "Audiobread/Sound Property/Low Pass Resonance Q")]
+    // [CreateAssetMenu (menuName = "Audiobread/Sound Property/Low Pass Resonance Q")]
     public class LowPassResonanceQ : FloatSoundProperty
     {
         // public override Type SoundModuleType { get; } = typeof(LowPassSoundModule);

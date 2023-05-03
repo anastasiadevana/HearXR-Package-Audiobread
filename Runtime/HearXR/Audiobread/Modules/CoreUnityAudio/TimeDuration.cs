@@ -5,7 +5,7 @@ namespace HearXR.Audiobread.SoundProperties
     [System.Serializable]
     public class TimeDurationDefinition : DoubleDefinition<TimeDuration> {}
     
-    [CreateAssetMenu (menuName = "Audiobread/Sound Property/Time Duration Property")]
+    // [CreateAssetMenu (menuName = "Audiobread/Sound Property/Time Duration Property")]
     public class TimeDuration : DoubleSoundProperty
     {
         public override string ShortName { get; } = "TDur";

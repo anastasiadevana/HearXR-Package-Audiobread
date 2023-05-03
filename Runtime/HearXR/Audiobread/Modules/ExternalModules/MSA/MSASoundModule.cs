@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace HearXR.Audiobread
 {
-    [CreateAssetMenu (menuName = "Audiobread/Sound Modules/MSA")]
+    // [CreateAssetMenu (menuName = "Audiobread/Sound Modules/MSA")]
     public class MSASoundModule : SoundModule
     {
         #region Sound Module Abstract Properties

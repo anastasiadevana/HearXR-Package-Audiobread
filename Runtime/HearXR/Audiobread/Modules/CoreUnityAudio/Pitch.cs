@@ -9,7 +9,7 @@ namespace HearXR.Audiobread.SoundProperties
 {
     [System.Serializable] public class PitchDefinition : FloatDefinition<Pitch> {}
     
-    [CreateAssetMenu (menuName = "Audiobread/Sound Property/Pitch Property")]
+    // [CreateAssetMenu (menuName = "Audiobread/Sound Property/Pitch Property")]
     public class Pitch : FloatSoundProperty
     {
         // public override System.Type SoundModuleType { get; } = typeof(CoreUnitySoundModule);

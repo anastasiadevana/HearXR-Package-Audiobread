@@ -6,7 +6,7 @@ namespace HearXR.Audiobread
 {
     [Serializable] public class FrequencyDefinition : FloatDefinition<Frequency> {}
     
-    [CreateAssetMenu (menuName = "Audiobread/Sound Property/Frequency")]
+    // [CreateAssetMenu (menuName = "Audiobread/Sound Property/Frequency")]
     public class Frequency : FloatSoundProperty
     {
         public override string ShortName { get; } = "Freq";

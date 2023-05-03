@@ -5,7 +5,7 @@ namespace HearXR.Audiobread
 {
     [System.Serializable] public class HighPassCutoffFrequencyDefinition : FloatDefinition<HighPassCutoffFrequency> {}
     
-    [CreateAssetMenu (menuName = "Audiobread/Sound Property/High Pass Cutoff Frequency")]
+    // [CreateAssetMenu (menuName = "Audiobread/Sound Property/High Pass Cutoff Frequency")]
     public class HighPassCutoffFrequency : FloatSoundProperty
     {
         // public override Type SoundModuleType { get; } = typeof(HighPassSoundModule);

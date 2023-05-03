@@ -4,7 +4,7 @@ namespace HearXR.Audiobread.SoundProperties
 {
     [System.Serializable] public class TimeBetweenDefinition : FloatDefinition<TimeBetween> {}
     
-    [CreateAssetMenu (menuName = "Audiobread/Sound Property/Time Between Property")]
+    // [CreateAssetMenu (menuName = "Audiobread/Sound Property/Time Between Property")]
     public class TimeBetween : FloatSoundProperty
     {
         public override string ShortName { get; } = "Tim";

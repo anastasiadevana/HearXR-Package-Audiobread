@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace HearXR.Audiobread
 {
-    [CreateAssetMenu (menuName = "Audiobread/Sound Modules/High Pass")]
+    // [CreateAssetMenu (menuName = "Audiobread/Sound Modules/High Pass")]
     public class HighPassSoundModule : SoundModule
     {
         #region Sound Module Abstract Properties
