@@ -7,8 +7,8 @@ namespace HearXR.Audiobread
     /// Sound parameter is saved with the sound definition.
     /// It describes the relationship between a specific parameter and a sound property based on a curve.
     /// </summary>
-    [System.Serializable]
-    public class SoundParameterDefinition
+    [CreateAssetMenu(fileName = "~~NameThis~~SoundParameterDefinition~PlaceInResourcesFolder", menuName = "Audiobread/Sound Parameter Definition", order = 200)]
+    public class SoundParameterDefinition : ScriptableObject
     {
         public Parameter parameter;
         public SoundProperty soundProperty;
