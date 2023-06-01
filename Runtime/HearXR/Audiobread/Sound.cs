@@ -1242,6 +1242,11 @@ namespace HearXR.Audiobread
 
         private void InitParameterValues()
         {
+            // TODO: This is a big and nasty bug. Somehow, on some sounds, the parameter values here are already set,
+            //       and I have no idea how. This is causing all kinds of gross behavior. 
+            //       As a hack, just clear the parameter values, but WHAT THE HELL?!
+            _parameterValues.Clear();
+
             for (var i = 0; i < _parameterList.Count; ++i)
             {
                 if (!_parameterValues.ContainsKey(_parameterList[i]))
