@@ -17,6 +17,7 @@ namespace HearXR.Audiobread
         [SerializeField] private int _audioSourcePoolSize = 20;
         [SerializeField] private int _preloadPoolWith = 20;
         [SerializeField] private SoundGeneratorDefaultSettings _soundGeneratorDefaultSettings;
+        [SerializeField] private SoundGeneratorDefaultSettings _soundGeneratorDefaultSettings_Editor;
         #endregion
         
         #region Properties
@@ -45,6 +46,11 @@ namespace HearXR.Audiobread
 // #else
                     Debug.LogError("Please create SoundGeneratorDefaultSettings asset and assign it to the AudiobreadManager.");
 // #endif
+                }
+
+                if (Application.isEditor && _soundGeneratorDefaultSettings_Editor != null)
+                {
+                    return _soundGeneratorDefaultSettings_Editor;
                 }
 
                 return _soundGeneratorDefaultSettings;
