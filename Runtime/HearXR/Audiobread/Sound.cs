@@ -1065,9 +1065,7 @@ namespace HearXR.Audiobread
             {
                 return;
             }
-            
-            Debug.Log($"Set parameter {parameter} on sound {this} to {parameterValue}");
-            
+
             // TODO: Validate input here
             if (_parameterValues.ContainsKey(parameter))
             {
