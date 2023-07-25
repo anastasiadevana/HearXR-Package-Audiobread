@@ -5,6 +5,7 @@ using System.IO;
 using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 // TODO: Add an option to enable default modules.
 // TODO: Add an option to set up bulk starting setting for the imported clips.
@@ -18,6 +19,12 @@ namespace HearXR.Audiobread
         private bool _userSelectedFolder = false;
         private readonly string[] _creationOptions = {"Audiobread Clip", "Simple Sampler"};
         private int _definitionTypeIndex = 0;
+        private Editor _audioClipEditor;
+        private Editor _simpleSamplerEditor;
+        private AudiobreadClipDefinition _blankAudiobreadClipDefinition;
+        private bool _blankAudiobreadClipDefinitionCreated;
+        private SimpleSamplerDefinition _blankSimpleSamplerDefinition;
+        private bool _blankSimpleSamplerDefinitionCreated;
         #endregion
         
         #region Unity Editor Methods
@@ -76,9 +83,48 @@ namespace HearXR.Audiobread
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Import type: ");
+            
             _definitionTypeIndex = EditorGUILayout.Popup(_definitionTypeIndex, _creationOptions);
 
+            
+            // Display the template for import.
+            EditorGUILayout.Space();
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Template: ");
+            switch (_definitionTypeIndex)
+            {
+                case 0: // Audiobread Clip
+                    if (!_blankAudiobreadClipDefinitionCreated)
+                    {
+                        _blankAudiobreadClipDefinition = CreateInstance<AudiobreadClipDefinition>();
+                        _blankAudiobreadClipDefinitionCreated = true;
+                    }
+                    Editor.CreateCachedEditor(_blankAudiobreadClipDefinition, null, ref _audioClipEditor);
+                    if (_audioClipEditor != null)
+                    {
+                        _audioClipEditor.OnInspectorGUI();
+                    }
+                    break;
+                
+                case 1: // Simple Sampler
+                    if (!_blankSimpleSamplerDefinitionCreated)
+                    {
+                        _blankSimpleSamplerDefinition = CreateInstance<SimpleSamplerDefinition>();
+                        _blankSimpleSamplerDefinitionCreated = true;
+                    }
+                    Editor.CreateCachedEditor(_blankSimpleSamplerDefinition, null, ref _simpleSamplerEditor);
+                    if (_simpleSamplerEditor != null)
+                    {
+                        _simpleSamplerEditor.OnInspectorGUI();
+                    }
+                    break;
+            }
+            
             // Display drag and drop area.
+            EditorGUILayout.Space();
+            EditorGUILayout.Space();
+            EditorGUILayout.Space();
+            EditorGUILayout.Space();
             EditorGUILayout.Space();
             var evt = Event.current;
             var dropArea = GUILayoutUtility.GetRect(0.0f, 50.0f, GUILayout.ExpandWidth(true));
@@ -134,7 +180,7 @@ namespace HearXR.Audiobread
                 
                 if (_definitionTypeIndex == 0)
                 {
-                    var audiobreadClipDefinition = CreateInstance<AudiobreadClipDefinition>();
+                    var audiobreadClipDefinition = Instantiate(_blankAudiobreadClipDefinition);
                     audiobreadClipDefinition.AudioClip = clips[i];
                     soundDefinition = audiobreadClipDefinition;
                     assetName = clips[i].name + "_AB_Clip.asset";
@@ -142,7 +188,7 @@ namespace HearXR.Audiobread
                 }
                 else
                 {
-                    var simpleSamplerDefinition = CreateInstance<SimpleSamplerDefinition>();
+                    var simpleSamplerDefinition = Instantiate(_blankSimpleSamplerDefinition);
                     simpleSamplerDefinition.AudioClip = clips[i];
                     soundDefinition = simpleSamplerDefinition;
                     assetName = clips[i].name + "_SimpleSampler.asset";
@@ -154,8 +200,6 @@ namespace HearXR.Audiobread
                 AssetDatabase.CreateAsset(soundDefinition, path);
                 Debug.Log($"Created new {assetType} at {path}");
                 yield return null;
-                
-                AudiobreadEditorUtilities.AddRequiredModulesToSoundDefinition(soundDefinition, path);
             }
             
             AssetDatabase.SaveAssets();
