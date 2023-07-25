@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26bbfd56bfb44a18a77bf0e86f691099, type: 3}
+  m_Name: ToneGenerator_Default
+  m_EditorClassIdentifier: 
+  soundModule: {fileID: 0}
+  bypass: 0
+  parameters: []
+  frequency:
+    active: 1
+    value: 440
+    randomize: 0
+    variance: 0
+    soundProperty: {fileID: 11400000, guid: de702abc0ce4b477ea478bc1d21ce5a8, type: 2}
+  waveShape:
+    active: 1
+    value: 0
+    randomize: 0
+    variance: 0
+    soundProperty: {fileID: 11400000, guid: 2ced47c78ed53499c925aecf7fd07b76, type: 2}
+    myEnum: 0

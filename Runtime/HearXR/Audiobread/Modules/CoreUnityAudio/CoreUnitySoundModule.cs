@@ -28,14 +28,6 @@ namespace HearXR.Audiobread.Core
             return false;
         }
 
-        public override SoundModuleDefinition CreateModuleSoundDefinition()
-        {
-            var soundModuleProperties = CreateInstance<CoreUnitySoundModuleDefinition>();
-            soundModuleProperties.name = DisplayName;
-            soundModuleProperties.soundModule = this;
-            return soundModuleProperties;
-        }
-
         public override SoundModuleProcessor CreateSoundModuleProcessor(ISound sound)
         {
             return new CoreUnitySoundProcessor(this, sound);

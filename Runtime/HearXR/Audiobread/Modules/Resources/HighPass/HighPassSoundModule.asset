@@ -12,6 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49118b68570c4942ad1e49e05a667be0, type: 3}
   m_Name: HighPassSoundModule
   m_EditorClassIdentifier: 
-  _soundProperties:
-  - {fileID: 11400000, guid: 3bf6fe180430240328fb0510b9fd6392, type: 2}
-  - {fileID: 11400000, guid: 69cad51f4cf29477580e97985f5a673d, type: 2}
+  _defaultSoundModuleDefinition: {fileID: 11400000, guid: 2ba25d4e4e02d478881e86f49bf7619d, type: 2}

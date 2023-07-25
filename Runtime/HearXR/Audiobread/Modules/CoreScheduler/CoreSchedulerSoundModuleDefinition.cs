@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace HearXR.Audiobread
 {
+    [CreateAssetMenu(menuName = "Audiobread/Sound Module Definitions/Core Scheduler")]
     public class CoreSchedulerSoundModuleDefinition : SoundModuleDefinition, IChildSchedulerDefinition
     {
         #region Editor Fields

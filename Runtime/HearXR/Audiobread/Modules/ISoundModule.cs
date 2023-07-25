@@ -11,7 +11,6 @@ namespace HearXR.Audiobread
         #endregion
         
         #region Methods
-        SoundModuleDefinition CreateModuleSoundDefinition();
         SoundModuleProcessor CreateSoundModuleProcessor(ISound sound);
         #endregion
     }

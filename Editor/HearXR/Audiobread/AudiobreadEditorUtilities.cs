@@ -33,38 +33,6 @@ namespace HearXR.Audiobread
             return path;
         }
 
-        internal static bool AddRequiredModulesToSoundDefinition(SoundDefinition soundDefinition, string assetPath)
-        {
-            var addedModules = false;
-            
-            lock (soundDefinition)
-            {
-                
-                var compatibleModules = soundDefinition.GetCompatibleModules();
-                    
-                foreach (var module in compatibleModules)
-                {
-                    // Add modules that should be enabled by default.
-                    if (!module.EnabledByDefault) continue;
-                    if (soundDefinition.ModuleEnabled(module)) continue;
-                        
-                    var soundModuleDefinition = soundDefinition.AddModule(module);
-                    if (soundModuleDefinition != null)
-                    {
-                        addedModules = true;
-                        AssetDatabase.AddObjectToAsset(soundModuleDefinition, assetPath);
-                    }
-                }
-
-                if (addedModules)
-                {
-                    soundDefinition.OnDefaultModulesAdded();
-                }
-            }
-
-            return addedModules;
-        }
-        
         /// <summary>
         /// Creates and returns a new audiobread serialized file.
         /// </summary>

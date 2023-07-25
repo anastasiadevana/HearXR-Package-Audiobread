@@ -109,7 +109,9 @@ namespace HearXR.Audiobread
         {
             if (_enabledSoundModules.Contains(module)) return null;
             _enabledSoundModules.Add(module);
-            var soundModuleSoundDefinition = module.CreateModuleSoundDefinition();
+
+            var soundModuleSoundDefinition = module.DefaultSoundModuleDefinition;
+
             _moduleSoundDefinitions.Add(soundModuleSoundDefinition);
             return soundModuleSoundDefinition;
         }

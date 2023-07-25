@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0359eb350746e42f9b7731fd0b0a6c9a, type: 3}
-  m_Name: MSASoundModule
+  m_Script: {fileID: 11500000, guid: 9df274b54146416699d6b84a5a1ec162, type: 3}
+  m_Name: CoreUnityAudioModule
   m_EditorClassIdentifier: 
-  _defaultSoundModuleDefinition: {fileID: 11400000, guid: 34937545da6fc4e59a2538f15c3ce04c, type: 2}
+  _defaultSoundModuleDefinition: {fileID: 11400000, guid: 94b75c1f015ce45ecb36a5b817a59b1d, type: 2}

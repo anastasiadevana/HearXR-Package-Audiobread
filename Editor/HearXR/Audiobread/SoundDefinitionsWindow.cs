@@ -16,7 +16,7 @@ namespace HearXR.Audiobread
         private Editor _editor;
         private float _leftPanelWidth = 200;
         private float _panelSpacing = 20;
-        private ScriptableObject _s;
+        private ScriptableObject _so;
         
         [MenuItem ("🔈 Audiobread  🔈/Sound Definitions")]
         public static void  ShowWindow () {
@@ -48,12 +48,12 @@ namespace HearXR.Audiobread
             _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition, GUILayout.Width(_leftPanelWidth));
             for (int i = 0; i < _guids.Length; ++i)
             {
-                ScriptableObject s = (ScriptableObject) AssetDatabase.LoadAssetAtPath(_paths[i], typeof(ISoundDefinition));
-                if (GUILayout.Button(s.name))
+                var so = (ScriptableObject) AssetDatabase.LoadAssetAtPath(_paths[i], typeof(ISoundDefinition));
+                if (GUILayout.Button(so.name))
                 {
-                    EditorGUIUtility.PingObject(s);
-                    Editor.CreateCachedEditor(s, null, ref _editor);
-                    _s = s;
+                    EditorGUIUtility.PingObject(so);
+                    Editor.CreateCachedEditor(so, null, ref _editor);
+                    _so = so;
                 }
             }
             EditorGUILayout.EndScrollView();
@@ -69,9 +69,9 @@ namespace HearXR.Audiobread
             
             if (_editor != null)
             {
-                if (_s != null)
+                if (_so != null)
                 {
-                    EditorGUILayout.LabelField($"Editing: {_s.name}", EditorStyles.boldLabel);   
+                    EditorGUILayout.LabelField($"Editing: {_so.name}", EditorStyles.boldLabel);   
                 }
                 EditorGUIUtility.labelWidth = 250;
                 _scrollPosition2 = EditorGUILayout.BeginScrollView(_scrollPosition2);

@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace HearXR.Audiobread
 {
+    [CreateAssetMenu(menuName = "Audiobread/Sound Module Definitions/Core Child Picker")]
     public class CoreChildPickerSoundModuleDefinition : SoundModuleDefinition, IChildPickerDefinition
     {
         [SerializeField] private ParentSoundPlaybackOrder _playbackOrder;

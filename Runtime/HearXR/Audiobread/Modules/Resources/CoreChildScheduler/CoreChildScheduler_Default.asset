@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50c5ff86f6a6147489a1f6d7fa592220, type: 3}
+  m_Name: CoreChildScheduler_Default
+  m_EditorClassIdentifier: 
+  soundModule: {fileID: 0}
+  bypass: 0
+  parameters: []
+  _repeatsDefinition:
+    active: 1
+    value: 1
+    randomize: 0
+    variance: 0
+    soundProperty: {fileID: 11400000, guid: 004d515cf3a0e46bb98ad05a7a96a6b4, type: 2}
+  _timeBetweenDefinition:
+    active: 0
+    value: 0
+    randomize: 0
+    variance: 0
+    soundProperty: {fileID: 11400000, guid: a5f729353271e430cafddad2850a8fb4, type: 2}
+  _repeatType: 0

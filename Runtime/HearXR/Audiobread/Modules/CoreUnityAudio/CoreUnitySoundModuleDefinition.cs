@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace HearXR.Audiobread.Core
 {
+    [CreateAssetMenu(menuName = "Audiobread/Sound Module Definitions/Core Unity")]
     public class CoreUnitySoundModuleDefinition : SoundModuleDefinition
     {
         #region Static Private Fields

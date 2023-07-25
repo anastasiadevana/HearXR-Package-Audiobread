@@ -7,6 +7,7 @@ using UnityEngine;
 namespace HearXR.Audiobread
 {
     // TODO: Add support for custom cutoff curve.
+    [CreateAssetMenu(menuName = "Audiobread/Sound Module Definitions/Low Pass")]
     public class LowPassSoundModuleDefinition : SoundModuleDefinition
     {
         #region Static Private Fields

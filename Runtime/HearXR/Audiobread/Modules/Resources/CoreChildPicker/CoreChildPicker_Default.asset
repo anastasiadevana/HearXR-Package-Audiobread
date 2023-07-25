@@ -9,9 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1bc9717bd6654914a18944c2616aaef4, type: 3}
-  m_Name: LowPassSoundModule
+  m_Script: {fileID: 11500000, guid: fc1dae5745e134ee28ddc27f3e6fb0c2, type: 3}
+  m_Name: CoreChildPicker_Default
   m_EditorClassIdentifier: 
-  _soundProperties:
-  - {fileID: 11400000, guid: 1a72898145bab4a35a129c59454155c2, type: 2}
-  - {fileID: 11400000, guid: 8772572bc63a942b6904d840b02f9da0, type: 2}
+  soundModule: {fileID: 0}
+  bypass: 0
+  parameters: []
+  _playbackOrder: 0
+  _doNotRepeatLast: 1

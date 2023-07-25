@@ -41,29 +41,11 @@ namespace HearXR.Audiobread
 
             EditorGUI.BeginChangeCheck();
 
-            // Make a copy of the sound module properties, in case the user removes something.
-            // This way we can delete it from the Asset file.
-            var soundModuleSoundDefinitionsCopy = new List<SoundModuleDefinition>();
-            for (int i = 0; i < _soundDefinition.ModuleSoundDefinitions.Count; ++i)
-            {
-                soundModuleSoundDefinitionsCopy.Add(_soundDefinition.ModuleSoundDefinitions[i]);
-            }
-            
             DrawMainInspector();
             
             if (EditorGUI.EndChangeCheck())
             {
                 serializedObject.ApplyModifiedProperties();
-                
-                // Delete removed modules from the Asset.
-                for (int i = 0; i < soundModuleSoundDefinitionsCopy.Count; ++i)
-                {
-                    var smp = soundModuleSoundDefinitionsCopy[i];
-                    if (!_soundDefinition.ModuleSoundDefinitions.Contains(smp))
-                    {
-                        RemoveModuleFromAsset(smp);
-                    }
-                }
 
                 // Remove enabled modules as needed.
                 _soundDefinition.RescanEnabledModules();
@@ -95,24 +77,14 @@ namespace HearXR.Audiobread
                 {
                     if (GUILayout.Button($"Remove {module.DisplayName}"))
                     {
-                        // TODO: Use bool / out combo
-                        var smp = _soundDefinition.RemoveModule(module);
-                        if (smp != null)
-                        {
-                            RemoveModuleFromAsset(smp);   
-                        }
+                        _soundDefinition.RemoveModule(module);
                     }
                 }
                 else
                 {
                     if (GUILayout.Button($"Add {module.DisplayName}"))
                     {
-                        // TODO: Use bool / out combo
-                        var smp = _soundDefinition.AddModule(module);
-                        if (smp != null)
-                        {
-                            AddModuleToAsset(smp);   
-                        }
+                        _soundDefinition.AddModule(module);
                     }
                 }
             }
@@ -133,7 +105,7 @@ namespace HearXR.Audiobread
 
             if (_lastValidatedTime > 0 && (currentTime - _lastValidatedTime < _validationCooldown)) return;
             
-            if (AudiobreadEditorUtilities.AddRequiredModulesToSoundDefinition(_soundDefinition, _assetPath))
+            if (AddRequiredModulesToSoundDefinition(_soundDefinition))
             {
                 serializedObject.ApplyModifiedProperties();
                 _soundDefinition.RescanEnabledModules();
@@ -143,25 +115,34 @@ namespace HearXR.Audiobread
             _lastValidatedTime = currentTime;
         }
         
-        protected void AddModuleToAsset(SoundModuleDefinition soundModuleDefinition, bool saveAsset = true)
+        protected bool AddRequiredModulesToSoundDefinition(SoundDefinition soundDefinition)
         {
-            AssetDatabase.AddObjectToAsset(soundModuleDefinition, _assetPath);
-            if (saveAsset)
+            var addedModules = false;
+            
+            lock (soundDefinition)
             {
-                AssetDatabase.SaveAssets();
+                var compatibleModules = soundDefinition.GetCompatibleModules();
+                    
+                foreach (var module in compatibleModules)
+                {
+                    // Add modules that should be enabled by default.
+                    if (!module.EnabledByDefault) continue;
+                    if (soundDefinition.ModuleEnabled(module)) continue;
+                        
+                    var soundModuleDefinition = soundDefinition.AddModule(module);
+                    if (soundModuleDefinition != null)
+                    {
+                        addedModules = true;
+                    }
+                }
+            
+                if (addedModules)
+                {
+                    soundDefinition.OnDefaultModulesAdded();
+                }
             }
-            OnModuleAdded(ref soundModuleDefinition);
-        }
-        
-        protected void RemoveModuleFromAsset(SoundModuleDefinition smp)
-        {
-            if (smp == null) return;
-            var smpAsset = AssetDatabase.LoadAssetAtPath(_assetPath, smp.GetType());
-            AssetDatabase.RemoveObjectFromAsset(smpAsset);
-            DestroyImmediate(smp);
-            AssetDatabase.SaveAssets();
-        }
 
-        protected virtual void OnModuleAdded(ref SoundModuleDefinition soundModuleDefinition) {}
+            return addedModules;
+        }
     }
 }

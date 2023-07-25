@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using HearXR.Audiobread.SoundProperties;
+using UnityEngine;
 
 namespace HearXR.Audiobread
 {
+    [CreateAssetMenu(menuName = "Audiobread/Sound Module Definitions/Tone Generator")]
     public class ToneGeneratorSoundModuleDefinition : SoundModuleDefinition
     {
         #region Static Private Fields

@@ -35,14 +35,6 @@ namespace HearXR.Audiobread
             return false;
         }
 
-        public override SoundModuleDefinition CreateModuleSoundDefinition()
-        {
-            var soundModuleProperties = CreateInstance<MSASoundModuleDefinition>();
-            soundModuleProperties.name = DisplayName;
-            soundModuleProperties.soundModule = this;
-            return soundModuleProperties;
-        }
-
         public override SoundModuleProcessor CreateSoundModuleProcessor(ISound sound)
         {
             return new MSASoundModuleProcessor(this, sound);

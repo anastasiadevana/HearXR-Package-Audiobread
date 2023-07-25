@@ -9,6 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51c0ac47a5bf4876987880d204499cba, type: 3}
-  m_Name: ToneGeneratorSoundModule
+  m_Script: {fileID: 11500000, guid: 1bc9717bd6654914a18944c2616aaef4, type: 3}
+  m_Name: LowPassSoundModule
   m_EditorClassIdentifier: 
+  _defaultSoundModuleDefinition: {fileID: 11400000, guid: 77aad4b6adc774abca6bacb057879763, type: 2}
