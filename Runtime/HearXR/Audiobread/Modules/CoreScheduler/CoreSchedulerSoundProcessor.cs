@@ -59,8 +59,11 @@ namespace HearXR.Audiobread
 
         internal void ProcessSchedulingBeforePlay(ref Sound.SoundInstancePlaybackInfo instancePlaybackInfo, PlaySoundFlags playFlags)
         {
-            // Debug.Log("ProcessSchedulingBeforePlay");
-            
+            if (_soundDefinition.SoundType == SoundType.OneShot)
+            {
+                _playMore = false;
+            }
+
             // We only care about continuous sounds.
             if (_soundDefinition.SoundType != SoundType.Continuous) return;
 

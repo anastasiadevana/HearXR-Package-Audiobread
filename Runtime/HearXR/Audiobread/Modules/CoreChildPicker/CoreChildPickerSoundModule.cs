@@ -20,7 +20,7 @@ namespace HearXR.Audiobread
         /// <returns></returns>
         public override bool IsCompatibleWith(in ISoundDefinition soundDefinition)
         {
-            if (soundDefinition is IContainerSoundDefinition) return true;
+            if (soundDefinition is ContainerSoundDefinition) return true;
             return false;
         }
 
