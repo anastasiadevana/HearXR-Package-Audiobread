@@ -194,7 +194,7 @@ namespace HearXR.Audiobread
 
             for (int i = 0; i < inUseAudioSources.Count; ++i)
             {
-                if (inUseAudioSources[i].Player.IsStopped())
+                if (!inUseAudioSources[i].Player.IsPlayingOrTransitioning())
                 {
                     oldestNonPlaying = i;
                     break;
