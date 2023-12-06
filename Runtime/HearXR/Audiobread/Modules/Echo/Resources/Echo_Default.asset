@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc06a2791913b4d9a8439323b8e0b710, type: 3}
+  m_Name: Echo_Default
+  m_EditorClassIdentifier: 
+  soundModule: {fileID: 11400000, guid: 5677da743a6234f709f8d95dbd3da2f8, type: 2}
+  bypass: 0
+  parameters: []
+  delay:
+    active: 1
+    value: 500
+    randomize: 0
+    variance: 0
+    soundProperty: {fileID: 11400000, guid: 34f0108c6811e42acbb77675704dbcb8, type: 2}
+  decayRatio:
+    active: 1
+    value: 0.5
+    randomize: 0
+    variance: 0
+    soundProperty: {fileID: 11400000, guid: bddf2ce0c73af449090397c51862d2cd, type: 2}
+  dryMix:
+    active: 1
+    value: 1
+    randomize: 0
+    variance: 0
+    soundProperty: {fileID: 11400000, guid: 10e8482dd675a4c25bdba49e32a9b12a, type: 2}
+  wetMix:
+    active: 1
+    value: 1
+    randomize: 0
+    variance: 0
+    soundProperty: {fileID: 11400000, guid: 424a1756e863842b1ac8817c19708838, type: 2}
