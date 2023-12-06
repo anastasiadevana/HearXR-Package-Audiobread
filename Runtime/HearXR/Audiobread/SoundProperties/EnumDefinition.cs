@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace HearXR.Audiobread.SoundProperties
 {
@@ -46,6 +47,29 @@ namespace HearXR.Audiobread.SoundProperties
 
                 return _numItems;
             }
+        }
+        
+        public override void SetFloatValue(float newValue)
+        {
+            Debug.LogWarning("Unable to set float value on an enum sound property definition");
+        }
+
+        public override void SetBoolValue(int newValue)
+        {
+            Debug.LogWarning("Unable to set bool value on an enum sound property definition");
+        }
+
+        public override void SetDoubleValue(double newValue)
+        {
+            Debug.LogWarning("Unable to set double value on an enum sound property definition");
+        }
+
+        public override void SetIntValue(int newValue)
+        {
+            var numItems = NumItems;
+            if (newValue < 0) newValue = 0;
+            if (newValue >= numItems) newValue = numItems - 1;
+            value = newValue;
         }
     }
 }

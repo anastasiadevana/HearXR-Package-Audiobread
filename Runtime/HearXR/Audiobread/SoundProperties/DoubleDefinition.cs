@@ -1,4 +1,6 @@
-﻿namespace HearXR.Audiobread.SoundProperties
+﻿using UnityEngine;
+
+namespace HearXR.Audiobread.SoundProperties
 {
     public interface IDoubleDefinition<TProperty> : IDefinition<double, TProperty> where TProperty : DoubleSoundProperty {}
 
@@ -23,6 +25,28 @@
         
                 return _soundProperty;
             }
+        }
+        
+        public override void SetFloatValue(float newValue)
+        {
+            Debug.LogWarning("Unable to set float value on a double sound property definition");
+        }
+
+        public override void SetBoolValue(int newValue)
+        {
+            Debug.LogWarning("Unable to set bool value on a double sound property definition");
+        }
+
+        public override void SetDoubleValue(double newValue)
+        {
+            if (newValue < SoundProperty.MinLimit) newValue = SoundProperty.MinLimit;
+            if (newValue > SoundProperty.MaxLimit) newValue = SoundProperty.MaxLimit;
+            value = newValue;
+        }
+
+        public override void SetIntValue(int newValue)
+        {
+            Debug.LogWarning("Unable to set int value on a double sound property definition");
         }
     }
 }
