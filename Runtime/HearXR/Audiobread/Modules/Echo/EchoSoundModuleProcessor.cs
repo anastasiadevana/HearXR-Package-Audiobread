@@ -65,8 +65,7 @@ namespace HearXR.Audiobread
             }
             else
             {
-                // Debug.Log($"Enable echo on {MySound}");
-                _echoFilter.enabled = true;
+                _echoFilter.enabled = !ModuleSoundDefinition.bypass;
             }
             _initComplete = true;
         }

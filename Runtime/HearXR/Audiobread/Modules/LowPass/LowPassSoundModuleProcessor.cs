@@ -5,9 +5,9 @@ namespace HearXR.Audiobread
     public class LowPassSoundModuleProcessor : SoundModuleProcessor<LowPassSoundModule, LowPassSoundModuleDefinition>
     {
         #region Private Fields
-        private bool _initComplete = false;
+        private bool _initComplete;
         private AudioLowPassFilter _lowPassFilter;
-        private bool _invalid = false;
+        private bool _invalid;
         #endregion
         
         public LowPassSoundModuleProcessor(LowPassSoundModule soundModule, ISound sound) : base(soundModule, sound) {}
@@ -53,8 +53,7 @@ namespace HearXR.Audiobread
             }
             else
             {
-                // Debug.Log($"Enable low pass on {MySound}");
-                _lowPassFilter.enabled = true;
+                _lowPassFilter.enabled = !ModuleSoundDefinition.bypass;
             }
             _initComplete = true;
         }
