@@ -17,6 +17,11 @@ namespace HearXR.Audiobread
         private int _lastValidatedTime = -1;
         private const int _validationCooldown = 3;
         
+        // Stuff for preview
+        private Sound _sound;
+        private AudiobreadPool _audiobreadPool;
+        private SoundRegistry _soundRegistry;
+        
         protected virtual void OnEnable()
         {
             _soundDefinition = (SoundDefinition) target;
@@ -25,12 +30,42 @@ namespace HearXR.Audiobread
             _compatibleModules = _soundDefinition.GetCompatibleModules();
 
             ValidateRequiredModules();
+            
+            _audiobreadPool = AudiobreadPool.Instance;
+            if (!_audiobreadPool.HasPool)
+            {
+                _audiobreadPool.TryInitEditorPool(100, 0);
+            }
+            EditorApplication.update += OnUpdate;
         }
+        
+        void OnUpdate()
+        {
+            if (_sound != null && _sound.IsPlaying())
+            {
+                EditorApplication.QueuePlayerLoopUpdate();
+                _sound.Update();
+            }
+        }
+        
+        void OnDisable()
+         {
+             if (_sound != null)
+             {
+                 _sound.Stop(StopSoundFlags.Instant | StopSoundFlags.UnsetPersistentFlag);
+             }
+             if (_audiobreadPool != null)
+             {
+                 _audiobreadPool.ClearEditorPool();   
+             }
+             if (_soundRegistry != null)
+             {
+                 _soundRegistry.ClearRegistry();   
+             }
+         }
 
         public override void OnInspectorGUI()
         {
-            // _selectedTab = GUILayout.Toolbar(_selectedTab, new [] {"Main", "Everything else"});
-            
             _position = EditorGUILayout.GetControlRect();
             
             var position = _position;
@@ -53,12 +88,54 @@ namespace HearXR.Audiobread
                 _wasChangedProperty.boolValue = true;
                 serializedObject.ApplyModifiedProperties();
             }
+            
+            // Draw the preview buttons.
+            DrawSoundPreview();
         }
 
         protected virtual void DrawMainInspector()
         {
             // Show default inspector property editor
             DrawDefaultInspector();
+        }
+
+        protected void DrawSoundPreview()
+        {
+            EditorGUI.BeginDisabledGroup(serializedObject.isEditingMultipleObjects);
+            GUILayout.Space(20);
+            var r = EditorGUILayout.BeginHorizontal();
+            
+            if (GUILayout.Button("Preview"))
+            {
+                if (_sound != null)
+                {
+                    _sound.Stop(StopSoundFlags.Instant | StopSoundFlags.UnsetPersistentFlag);
+                    _sound = null;
+                }
+                
+                _sound = _soundDefinition.CreateSound() as Sound;
+        
+                if (_sound.IsValid())
+                {
+                    _sound.Play();
+                }
+                else
+                {
+                    Debug.Log("Sound isn't valid :(");
+                }
+            }
+            
+            if (_sound != null && _sound.IsPlayingOrTransitioning())
+            {
+                if (GUILayout.Button("Stop"))
+                {
+                    _sound.Stop(StopSoundFlags.Instant | StopSoundFlags.UnsetPersistentFlag);
+                    _sound = null;
+                }
+            }
+            
+            EditorGUILayout.EndHorizontal();
+            EditorGUI.EndDisabledGroup();
         }
 
         protected void DrawModuleButtons()
