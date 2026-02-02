@@ -213,6 +213,36 @@ namespace HearXR.Audiobread
             sound.Play(playFlags);
             return sound;
         }
+        
+        
+        /// <summary>
+        /// Play MIDI note with an already prepared sound.
+        /// </summary>
+        /// <param name="sound"></param>
+        /// <param name="midiNoteInfo"></param>
+        /// <param name="soundSourceObject"></param>
+        /// <param name="playFlags"></param>
+        /// <returns></returns>
+        public ISound PlayMidiNote(ISound sound,  MidiNoteInfo midiNoteInfo, GameObject soundSourceObject, PlaySoundFlags playFlags = PlaySoundFlags.None)
+        {
+            if (sound == null)
+            {
+                Debug.LogError("HEAR XR: Please provide a sound to play.");
+                return default;
+            }
+            
+            if (!sound.IsValid())
+            {
+                Debug.LogError("HEAR XR: Audiobread: Provided sound is not valid.");
+                return sound;
+            }
+
+            sound.SoundSourceObject = soundSourceObject;
+            sound.MidiNoteInfo = midiNoteInfo;
+            sound.Play(playFlags);
+            return sound;
+        }
+
 
         public void SetParameter(Parameter parameter, float parameterValue, ISoundDefinition soundDefinition = null,
             GameObject soundSourceObject = null)
