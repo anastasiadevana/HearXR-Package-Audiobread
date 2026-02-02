@@ -34,7 +34,7 @@ namespace HearXR.Audiobread
             _audiobreadPool = AudiobreadPool.Instance;
             if (!_audiobreadPool.HasPool)
             {
-                _audiobreadPool.TryInitEditorPool(100, 0);
+                _audiobreadPool.TryInitEditorPool(100, 0, BuiltInData.SoundModuleManager.InitPoolItemTemplate);
             }
             EditorApplication.update += OnUpdate;
         }

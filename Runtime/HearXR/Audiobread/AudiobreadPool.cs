@@ -97,7 +97,8 @@ namespace HearXR.Audiobread
         /// </summary>
         /// <param name="size"></param>
         /// <param name="preloadWith"></param>
-        internal void TryInitEditorPool(int size, int preloadWith)
+        /// <param name="poolItemTemplateInitCallback"></param>
+        internal void TryInitEditorPool(int size, int preloadWith, PoolItemTemplateInitCallback poolItemTemplateInitCallback = null)
         {
             //Debug.LogError("EDITOR INIT");
             if (_hasPool) return;
@@ -106,8 +107,18 @@ namespace HearXR.Audiobread
             // Create a parent Game Object and hide it in Editor.
             _editorPoolParent = new GameObject(GO_NAME);
             
+            var audiobreadSourceTemplate = audiobreadSource;
+            
+            // If some modules want to alter the template audio source pool item, clone the prefab first, so that
+            // it doesn't get altered.
+            if (poolItemTemplateInitCallback != null)
+            {
+                audiobreadSourceTemplate = Object.Instantiate(audiobreadSource, _editorPoolParent.transform);
+                poolItemTemplateInitCallback?.Invoke(ref audiobreadSourceTemplate);
+            }
+            
             //_editorPoolParent.hideFlags = HideFlags.HideAndDontSave;
-            _audioSourcePool = new TypedItemPool<AudiobreadSource>(audiobreadSource, size, preloadWith, _editorPoolParent.transform);
+            _audioSourcePool = new TypedItemPool<AudiobreadSource>(audiobreadSourceTemplate, size, preloadWith, _editorPoolParent.transform);
             _hasPool = true;
         }
 
