@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace HearXR.Audiobread
 {
-    internal interface ISoundInternal : ISound
+    public interface ISoundInternal : ISound
     {
         void DeInit();
 
@@ -20,7 +20,7 @@ namespace HearXR.Audiobread
         void AddTrackedParameters(List<Parameter> parameters);
     }
     
-    internal interface ISoundInternal<in TDefinition> : ISoundInternal where TDefinition : ISoundDefinition
+    public interface ISoundInternal<in TDefinition> : ISoundInternal where TDefinition : ISoundDefinition
     {
         void Init(TDefinition soundDefinition, InitSoundFlags initFlags = InitSoundFlags.None);
     }

@@ -186,7 +186,7 @@ namespace HearXR.Audiobread
             {
                 serializedObject.ApplyModifiedProperties();
                 _soundDefinition.RescanEnabledModules();
-                _soundDefinition.OnDefaultModulesAdded();
+                _soundDefinition.InvokeOnDefaultModulesAdded();
             }
             
             _lastValidatedTime = currentTime;
@@ -215,7 +215,7 @@ namespace HearXR.Audiobread
             
                 if (addedModules)
                 {
-                    soundDefinition.OnDefaultModulesAdded();
+                    soundDefinition.InvokeOnDefaultModulesAdded();
                 }
             }
 

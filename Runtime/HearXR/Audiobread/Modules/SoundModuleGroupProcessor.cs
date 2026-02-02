@@ -123,7 +123,7 @@ namespace HearXR.Audiobread
             return false;
         }
 
-        internal bool TryGetProcessor<T>(out T soundModuleProcessor) where T : SoundModuleProcessor
+        public bool TryGetProcessor<T>(out T soundModuleProcessor) where T : SoundModuleProcessor
         {
             soundModuleProcessor = null;
             {

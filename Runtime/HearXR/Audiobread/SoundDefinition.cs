@@ -99,6 +99,11 @@ namespace HearXR.Audiobread
 
             }
         }
+
+        internal void InvokeOnDefaultModulesAdded()
+        {
+            OnDefaultModulesAdded();
+        }
         
         internal bool ModuleEnabled(SoundModule module)
         {
@@ -134,7 +139,7 @@ namespace HearXR.Audiobread
         }
         
         #region Validate
-        internal virtual void OnDefaultModulesAdded() {}
+        protected virtual void OnDefaultModulesAdded() {}
         #endregion
     }
 }

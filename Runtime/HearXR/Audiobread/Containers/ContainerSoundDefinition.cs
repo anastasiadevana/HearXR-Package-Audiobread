@@ -63,7 +63,7 @@ namespace HearXR.Audiobread
         #endregion
 
         #region Validate
-        internal override void OnDefaultModulesAdded()
+        protected override void OnDefaultModulesAdded()
         {
             base.OnDefaultModulesAdded();
             ConnectChildSchedulerDefinition();
